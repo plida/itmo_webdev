@@ -6,19 +6,19 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Plida's shop</title>
     <link rel="stylesheet" href="style.css">
-    <script type="text/javascript" src="index.js"></script>
   </head>
   <body>
 	  <h1>Plida's cool shop</h1>
 	  <a href="cart.html">Go to cart</a>
-	  <section>
+	  <section id="product-list">
 		  <h2>Our products</h2>
 		  <ul>
-			  <li>Apples <span class="item-price">150₽</span><input type="button" value="add to cart" onclick="addToCart('apples')"></li>
-			  <li>Oranges <span class="item-price">250₽</span><input type="button" value="add to cart" onclick="addToCart('oranges')"></li>
-			  <li>Bananas <span class="item-price">100₽</span><input type="button" value="add to cart" onclick="addToCart('bananas')"></li>
+			  <li>Apples <span class="item-price">150₽</span><button data-id="1" data-price="150" onclick="addToCart()">add to cart</button></li>
+			  <li>Oranges <span class="item-price">250₽</span><button data-id="2" data-price="250" onclick="addToCart()">add to cart</button></li>
+			  <li>Bananas <span class="item-price">100₽</span><button data-id="3" data-price="100" onclick="addToCart()">add to cart</button></li>
 		  </ul>
 	  </section>
+  <script type="text/javascript" src="index.js"></script>
   </body>
 </html>
 
