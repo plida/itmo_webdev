@@ -1,21 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Plida's shop</title>
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
-	  <h1>Plida's cool shop</h1>
-	  <a href="cart.html">Go to cart</a><div>Item count: <span id="cart_count">0</span>, total sum: <span id="cart_sum">0</span></div>
-	  <section id="product-list">
-		  <h2>Our products</h2>
-		  <ul>
-		  </ul>
-	  </section>
-  <script type="text/javascript" src="index.js"></script>
-  </body>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Plida's shop</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<section header class="header">
+		<div class="header-logo">
+			<img src="" alt="logo">
+			<div>
+				<h1>Plida's cool shop</h1>
+				<h2>Web programming lab work #1</h2>
+			</div>
+
+		</div>
+		<div class="header-buttons">
+			<a href="https://github.com/plida/itmo_webdev">Github</a>
+			<div class="cart_button">
+				<a href="cart.html">Go to cart</a>
+				Item count: <span id="cart_count">0</span>,
+	                	Total sum: <span id="cart_sum">0</span>
+			</div>
+		</div>
+	</section>
+       	<section product-List id="product-list">
+		<h2>Our products</h2>
+		<ul></ul>
+	</section>
+	<section footer class="footer">
+		<p>Plida 2025</p>
+	</section>
+
+	<script type="text/javascript" src="index.js"></script>
+</body>
 </html>
 
