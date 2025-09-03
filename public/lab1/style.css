@@ -27,26 +27,31 @@
 }
 
 body{
-	padding-top: 8em;
+	background-color: #f4f4f4;
 	font-family:"Arial";
 }
 
 .header{
+	background-color: #fff;
+	border: 1px solid #f0f0f0;
 	display: flex;
-	position: fixed;
 	justify-content: space-between;
+	align-items: center;
 	height: 8em;
 	top: 0;
 	left: 0;
-	width: 100%;
+	margin: 0 auto;
+	width: 50%;
+	z-index: 99;
 }
+
 
 .header-logo{
 	display: flex;
-	margin: 15px;
 	line-height: 10px;
-	align-self: start;
 	align-items: center;
+	text-decoration: none;
+	color: #000;
 }
 
 .header-buttons{
@@ -58,10 +63,56 @@ body{
 
 .header-image{
 	max-width: 96px;
-	margin: 8px;
+	margin: 16px;
+}
+
+
+.itemCard{
+	flex-shrink: 1;
+	background-color: #fff;
+	padding: 10px;
+	border-radius: 5px 5px 5px 5px;
+	margin: 5px 25px 5px 25px;
+	width: 170px;
+	height: 365px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	clip-path: circle(100% at 50% 20%);
+}
+
+.itemCardText{
+	display:flex;
+	flex-direction: column;
+	margin: 10px;
+	align-items: center;
+}
+
+.itemCardImage{
+	max-width: inherit;
+	max-height: 150px;
+	border-radius: 2px;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+
+.itemCardButton{
+	padding: 5px 10px 5px 10px;
+	margin-bottom: 25px;
+}
+
+#product-list{
+        display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	max-width: 1000px;
 }
 
 .footer{
+	background-color: #fff;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -69,13 +120,24 @@ body{
 	bottom: 0;
 	left: 0;
 	width: 100%;
+	z-index: 99;
 }
 
 .popup{
 	visibility: hidden;
 	position: absolute;
 	z-index: 999;
+	line-height: 5px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: #fff;
+	border: 2px solid #d2d2d2;
+	border-radius: 5px;
+	width: 124px;
+
 }
+
 
 h1{
 	font-size: 36px;

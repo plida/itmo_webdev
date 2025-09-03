@@ -113,13 +113,12 @@ function populateCartContents(cartContents){
 }
 
 function populateProductList(){
-	let productList = document.getElementById('product-list')
-	if (productList === null){
+	let list = document.getElementById('product-list')
+	if (list === null){
 		return;
 	}
-	let list = productList.querySelector("ul");
 	let listClone = list.cloneNode(true);
-	listClone.innerHTML = "";
+	listClone.innerHTML = "";/*
 	for (const [key, value] of Object.entries(lookupTable)){
 		let item = value;
 		let listItem = document.createElement('li');
@@ -130,7 +129,36 @@ function populateProductList(){
 		listItem.appendChild(document.createTextNode(item.name + " " + item.price + "₽ "));
 		listItem.appendChild(addBtn);
 		listClone.append(listItem);
-	}
+	}*/
+	for (const [key, value] of Object.entries(lookupTable)){
+                let item = value;
+                let listItem = document.createElement('li');
+			listItem.classList.add('itemCard');
+		let image = document.createElement('img');
+			image.classList.add('itemCardImage');
+			image.src = item.img;
+		let text = document.createElement('div');
+			text.classList.add('itemCardText');
+			let heading = document.createElement('span');
+				heading.textContent = item.name;
+			let weight = document.createElement('span');
+				weight.textContent = item.weight;
+			let price = document.createElement('span');
+				price.textContent = item.price;
+			text.appendChild(heading);
+			text.appendChild(weight);
+			text.appendChild(price);
+		let addBtn = document.createElement('button');
+       			addBtn.innerText = '+';
+			addBtn.classList.add('addBtn');
+			addBtn.classList.add('itemCardButton');
+			addBtn.id = 'addbtn' + key;
+                listItem.appendChild(image);
+		listItem.appendChild(text);
+                listItem.appendChild(addBtn);
+                listClone.append(listItem);
+        }
+
 
 	listClone.addEventListener('click', (event) => {
 		const isButton = event.target.nodeName === 'BUTTON';
@@ -152,10 +180,15 @@ function acceptForm(event){
 }
 
 const lookupTable = {
-	"1": { name: "Apples 1kg", price: 150},
-	"2": { name: "Oranges 1kg", price: 250},
-	"3": { name: "Bananas 1kg", price: 100},
-	"4": { name: "Pineapples", price: 400}
+	"1": { name: 'Apples', weight:"1kg", price: 150, img: 'media/shelley-pauls-unsplash.jpg'},
+	"2": { name: 'Oranges', weight:"1kg", price: 250, img: 'media/erol-ahmed-unsplash.jpg'},
+	"3": { name: 'Bananas', weight:"1kg", price: 100, img: 'media/ries-bosch-unsplash.jpg'},
+	"4": { name: 'Pineapples', weight:"1kg", price: 400, img: 'media/phoenix-han-unsplash.jpg'},
+	"5": { name: 'Pears', weight:"1kg", price: 150, img: 'media/maksim-shutov-unsplash.jpg'},
+        "6": { name: 'Grape', weight:"1kg", price: 250, img: 'media/alexander-schimmeck-unsplash.jpg'},
+        "7": { name: 'Cherries', weight:"1kg", price: 100, img: 'media/roksolana-zasiadko-unsplash.jpg'},
+        "8": { name: 'Strawberries', weight:"1kg", price: 400, img: 'media/massimiliano-martini-unsplash.jpg'},
+	"9": { name: 'Peaches', weight:"1kg", price: 400, img: 'media/eric-prouzet-unsplash.jpg'},
 }
 
 populateProductList();
