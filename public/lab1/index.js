@@ -38,9 +38,9 @@ function emptyCart(){
 
 
 function updateCart(){
-	let cartDisplaySum = document.getElementById("cart_sum");
-	let cartDisplayCount = document.getElementById("cart_count")
-	let cartContents = document.getElementById("cart_contents")
+	let cartDisplaySum = document.getElementById('cart_sum');
+	let cartDisplayCount = document.getElementById('cart_count');
+	let cartContents = document.getElementById('cart_contents');
 
 	let sum = 0;
 	let count = 0;
@@ -56,16 +56,25 @@ function updateCart(){
 	}
 
 	if (cartContents){
-		populateCartContents(cartContents)
+		populateCartContents(cartContents);
 	}
+
+	let orderBtn = document.getElementById('placeOrder');
+	if (orderBtn && count > 0){orderBtn.disabled = false;}
+	if (orderBtn && count === 0){orderBtn.disabled = true;}
+	
+	let emptyBtn = document.getElementById('emptyCart');
+        if (emptyBtn && count > 0){emptyBtn.disabled = false;}  
+        if (emptyBtn && count === 0){emptyBtn.disabled = true;}
+	
 
 	localStorage.setItem('cart', JSON.stringify(cart));
 }
 
 function populateCartContents(cartContents){
-	let list = cartContents.querySelector("ul");
+	let list = cartContents.querySelector('ul');
 	listClone = list.cloneNode(true);
-	listClone.innerHTML = "";
+	listClone.innerHTML = '';
 	for (item of cart){
 		let listItem = document.createElement('li');
 		let plusBtn = document.createElement('button');
@@ -135,6 +144,13 @@ function populateProductList(){
 }
 
 
+function acceptForm(event){
+	emptyCart();
+	closeOrderForm();
+	alert("The order was successfuly placed!");
+	event.preventDefault();
+}
+
 const lookupTable = {
 	"1": { name: "Apples 1kg", price: 150},
 	"2": { name: "Oranges 1kg", price: 250},
@@ -167,16 +183,20 @@ productList.addEventListener('click', (event) => {
 
 
 function openOrderForm(){
-	let orderForm = document.getElementById('orderForm');
-	if (orderForm.classList.contains('show') === false){
-		orderForm.classList.add('show');
+	let orderFormMenu = document.getElementById('orderForm');
+	if (orderFormMenu.classList.contains('show') === false){
+		orderFormMenu.classList.add('show');
 	}
 }
 
 function closeOrderForm(){
-        let orderForm = document.getElementById('orderForm');
-        if (orderForm.classList.contains('show') === true){
-                orderForm.classList.remove('show');
+        let orderFormMenu = document.getElementById('orderForm');
+        if (orderFormMenu.classList.contains('show') === true){
+                orderFormMenu.classList.remove('show');
         }
 }
 
+let orderForm = document.getElementById('orderForm')
+if (orderForm !== null){
+	orderForm.addEventListener('submit', (event) => {acceptForm(event)});
+}

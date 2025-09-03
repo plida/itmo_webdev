@@ -16,6 +16,9 @@
 	display: flex;
 	flex-direction: column;
 	width: 25%;
+	min-width: 250px;
+	background-color: rgba(200, 200, 200);
+	padding: 0 10px 20px 10px;
 }
 
 .orderFormContents form{
@@ -26,4 +29,9 @@
 .show{
         visibility: visible;
 }
-
+button{
+	cursor:pointer;
+}
+button:disabled{
+	cursor: not-allowed;
+}

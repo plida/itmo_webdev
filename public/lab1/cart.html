@@ -11,20 +11,21 @@
 	  <h1>Plida's cool shop</h1>
 	  <a href="index.html">Return to shopping</a>
 	  <section>
-	  <section id="cart_contents">
-		 <h2>Cart</h2>
+	  <h2>Cart</h2>
+	  <div id="cart_contents">
 		 <ul>
 			 ...
 		 </ul>
-		 <div>Item count: <span id="cart_count">0</span>, total sum: <span id="cart_sum">0</span></div>
-	  </section>
-	  <button onclick="emptyCart()">Empty the cart</button>
-	  <button onclick="openOrderForm()">Place an order</button>
+	  </div>
+	  <div>Item count: <span id="cart_count">0</span>, total sum: <span id="cart_sum">0</span></div>
+
+	  <button id="emptyCart" onclick="emptyCart()">Empty the cart</button>
+	  <button id="placeOrder" onclick="openOrderForm()">Place an order</button>
 	  </section>
 	  <section class="orderForm" id="orderForm">
 		<div class="orderFormContents">
 		<h2>Order form</h2>
-		<button onclick="closeOrderForm()">x</button>
+		<button onclick="closeOrderForm()">Close the form</button>
 		<form>
 			<label for="form-name">First name: </label>
 			<input type="text" id="form-name" placeholder="John" required>
@@ -35,7 +36,7 @@
 			<label for="form-tel">Phone number: </label>
                         <input type="tel" id="form-tel" placeholder="7(123)456-78-90" required>
 			
-			<input type="submit" value="Submit form">
+			<input type="submit" value="Submit">
 		</form>
 		</div>
 	  </section>
