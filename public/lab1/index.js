@@ -56,50 +56,51 @@ function updateCart(){
 	}
 
 	if (cartContents){
-                let cartClone = cartContents.cloneNode(true);
-		let list = cartClone.querySelector("ul");
-		list.innerHTML = "";
-		if (list){
-			for (item of cart){
-				let listItem = document.createElement('li');
-				let plusBtn = document.createElement('button');
-					plusBtn.innerText = '+';
-					plusBtn.classList.add('plusBtn');
-					plusBtn.id = 'plusbtn' + item.id;
-				let minsBtn = document.createElement('button');
-					minsBtn.innerText = '-';
-					minsBtn.classList.add('minsBtn');
-					minsBtn.id = 'minsbtn' + item.id;
-				let rmveBtn = document.createElement('button');
-					rmveBtn.innerText = 'remove';
-					rmveBtn.classList.add('rmveBtn');
-					rmveBtn.id = 'rmvebtn' + item.id;
-				listItem.appendChild(document.createTextNode(item.name + " " + item.price + "₽ " + item.quantity));
-				listItem.appendChild(plusBtn);
-				listItem.appendChild(minsBtn);
-				listItem.appendChild(rmveBtn);
-				list.append(listItem);
-
-			}
-		}
-		cartClone.addEventListener('click', (event) => {
-                                        const isButton = event.target.nodeName === 'BUTTON';
-                                        if (isButton && event.target.classList.contains('plusBtn')){
-						addToCart(event.target.id.slice(7));
-                                        }
-					if (isButton && event.target.classList.contains('minsBtn')){
-						removeFromCart(event.target.id.slice(7));
-                                        }
-					if (isButton && event.target.classList.contains('rmveBtn')){
-						removeFromCart(event.target.id.slice(7), true);
-					}
-                                })
-		// cloning removes existing event listeners
-		cartContents.parentNode.appendChild(cartClone);
-		cartContents.remove();
+		populateCartContents(cartContents)
 	}
 
 	localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+function populateCartContents(cartContents){
+	let list = cartContents.querySelector("ul");
+	listClone = list.cloneNode(true);
+	listClone.innerHTML = "";
+	for (item of cart){
+		let listItem = document.createElement('li');
+		let plusBtn = document.createElement('button');
+			plusBtn.innerText = '+';
+			plusBtn.classList.add('plusBtn');
+			plusBtn.id = 'plusbtn' + item.id;
+		let minsBtn = document.createElement('button');
+			minsBtn.innerText = '-';
+			minsBtn.classList.add('minsBtn');
+			minsBtn.id = 'minsbtn' + item.id;
+		let rmveBtn = document.createElement('button');
+			rmveBtn.innerText = 'remove';
+			rmveBtn.classList.add('rmveBtn');
+			rmveBtn.id = 'rmvebtn' + item.id;
+		listItem.appendChild(document.createTextNode(item.name + " " + item.price + "₽ " + item.quantity));
+		listItem.appendChild(plusBtn);
+		listItem.appendChild(minsBtn);
+		listItem.appendChild(rmveBtn);
+		listClone.append(listItem);
+	}
+	listClone.addEventListener('click', (event) => {
+		const isButton = event.target.nodeName === 'BUTTON';
+		if (isButton && event.target.classList.contains('plusBtn')){
+			addToCart(event.target.id.slice(7));
+		}
+		if (isButton && event.target.classList.contains('minsBtn')){
+			removeFromCart(event.target.id.slice(7));
+		}
+		if (isButton && event.target.classList.contains('rmveBtn')){
+			removeFromCart(event.target.id.slice(7), true);
+		}
+	})
+	// cloning removes existing event listeners
+	list.parentNode.appendChild(listClone);
+	list.remove();
 }
 
 function populateProductList(){
@@ -131,9 +132,6 @@ function populateProductList(){
 	// cloning removes existing event listeners
 	list.parentNode.appendChild(listClone);
 	list.remove();
-
-
-
 }
 
 
