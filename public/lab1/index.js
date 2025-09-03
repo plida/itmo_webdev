@@ -17,11 +17,12 @@ function addToCart(id, price){
 	updateCart();
 }
 
-function removeFromCart(id){
+function removeFromCart(id, removeFully = false){
 	let item = cart.find(item => item.id === id);
+
 	if (item){
 		item.quantity--;
-		if (item.quantity < 1){
+		if (item.quantity < 1 || removeFully){
 			let n = cart.indexOf(item);
 			cart.splice(n, 1);
 		}
@@ -68,9 +69,14 @@ function updateCart(){
 					minsBtn.innerText = '-';
 					minsBtn.classList.add('minsBtn');
 					minsBtn.id = 'minsbtn' + item.id;
+				let rmveBtn = document.createElement('button');
+					rmveBtn.innerText = 'remove';
+					rmveBtn.classList.add('rmveBtn');
+					rmveBtn.id = 'rmvebtn' + item.id;
 				listItem.appendChild(document.createTextNode(item.id + " " + item.price + "₽ " + item.quantity));
 				listItem.appendChild(plusBtn);
 				listItem.appendChild(minsBtn);
+				listItem.appendChild(rmveBtn);
 				list.append(listItem);
 
 			}
@@ -80,9 +86,12 @@ function updateCart(){
                                         if (isButton && event.target.classList.contains('plusBtn')){
 						addToCart(event.target.id.slice(7), 150);
                                         }
-					else if (isButton && event.target.classList.contains('minsBtn')){
+					if (isButton && event.target.classList.contains('minsBtn')){
 						removeFromCart(event.target.id.slice(7));
                                         }
+					if (isButton && event.target.classList.contains('rmveBtn')){
+						removeFromCart(event.target.id.slice(7), true);
+					}
                                 })
 		// cloning removes existing event listeners
 		cartContents.parentNode.appendChild(cartClone);
