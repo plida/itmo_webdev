@@ -1,0 +1,29 @@
+.orderForm{
+	position: fixed;
+	visibility: hidden;
+	z-index: 9999;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.6);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.orderFormContents{
+	display: flex;
+	flex-direction: column;
+	width: 25%;
+}
+
+.orderFormContents form{
+	display: flex;
+	flex-direction: column;
+}
+
+.show{
+        visibility: visible;
+}
+

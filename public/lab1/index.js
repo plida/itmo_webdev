@@ -146,8 +146,8 @@ populateProductList();
 
 let cart = [];
 
-if (localStorage.getItem("cart")){
-	cart = JSON.parse(localStorage.getItem("cart"));
+if (localStorage.getItem('cart')){
+	cart = JSON.parse(localStorage.getItem('cart'));
 }
 
 updateCart();
@@ -165,4 +165,18 @@ productList.addEventListener('click', (event) => {
 })
 }
 
+
+function openOrderForm(){
+	let orderForm = document.getElementById('orderForm');
+	if (orderForm.classList.contains('show') === false){
+		orderForm.classList.add('show');
+	}
+}
+
+function closeOrderForm(){
+        let orderForm = document.getElementById('orderForm');
+        if (orderForm.classList.contains('show') === true){
+                orderForm.classList.remove('show');
+        }
+}
 
