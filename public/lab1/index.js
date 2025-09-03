@@ -19,9 +19,9 @@ function addToCart(id, price){
 
 function removeFromCart(id){
 	let item = cart.find(item => item.id === id);
-	if (item !== undefined){
+	if (item){
 		item.quantity--;
-		if (item.quantity-- < 1){
+		if (item.quantity < 1){
 			let n = cart.indexOf(item);
 			cart.splice(n, 1);
 		}
@@ -29,7 +29,7 @@ function removeFromCart(id){
 	updateCart();
 }
 
-function clearCart(){
+function emptyCart(){
 	cart = [];
 	updateCart();
 }
@@ -54,15 +54,39 @@ function updateCart(){
 	}
 
 	if (cartContents){
-		cartContents.innerHTML = "";
-		let list = cartContents.querySelector("ul");
-		if (list !== undefined){
+                let cartClone = cartContents.cloneNode(true);
+		let list = cartClone.querySelector("ul");
+		list.innerHTML = "";
+		if (list){
 			for (item of cart){
 				let listItem = document.createElement('li');
+				let plusBtn = document.createElement('button');
+					plusBtn.innerText = '+';
+					plusBtn.classList.add('plusBtn');
+					plusBtn.id = 'plusbtn' + item.id;
+				let minsBtn = document.createElement('button');
+					minsBtn.innerText = '-';
+					minsBtn.classList.add('minsBtn');
+					minsBtn.id = 'minsbtn' + item.id;
 				listItem.appendChild(document.createTextNode(item.id + " " + item.price + "₽ " + item.quantity));
-				cartContents.append(listItem);
+				listItem.appendChild(plusBtn);
+				listItem.appendChild(minsBtn);
+				list.append(listItem);
+
 			}
 		}
+		cartClone.addEventListener('click', (event) => {
+                                        const isButton = event.target.nodeName === 'BUTTON';
+                                        if (isButton && event.target.classList.contains('plusBtn')){
+						addToCart(event.target.id.slice(7), 150);
+                                        }
+					else if (isButton && event.target.classList.contains('minsBtn')){
+						removeFromCart(event.target.id.slice(7));
+                                        }
+                                })
+		// cloning removes existing event listeners
+		cartContents.parentNode.appendChild(cartClone);
+		cartContents.remove();
 	}
 
 	localStorage.setItem("cart", JSON.stringify(cart));
@@ -89,4 +113,5 @@ productList.addEventListener('click', (event) => {
 	}
 })
 }
+
 

@@ -10,12 +10,17 @@
   <body>
 	  <h1>Plida's cool shop</h1>
 	  <a href="index.html">Return to shopping</a>
+	  <section>
 	  <section id="cart_contents">
 		 <h2>Cart</h2>
 		 <ul>
+			 ...
 		 </ul>
+		 <div>Item count: <span id="cart_count">0</span>, total sum: <span id="cart_sum">0</span></div>
 	  </section>
+	  <button onclick="emptyCart()">Empty the cart</button>
 	  <button onclick="placeOrder()">Place an order</button>
+	  </section>
 	  <div class="order_form">
 		<h2>Order form</h2>
 		<button onclick="closeOrderForm()">x</button>
