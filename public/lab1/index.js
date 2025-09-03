@@ -196,7 +196,25 @@ function closeOrderForm(){
         }
 }
 
-let orderForm = document.getElementById('orderForm')
+let orderForm = document.getElementById('orderForm');
 if (orderForm !== null){
 	orderForm.addEventListener('submit', (event) => {acceptForm(event)});
 }
+
+let cartButton = document.getElementsByClassName('cart_button')[0];
+if (cartButton){
+	let cartButtonPopup = cartButton.getElementsByClassName('popup')[0];
+	if (cartButtonPopup){
+		cartButton.addEventListener('mouseover', function(){
+       	        	if (cartButtonPopup.classList.contains('show') === false){
+				cartButtonPopup.classList.add('show');
+			}
+	     	})
+	        cartButton.addEventListener('mouseout', function(){
+        		if (cartButtonPopup.classList.contains('show') === true){
+                                cartButtonPopup.classList.remove('show');
+                        }
+		})
+	}
+}
+

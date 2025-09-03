@@ -31,13 +31,10 @@ body{
 	font-family:"Arial";
 }
 
-.show{
-        visibility: visible;
-}
-
 .header{
 	display: flex;
 	position: fixed;
+	justify-content: space-between;
 	height: 8em;
 	top: 0;
 	left: 0;
@@ -49,11 +46,19 @@ body{
 	margin: 15px;
 	line-height: 10px;
 	align-self: start;
+	align-items: center;
 }
 
 .header-buttons{
 	display: flex;
 	align-self: end;
+	justify-self: end;
+}
+
+
+.header-image{
+	max-width: 96px;
+	margin: 8px;
 }
 
 .footer{
@@ -64,6 +69,12 @@ body{
 	bottom: 0;
 	left: 0;
 	width: 100%;
+}
+
+.popup{
+	visibility: hidden;
+	position: absolute;
+	z-index: 999;
 }
 
 h1{
@@ -85,4 +96,8 @@ hr {
   margin-left: 0;
   margin-right: 0;
   width:100%;
+}
+
+.show{
+        visibility: visible !important;
 }
