@@ -36,21 +36,38 @@ function clearCart(){
 
 
 function updateCart(){
-	var cartDisplaySum = document.getElementById("cart_sum");
-	var cartDisplayCount = document.getElementById("cart_count")
+	let cartDisplaySum = document.getElementById("cart_sum");
+	let cartDisplayCount = document.getElementById("cart_count")
+	let cartContents = document.getElementById("cart_contents")
+
 	let sum = 0;
 	let count = 0;
-
-	for (item of cart){
-		console.log(item, item.quantity);
-		count += item.quantity;
-		sum += item.price * item.quantity;
+	
+	if (cartDisplaySum && cartDisplayCount){
+		for (item of cart){
+			count += item.quantity;
+			sum += item.price * item.quantity;
+		}
+	
+		cartDisplaySum.textContent = sum;
+		cartDisplayCount.textContent = count;
 	}
-	cartDisplaySum.textContent = sum;
-	cartDisplayCount.textContent = count;
+
+	if (cartContents){
+		cartContents.innerHTML = "";
+		let list = cartContents.querySelector("ul");
+		if (list !== undefined){
+			for (item of cart){
+				let listItem = document.createElement('li');
+				listItem.appendChild(document.createTextNode(item.id + " " + item.price + "₽ " + item.quantity));
+				cartContents.append(listItem);
+			}
+		}
+	}
 
 	localStorage.setItem("cart", JSON.stringify(cart));
 }
+
 
 let cart = [];
 
@@ -60,7 +77,8 @@ if (localStorage.getItem("cart")){
 
 updateCart();
 
-var productList = document.getElementById('product-list');
+
+let productList = document.getElementById('product-list');
 
 if (productList !== null){
 productList.addEventListener('click', (event) => {
