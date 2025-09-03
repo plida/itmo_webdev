@@ -1,12 +1,13 @@
-function addToCart(id, price){
-	if (id === undefined || price === undefined){
+function addToCart(id){
+	if (id === undefined){
 		return;
 	}
 	let item = cart.find(item => item.id === id);
 	if (item === undefined){
 		let cartItem = {
 			id: id,
-			price: price,
+			price: lookupTable[id].price,
+			name: lookupTable[id].name,
 			quantity: 1
 		};
 		cart.push(cartItem);
@@ -73,7 +74,7 @@ function updateCart(){
 					rmveBtn.innerText = 'remove';
 					rmveBtn.classList.add('rmveBtn');
 					rmveBtn.id = 'rmvebtn' + item.id;
-				listItem.appendChild(document.createTextNode(item.id + " " + item.price + "₽ " + item.quantity));
+				listItem.appendChild(document.createTextNode(item.name + " " + item.price + "₽ " + item.quantity));
 				listItem.appendChild(plusBtn);
 				listItem.appendChild(minsBtn);
 				listItem.appendChild(rmveBtn);
@@ -84,7 +85,7 @@ function updateCart(){
 		cartClone.addEventListener('click', (event) => {
                                         const isButton = event.target.nodeName === 'BUTTON';
                                         if (isButton && event.target.classList.contains('plusBtn')){
-						addToCart(event.target.id.slice(7), 150);
+						addToCart(event.target.id.slice(7));
                                         }
 					if (isButton && event.target.classList.contains('minsBtn')){
 						removeFromCart(event.target.id.slice(7));
@@ -98,9 +99,52 @@ function updateCart(){
 		cartContents.remove();
 	}
 
-	localStorage.setItem("cart", JSON.stringify(cart));
+	localStorage.setItem('cart', JSON.stringify(cart));
 }
 
+function populateProductList(){
+	let productList = document.getElementById('product-list')
+	if (productList === null){
+		return;
+	}
+	let list = productList.querySelector("ul");
+	let listClone = list.cloneNode(true);
+	listClone.innerHTML = "";
+	for (const [key, value] of Object.entries(lookupTable)){
+		let item = value;
+		let listItem = document.createElement('li');
+                let addBtn = document.createElement('button');
+                	addBtn.innerText = 'Add to cart';
+                	addBtn.classList.add('addBtn');
+                	addBtn.id = 'addbtn' + key;
+		listItem.appendChild(document.createTextNode(item.name + " " + item.price + "₽ "));
+		listItem.appendChild(addBtn);
+		listClone.append(listItem);
+	}
+
+	listClone.addEventListener('click', (event) => {
+		const isButton = event.target.nodeName === 'BUTTON';
+		if (isButton && event.target.classList.contains('addBtn')){
+			addToCart(event.target.id.slice(6));
+		}
+	})
+	// cloning removes existing event listeners
+	list.parentNode.appendChild(listClone);
+	list.remove();
+
+
+
+}
+
+
+const lookupTable = {
+	"1": { name: "Apples 1kg", price: 150},
+	"2": { name: "Oranges 1kg", price: 250},
+	"3": { name: "Bananas 1kg", price: 100},
+	"4": { name: "Pineapples", price: 400}
+}
+
+populateProductList();
 
 let cart = [];
 
@@ -117,7 +161,7 @@ if (productList !== null){
 productList.addEventListener('click', (event) => {
 	const isButton = event.target.nodeName === 'BUTTON';
 	if (isButton) {
-		addToCart(event.target.dataset.id, event.target.dataset.price);
+		addToCart(event.target.dataset.id);
 		//removeFromCart(event.target.dataset.id);
 	}
 })
