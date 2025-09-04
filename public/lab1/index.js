@@ -44,7 +44,6 @@ function updateCart(){
 
 	let sum = 0;
 	let count = 0;
-	
 	if (cartDisplaySum && cartDisplayCount){
 		for (item of cart){
 			count += item.quantity;
@@ -53,6 +52,8 @@ function updateCart(){
 	
 		cartDisplaySum.textContent = sum;
 		cartDisplayCount.textContent = count;
+		console.log(sum, count);
+		console.log(cartDisplaySum.textContent);
 	}
 
 	if (cartContents){

@@ -27,6 +27,7 @@
 }
 
 body{
+	padding-top: 8em;
 	background-color: #f4f4f4;
 	font-family:"Arial";
 }
@@ -40,9 +41,12 @@ body{
 	height: 8em;
 	top: 0;
 	left: 0;
+	right: 0;
 	margin: 0 auto;
-	width: 50%;
+	width: 1000px;
 	z-index: 99;
+	border-radius: 0 0 20px 20px;
+	position: fixed;
 }
 
 
@@ -107,8 +111,10 @@ body{
 #product-list{
         display: flex;
 	justify-content: center;
+	margin: 0 auto;
 	flex-wrap: wrap;
-	max-width: 1000px;
+	max-width: 1400px;
+	padding: 0;
 }
 
 .footer{
@@ -116,7 +122,6 @@ body{
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	position:fixed;
 	bottom: 0;
 	left: 0;
 	width: 100%;
