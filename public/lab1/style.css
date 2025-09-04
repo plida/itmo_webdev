@@ -44,9 +44,11 @@ body{
 	right: 0;
 	margin: 0 auto;
 	width: 1000px;
+	min-width: 320px;
 	z-index: 99;
 	border-radius: 0 0 20px 20px;
 	position: fixed;
+	box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
 }
 
 
@@ -60,7 +62,6 @@ body{
 
 .header-buttons{
 	display: flex;
-	align-self: end;
 	justify-self: end;
 }
 
@@ -84,6 +85,7 @@ body{
 	align-items: center;
 	clip-path: circle(100% at 50% 20%);
 	justify-content: space-between;
+
 }
 
 .itemCardText{
@@ -136,6 +138,34 @@ body{
 	z-index: 99;
 }
 
+.cart_button{
+	position: relative;
+}
+
+.header-button{
+	filter: grayscale(100%);
+}
+
+.header-button:hover{
+	filter: grayscale(0%);
+	
+}
+
+.cart_button-overlay{
+	z-index: 1;
+	position: absolute;
+	left: calc(70%);
+	top: 20px;
+	background-color: #50C878;
+	display:flex;
+	justify-content: center;
+	align-items: center;
+	width: 30px;
+	height: 30px;
+	border-radius: 9999px;
+	color: black;
+}
+
 .popup{
 	visibility: hidden;
 	position: absolute;
@@ -179,4 +209,64 @@ hr {
 
 .fully-hide{
 	display: none !important;
+}
+
+@media only screen and (max-width: 1080px) {
+        .header{
+                width: 95%;
+        }
+}
+
+
+@media only screen and (max-width: 800px) {
+	.header-logo{
+                line-height: inherit;
+        }
+        .header-text-h2{
+                display: none;
+        }
+}
+
+@media only screen and (max-height:600px){
+        .header-text{
+                display: none;
+        }
+        .header-image{
+                height: 75px;
+                margin: 8px;
+        }
+        .header{
+                justify-content: center;
+		height: 6em;
+		width: 50%;
+        }
+        .itemCard{
+                padding: 10px;
+                margin: 5px;
+                width: 170px;
+                height: 365px;
+        }
+
+}
+
+
+
+@media only screen and (max-width:600px){
+	.header-text{
+		display: none;
+	}
+	.header-image{
+		height: 75px;
+		margin: 8px;
+	}
+	.header{
+		justify-content: center;
+	}
+	.itemCard{
+                padding: 10px;
+                margin: 5px;
+                width: 170px;
+                height: 365px;
+        }
+
 }

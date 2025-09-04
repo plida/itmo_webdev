@@ -9,19 +9,22 @@
   </head>
   <body>
 	  <section header class="header">
-                <a href="index.html" class="header-logo">
+                <a href="index.html" class="header-logo header-button">
                         <img class="header-image" src="media/yes.png" alt="logo">
-			<div>
-                                <h1>Plida's cool shop</h1>
-                                <h2>Web programming lab work #1</h2>
+			<div class="header-text">
+                                <h1 class="header-text-h1">Plida's cool shop</h1>
+                                <h2 class="header-text-h2">Web programming lab work #1</h2>
                         </div>
 
                 </a>
-                <div class="header-buttons">
-                        <a href="https://github.com/plida/itmo_webdev"><img class="header-image" src="media/Octicons-mark-github.svg.png" alt="Github"></a>
-                        <div class="cart_button">
-                                <a href="cart.html"><img class="header-image" src="media/shopping-cart-114.png" alt="Go to cart"></a>
-                        </div>
+		<div class="header-buttons">
+                        <a href="https://github.com/plida/itmo_webdev" class="header-button"><img class="header-image" src="media/Octicons-mark-github.svg.png" alt="Github"></a>
+                        <div href="cart.html" class="cart_button">
+                                <img class="header-image" src="media/shopping-cart-114.png" alt="Go to cart">
+                                <div class="cart_button-overlay">
+                                        <span id="cart_button-count">0</span>
+                                </div>
+                        </a>
                 </div>
 	</section>
 	<section>

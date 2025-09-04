@@ -41,20 +41,25 @@ function emptyCart(){
 function updateCart(){
 	let cartDisplaySum = document.getElementById('cart_sum');
 	let cartDisplayCount = document.getElementById('cart_count');
+	let cartButtonCount = document.getElementById('cart_button-count')
 	let cartContents = document.getElementById('cart_contents');
 
 	let sum = 0;
 	let count = 0;
-	if (cartDisplaySum && cartDisplayCount){
-		for (item of cart){
-			count += item.quantity;
-			sum += item.price * item.quantity;
-		}
-	
+
+	for (item of cart){
+                        count += item.quantity;
+                        sum += item.price * item.quantity;
+                }
+
+	if (cartDisplaySum){
 		cartDisplaySum.textContent = sum;
-		cartDisplayCount.textContent = count;
-		console.log(sum, count);
-		console.log(cartDisplaySum.textContent);
+	}
+	if (cartDisplayCount){
+                cartDisplayCount.textContent = count;
+        }
+	if (cartButtonCount){
+		cartButtonCount.textContent = count;
 	}
 
 	if (cartContents){
@@ -70,9 +75,9 @@ function updateCart(){
         if (emptyBtn && count === 0){emptyBtn.disabled = true;}
 		
 	for (const [key, value] of Object.entries(lookupTable)){
-                let menuCount = document.getElementById('menuCount' + item.id);
+                let menuCount = document.getElementById('menuCount' + key);
                 if (menuCount){
-			menuCount.innerText = 0;
+			menuCount.innerText = '0';
 		}
         }
 
@@ -191,15 +196,18 @@ function populateProductList(){
 		const isButton = event.target.nodeName === 'BUTTON';
 		if (isButton && event.target.classList.contains('addBtn')){
 			addToCart(event.target.id.slice(6));
-                	event.target.remove();
-                       	let itemCardMenu = document.getElementById('cardMenu' + event.target.id.slice(6)); 
-			itemCardMenu.classList.remove('fully-hide');	
+			swapAddToMenu(event.target);
 		}
 		if (isButton && event.target.classList.contains('plusBtn')){
                         addToCart(event.target.id.slice(7));
                 }
                 if (isButton && event.target.classList.contains('minsBtn')){
                         removeFromCart(event.target.id.slice(7));
+			let id = event.target.id.slice(7);
+			let item = cart.find(item => item.id === event.target.id.slice(7));
+			if (item === undefined){
+				swapMenuToAdd(event.target.parentNode);
+			};
                 }
 	})
 	// cloning removes existing event listeners
@@ -214,6 +222,19 @@ function acceptForm(event){
 	alert("The order was successfuly placed!");
 	event.preventDefault();
 }
+
+function swapAddToMenu(addBtn){
+	addBtn.classList.add('fully-hide');
+        let itemCardMenu = document.getElementById('cardMenu' + addBtn.id.slice(6));
+        itemCardMenu.classList.remove('fully-hide');
+}
+
+function swapMenuToAdd(menu){
+        menu.classList.add('fully-hide');
+        let addBtn = document.getElementById('addbtn' + menu.id.slice(8));
+        addBtn.classList.remove('fully-hide');
+}
+
 
 const lookupTable = {
 	"1": { name: 'Apples', weight:"1kg", price: 150, img: 'media/shelley-pauls-unsplash.jpg'},
@@ -237,6 +258,15 @@ if (localStorage.getItem('cart')){
 
 updateCart();
 
+for (item of cart){
+	let menuCount = document.getElementById('menuCount' + item.id);
+	if (menuCount){
+		let addButton = document.getElementById('addbtn' + item.id);
+		if (addButton){
+			swapAddToMenu(addButton);
+		}
+	}
+}
 
 let productList = document.getElementById('product-list');
 
@@ -245,7 +275,6 @@ productList.addEventListener('click', (event) => {
 	const isButton = event.target.nodeName === 'BUTTON';
 	if (isButton) {
 		addToCart(event.target.dataset.id);
-		//removeFromCart(event.target.dataset.id);
 	}
 })
 }
