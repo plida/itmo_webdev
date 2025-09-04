@@ -81,9 +81,9 @@ body{
 	height: 365px;
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
 	align-items: center;
 	clip-path: circle(100% at 50% 20%);
+	justify-content: space-between;
 }
 
 .itemCardText{
@@ -105,7 +105,15 @@ body{
 
 .itemCardButton{
 	padding: 5px 10px 5px 10px;
-	margin-bottom: 25px;
+	visibility: hidden;
+	height: 50px;
+	margin-top: auto;
+}
+
+.itemCardMenu{
+	padding: 5px 10px 5px 10px;
+	height: 50px;
+	margin-top: auto;
 }
 
 #product-list{
@@ -167,4 +175,8 @@ hr {
 
 .show{
         visibility: visible !important;
+}
+
+.fully-hide{
+	display: none !important;
 }

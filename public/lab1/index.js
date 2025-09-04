@@ -26,6 +26,7 @@ function removeFromCart(id, removeFully = false){
 		if (item.quantity < 1 || removeFully){
 			let n = cart.indexOf(item);
 			cart.splice(n, 1);
+			item.quantity = 0;
 		}
 	}
 	updateCart();
@@ -67,7 +68,20 @@ function updateCart(){
 	let emptyBtn = document.getElementById('emptyCart');
         if (emptyBtn && count > 0){emptyBtn.disabled = false;}  
         if (emptyBtn && count === 0){emptyBtn.disabled = true;}
-	
+		
+	for (const [key, value] of Object.entries(lookupTable)){
+                let menuCount = document.getElementById('menuCount' + item.id);
+                if (menuCount){
+			menuCount.innerText = 0;
+		}
+        }
+
+	for (item of cart){
+		let menuCount = document.getElementById('menuCount' + item.id);
+        	if (menuCount){
+			menuCount.innerText = item.quantity;
+		}
+	}
 
 	localStorage.setItem('cart', JSON.stringify(cart));
 }
@@ -119,18 +133,7 @@ function populateProductList(){
 		return;
 	}
 	let listClone = list.cloneNode(true);
-	listClone.innerHTML = "";/*
-	for (const [key, value] of Object.entries(lookupTable)){
-		let item = value;
-		let listItem = document.createElement('li');
-                let addBtn = document.createElement('button');
-                	addBtn.innerText = 'Add to cart';
-                	addBtn.classList.add('addBtn');
-                	addBtn.id = 'addbtn' + key;
-		listItem.appendChild(document.createTextNode(item.name + " " + item.price + "₽ "));
-		listItem.appendChild(addBtn);
-		listClone.append(listItem);
-	}*/
+	listClone.innerHTML = "";
 	for (const [key, value] of Object.entries(lookupTable)){
                 let item = value;
                 let listItem = document.createElement('li');
@@ -149,14 +152,37 @@ function populateProductList(){
 			text.appendChild(heading);
 			text.appendChild(weight);
 			text.appendChild(price);
+		let addBtnMenu = document.createElement('div');
+                        addBtnMenu.classList.add('itemCardButton');
 		let addBtn = document.createElement('button');
-       			addBtn.innerText = '+';
+       			addBtn.innerText = 'Add to cart';
 			addBtn.classList.add('addBtn');
-			addBtn.classList.add('itemCardButton');
 			addBtn.id = 'addbtn' + key;
+			addBtn.classList.add('show');
+		addBtnMenu.appendChild(addBtn);
+		let menu = document.createElement('div');
+			menu.classList.add('itemCardMenu');
+			menu.id = 'cardMenu' + key;
+			menu.classList.add('fully-hide');
+			let plusBtn = document.createElement('button');
+				plusBtn.innerText = '+';
+				plusBtn.classList.add('plusBtn');
+				plusBtn.id = 'plusbtn' + key;
+			let menuCount = document.createElement('span');
+				menuCount.id = "menuCount" + key;
+				menuCount.innerText = '0';
+			let minsBtn = document.createElement('button');
+				minsBtn.innerText = '-';
+				minsBtn.classList.add('minsBtn');
+				minsBtn.id = 'minsbtn' + key;
+			menu.appendChild(plusBtn);
+	                menu.appendChild(menuCount);
+        	        menu.appendChild(minsBtn);
+
                 listItem.appendChild(image);
 		listItem.appendChild(text);
-                listItem.appendChild(addBtn);
+                listItem.appendChild(addBtnMenu);
+		listItem.appendChild(menu);
                 listClone.append(listItem);
         }
 
@@ -165,7 +191,16 @@ function populateProductList(){
 		const isButton = event.target.nodeName === 'BUTTON';
 		if (isButton && event.target.classList.contains('addBtn')){
 			addToCart(event.target.id.slice(6));
+                	event.target.remove();
+                       	let itemCardMenu = document.getElementById('cardMenu' + event.target.id.slice(6)); 
+			itemCardMenu.classList.remove('fully-hide');	
 		}
+		if (isButton && event.target.classList.contains('plusBtn')){
+                        addToCart(event.target.id.slice(7));
+                }
+                if (isButton && event.target.classList.contains('minsBtn')){
+                        removeFromCart(event.target.id.slice(7));
+                }
 	})
 	// cloning removes existing event listeners
 	list.parentNode.appendChild(listClone);
@@ -182,7 +217,7 @@ function acceptForm(event){
 
 const lookupTable = {
 	"1": { name: 'Apples', weight:"1kg", price: 150, img: 'media/shelley-pauls-unsplash.jpg'},
-	"2": { name: 'Oranges', weight:"1kg", price: 250, img: 'media/erol-ahmed-unsplash.jpg'},
+	"2": { name: 'Tangerines', weight:"1kg", price: 250, img: 'media/erol-ahmed-unsplash.jpg'},
 	"3": { name: 'Bananas', weight:"1kg", price: 100, img: 'media/ries-bosch-unsplash.jpg'},
 	"4": { name: 'Pineapples', weight:"1kg", price: 400, img: 'media/phoenix-han-unsplash.jpg'},
 	"5": { name: 'Pears', weight:"1kg", price: 150, img: 'media/maksim-shutov-unsplash.jpg'},
