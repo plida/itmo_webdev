@@ -106,6 +106,10 @@ function updateCart(){
         	if (menuCount){
 			menuCount.innerText = item.quantity;
 		}
+		let itemTotal = document.getElementById('itemCartContentsTotal' + item.id);
+		if (itemTotal){
+			itemTotal.innerText = '$' + (Math.round(item.quantity * lookupTable[item.id].price * 100) / 100).toFixed(2);
+		}
 	}
 
 	localStorage.setItem('cart', JSON.stringify(cart));
@@ -118,6 +122,7 @@ function populateCartContents(cartContents){
 	for (item of cart){
 		let listItem = document.createElement('li');
 			listItem.classList.add('itemCartContents');
+		listClone.append(listItem);
 		let image = document.createElement('img');
                         image.classList.add('itemCartContentsImage');
                         image.src = lookupTable[item.id].img;
@@ -129,7 +134,12 @@ function populateCartContents(cartContents){
                                 price.textContent = "$" + lookupTable[item.id].price;
                         text.appendChild(heading);
                         text.appendChild(price);
-		listClone.append(listItem);
+		let rightMenu = document.createElement('div');
+			rightMenu.classList.add('itemCartRight');
+
+		let totalPrice = document.createElement('span');
+			totalPrice.id = 'itemCartContentsTotal' + item.id;
+			totalPrice.classList.add('itemCartContentsTotal');
 		let menu = document.createElement('div');
                         menu.classList.add('itemCartContentsMenu');
                         menu.id = 'itemCartContentsMenu' + item.id;
@@ -146,10 +156,11 @@ function populateCartContents(cartContents){
                         menu.appendChild(minsBtn);
                         menu.appendChild(menuCount);
                         menu.appendChild(plusBtn);
-
                 listItem.appendChild(image);
                 listItem.appendChild(text);
-                listItem.appendChild(menu);
+		rightMenu.appendChild(totalPrice);
+                rightMenu.appendChild(menu);
+		listItem.appendChild(rightMenu);
                 listClone.append(listItem);
 
 	}
@@ -187,10 +198,13 @@ function populateProductList(){
 			text.classList.add('itemCardText');
 			let heading = document.createElement('span');
 				heading.textContent = value.name;
+				heading.classList.add('itemCardHeading');
 			let weight = document.createElement('span');
 				weight.textContent = value.weight;
+				weight.classList.add('itemCardWeight');
 			let price = document.createElement('span');
 				price.textContent = "$"+value.price;
+				price.classList.add('itemCardPrice');
 			text.appendChild(heading);
 			text.appendChild(weight);
 			text.appendChild(price);
@@ -260,7 +274,7 @@ function acceptForm(event){
 }
 
 function swapAddToMenu(addBtn){
-	addBtn.classList.add('fully-hide');
+	addBtn.parentNode.classList.add('fully-hide');
         let itemCardMenu = document.getElementById('cardMenu' + addBtn.id.slice(6));
         itemCardMenu.classList.remove('fully-hide');
 }
@@ -268,7 +282,7 @@ function swapAddToMenu(addBtn){
 function swapMenuToAdd(menu){
         menu.classList.add('fully-hide');
         let addBtn = document.getElementById('addbtn' + menu.id.slice(8));
-        addBtn.classList.remove('fully-hide');
+        addBtn.parentNode.classList.remove('fully-hide');
 }
 
 

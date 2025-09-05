@@ -94,6 +94,23 @@ body{
 	flex-direction: column;
 	margin: 10px;
 	align-items: center;
+	font-size: 24px;
+	text-align: center;
+	width: inherit;
+	word-wrap: break-word;
+}
+
+.itemCardHeading{
+        height: 60px;
+	width: inherit;
+}
+
+.itemCardWeight{
+	color: #888;
+}
+
+.itemCardPrice{
+	font-size: 32px;
 }
 
 .itemCardImage{
@@ -207,6 +224,7 @@ body{
         align-items: center;
         clip-path: circle(100% at 50% 20%);
         justify-content: space-between;	
+	font-size: 24px;
 }
 
 .itemCartContentsText{
@@ -223,9 +241,22 @@ body{
 	object-fit: cover;
 }
 
+.itemCartContentsTotal{
+	margin: 20px;
+	width: 100px;
+	text-align: center;
+}
+
+.itemCartRight{
+	display: flex;
+	margin-left: auto;
+	align-items: center;
+}
+
 .itemCartContentsMenu{
 	margin-left: auto;
 	margin-right: 10px;
+	font-size: 16px;
 }
 
 .cartPage{
@@ -267,6 +298,7 @@ body{
 	height: 95%;
 }
 
+
 .cartTitle{
 	flex-grow: 2;
 }
@@ -276,12 +308,14 @@ body{
 }
 
 .addBtn{
-	padding: 12px 24px 13px 24px;
+	padding: 5px;
+	height: 40px;
+	width: 120px;
 }
 .menuCount{
 	display: inline-block;
 	text-align: center;
-	width: 30px;
+	width: 40px;
 	font-weight: 600;
 }
 .plusBtn{
