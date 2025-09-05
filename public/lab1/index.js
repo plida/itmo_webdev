@@ -6,10 +6,6 @@ function addToCart(id){
 	if (item === undefined){
 		let cartItem = {
 			id: id,
-			price: lookupTable[id].price,
-			name: lookupTable[id].name,
-			img: lookupTable[id].img,
-			weight: lookupTable[id].weight,
 			quantity: 1
 		};
 		cart.push(cartItem);
@@ -51,8 +47,7 @@ function updateCart(){
 
 	for (item of cart){
                         count += item.quantity;
-                        sum += Math.round(item.price * item.quantity * 100) / 100;
-			console.log(sum);
+                        sum += Math.round(lookupTable[item.id].price * item.quantity * 100) / 100;
                 }
 	sum = Math.round(sum * 100) / 100;
 	sum = sum.toFixed(2);
@@ -125,13 +120,13 @@ function populateCartContents(cartContents){
 			listItem.classList.add('itemCartContents');
 		let image = document.createElement('img');
                         image.classList.add('itemCartContentsImage');
-                        image.src = item.img;
+                        image.src = lookupTable[item.id].img;
                 let text = document.createElement('div');
                         text.classList.add('itemCartContentsText');
                         let heading = document.createElement('span');
-                                heading.textContent = item.name + " " + item.weight;
+                                heading.textContent = lookupTable[item.id].name + " " + lookupTable[item.id].weight;
                         let price = document.createElement('span');
-                                price.textContent = "$" + item.price;
+                                price.textContent = "$" + lookupTable[item.id].price;
                         text.appendChild(heading);
                         text.appendChild(price);
 		listClone.append(listItem);
@@ -183,20 +178,19 @@ function populateProductList(){
 	let listClone = list.cloneNode(true);
 	listClone.innerHTML = "";
 	for (const [key, value] of Object.entries(lookupTable)){
-                let item = value;
                 let listItem = document.createElement('li');
 			listItem.classList.add('itemCard');
 		let image = document.createElement('img');
 			image.classList.add('itemCardImage');
-			image.src = item.img;
+			image.src = value.img;
 		let text = document.createElement('div');
 			text.classList.add('itemCardText');
 			let heading = document.createElement('span');
-				heading.textContent = item.name;
+				heading.textContent = value.name;
 			let weight = document.createElement('span');
-				weight.textContent = item.weight;
+				weight.textContent = value.weight;
 			let price = document.createElement('span');
-				price.textContent = "$"+item.price;
+				price.textContent = "$"+value.price;
 			text.appendChild(heading);
 			text.appendChild(weight);
 			text.appendChild(price);
