@@ -12,7 +12,7 @@
 
 </head>
 <body>
-	<section header class="header">
+	<header>
 		<a href="index.html" class="header-logo header-button">
 			<img class="header-image" src="media/yes.png" alt="logo">
 			<div class="header-text">
@@ -23,25 +23,25 @@
                 </a>
 		<div class="header-buttons">
                         <a href="https://github.com/plida/itmo_webdev" class="header-button"><img class="header-image" src="media/Octicons-mark-github.svg.png" alt="Github"></a>
-                        <div href="cart.html" class="cart_button">
+                        <div class="cart_button">
                                 <img class="header-image" src="media/shopping-cart-114.png" alt="Go to cart">
-                        </a>
+                        </div>
                 </div>
-	</section>
+	</header>
 	<div class="cartPage">
-		<section class="cartTitle"> 
-			<h2>Cart</h2>
-			<button id="emptyCart" onclick="emptyCart()">Empty the cart</button>
-		</section>
 	<div class="cartBottom">
 	<section class="cartContents">
+		<h3>Cart contents</h3>
 	<div id="cart_contents">
+		<div id="cart_contents-div">
 		<ul>
-			...
 		</ul>
+		</div>
+		<button id="emptyCart" onclick="emptyCart()">Empty the cart</button>
 	</div>
 	</section>
 	<section class="cartSummary">
+		<h3>Cart summary</h3>
 		<div class="cartSummaryContents">
 		<div id="cartSummaryCount">Item count: <span id="cart_count">0</span></div>
 		<div id="cartSummaryTotal">Total sum: <span id="cart_sum">0</span></div>
@@ -68,6 +68,10 @@
 			</form>
 		</div>
 	  </section>
+	 <footer>
+                <p>Plida 2025</p>
+        </footer>
+
 	<script src="index.js"></script>
 </body>
 </html>

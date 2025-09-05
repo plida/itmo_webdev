@@ -40,7 +40,7 @@ function updateCart(){
 	let cartDisplaySum = document.getElementById('cart_sum');
 	let cartDisplayCount = document.getElementById('cart_count');
 	let cartButtonCount = document.getElementById('cart_button-count')
-	let cartContents = document.getElementById('cart_contents');
+	let cartContents = document.getElementById('cart_contents-div');
 
 	let sum = 0;
 	let count = 0;
@@ -126,6 +126,7 @@ function populateCartContents(cartContents){
 		let image = document.createElement('img');
                         image.classList.add('itemCartContentsImage');
                         image.src = lookupTable[item.id].img;
+			image.alt = lookupTable[item.id].name;
                 let text = document.createElement('div');
                         text.classList.add('itemCartContentsText');
                         let heading = document.createElement('span');
@@ -194,6 +195,7 @@ function populateProductList(){
 		let image = document.createElement('img');
 			image.classList.add('itemCardImage');
 			image.src = value.img;
+			image.alt = value.name;
 		let text = document.createElement('div');
 			text.classList.add('itemCardText');
 			let heading = document.createElement('span');
@@ -207,11 +209,9 @@ function populateProductList(){
 				price.classList.add('itemCardPrice');
 			text.appendChild(heading);
 			text.appendChild(weight);
-			text.appendChild(price);
 		let addBtnMenu = document.createElement('div');
                         addBtnMenu.classList.add('itemCardButton');
 		let addBtn = document.createElement('button');
-       			addBtn.innerText = 'Add to cart';
 			addBtn.classList.add('addBtn');
 			addBtn.id = 'addbtn' + key;
 			addBtn.classList.add('show');
@@ -233,11 +233,14 @@ function populateProductList(){
 			menu.appendChild(minsBtn);
 	                menu.appendChild(menuCount);
         	        menu.appendChild(plusBtn);
-
+		let bottom = document.createElement('div');
+			bottom.classList.add('itemCardBottom');
+			bottom.appendChild(price);
+			bottom.appendChild(addBtnMenu);
+			bottom.appendChild(menu);
                 listItem.appendChild(image);
 		listItem.appendChild(text);
-                listItem.appendChild(addBtnMenu);
-		listItem.appendChild(menu);
+		listItem.appendChild(bottom);
                 listClone.append(listItem);
         }
 
