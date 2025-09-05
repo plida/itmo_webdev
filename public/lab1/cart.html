@@ -29,15 +29,14 @@
 	</section>
 	<section>
 	<h2>Cart</h2>
+	<button id="emptyCart" onclick="emptyCart()">Empty the cart</button>
+        <button id="placeOrder" onclick="openOrderForm()">Place an order</button>
 	<div id="cart_contents">
 		<ul>
 			...
 		</ul>
 	</div>
 	<div>Item count: <span id="cart_count">0</span>, total sum: <span id="cart_sum">0</span></div>
-
-	<button id="emptyCart" onclick="emptyCart()">Empty the cart</button>
-	<button id="placeOrder" onclick="openOrderForm()">Place an order</button>
 	</section>
 	<section class="orderForm" id="orderForm">
 		<div class="orderFormContents">

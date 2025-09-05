@@ -8,6 +8,8 @@ function addToCart(id){
 			id: id,
 			price: lookupTable[id].price,
 			name: lookupTable[id].name,
+			img: lookupTable[id].img,
+			weight: lookupTable[id].weight,
 			quantity: 1
 		};
 		cart.push(cartItem);
@@ -97,23 +99,42 @@ function populateCartContents(cartContents){
 	listClone.innerHTML = '';
 	for (item of cart){
 		let listItem = document.createElement('li');
-		let plusBtn = document.createElement('button');
-			plusBtn.innerText = '+';
-			plusBtn.classList.add('plusBtn');
-			plusBtn.id = 'plusbtn' + item.id;
-		let minsBtn = document.createElement('button');
-			minsBtn.innerText = '-';
-			minsBtn.classList.add('minsBtn');
-			minsBtn.id = 'minsbtn' + item.id;
-		let rmveBtn = document.createElement('button');
-			rmveBtn.innerText = 'remove';
-			rmveBtn.classList.add('rmveBtn');
-			rmveBtn.id = 'rmvebtn' + item.id;
-		listItem.appendChild(document.createTextNode(item.name + " " + item.price + "₽ " + item.quantity));
-		listItem.appendChild(plusBtn);
-		listItem.appendChild(minsBtn);
-		listItem.appendChild(rmveBtn);
+			listItem.classList.add('itemCartContents');
+		let image = document.createElement('img');
+                        image.classList.add('itemCartContentsImage');
+                        image.src = item.img;
+                let text = document.createElement('div');
+                        text.classList.add('itemCartContentsText');
+                        let heading = document.createElement('span');
+                                heading.textContent = item.name + " " + item.weight;
+                        let price = document.createElement('span');
+                                price.textContent = "$" + item.price;
+                        text.appendChild(heading);
+                        text.appendChild(price);
 		listClone.append(listItem);
+		let menu = document.createElement('div');
+                        menu.classList.add('itemCartContentsMenu');
+                        menu.id = 'itemCartContentsMenu' + item.id;
+                        let plusBtn = document.createElement('button');
+                                plusBtn.innerText = '+';
+                                plusBtn.classList.add('plusBtn');
+                                plusBtn.id = 'plusbtn' + item.id;
+                        let menuCount = document.createElement('span');
+                                menuCount.id = "menuCount" + item.id;
+                                menuCount.innerText = '0';
+                        let minsBtn = document.createElement('button');
+                                minsBtn.innerText = '-';
+                                minsBtn.classList.add('minsBtn');
+                                minsBtn.id = 'minsbtn' + item.id;
+                        menu.appendChild(minsBtn);
+                        menu.appendChild(menuCount);
+                        menu.appendChild(plusBtn);
+
+                listItem.appendChild(image);
+                listItem.appendChild(text);
+                listItem.appendChild(menu);
+                listClone.append(listItem);
+
 	}
 	listClone.addEventListener('click', (event) => {
 		const isButton = event.target.nodeName === 'BUTTON';
@@ -153,7 +174,7 @@ function populateProductList(){
 			let weight = document.createElement('span');
 				weight.textContent = item.weight;
 			let price = document.createElement('span');
-				price.textContent = item.price;
+				price.textContent = "$"+item.price;
 			text.appendChild(heading);
 			text.appendChild(weight);
 			text.appendChild(price);
@@ -180,9 +201,9 @@ function populateProductList(){
 				minsBtn.innerText = '-';
 				minsBtn.classList.add('minsBtn');
 				minsBtn.id = 'minsbtn' + key;
-			menu.appendChild(plusBtn);
+			menu.appendChild(minsBtn);
 	                menu.appendChild(menuCount);
-        	        menu.appendChild(minsBtn);
+        	        menu.appendChild(plusBtn);
 
                 listItem.appendChild(image);
 		listItem.appendChild(text);
