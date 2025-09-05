@@ -167,6 +167,19 @@ body{
 	color: black;
 }
 
+#cart_button-total{
+	z-index: 1;
+        position: absolute;
+        bottom: 0;
+	margin-left: calc(30% - 2px);
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        width: 64px;
+        height: 35px;
+        color: black;
+}
+
 .popup{
 	visibility: hidden;
 	position: absolute;
@@ -263,7 +276,7 @@ body{
 }
 
 .addBtn{
-	padding: 10px;
+	padding: 12px 24px 13px 24px;
 }
 .menuCount{
 	display: inline-block;

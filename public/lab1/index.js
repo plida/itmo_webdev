@@ -51,12 +51,20 @@ function updateCart(){
 
 	for (item of cart){
                         count += item.quantity;
-                        sum += item.price * item.quantity;
+                        sum += Math.round(item.price * item.quantity * 100) / 100;
+			console.log(sum);
                 }
-
+	sum = Math.round(sum * 100) / 100;
+	sum = sum.toFixed(2);
 	if (cartDisplaySum){
 		cartDisplaySum.textContent = "$" + sum;
 	}
+
+	let cartButtonTotal = document.getElementById('cart_button-total');
+	if (cartButtonTotal){
+		cartButtonTotal.textContent = "$" + sum;
+	}
+
 	if (cartDisplayCount){
                 cartDisplayCount.textContent = count;
         }
@@ -271,15 +279,15 @@ function swapMenuToAdd(menu){
 
 
 const lookupTable = {
-	"1": { name: 'Apples', weight:"1kg", price: 150, img: 'media/shelley-pauls-unsplash.jpg'},
-	"2": { name: 'Tangerines', weight:"1kg", price: 250, img: 'media/erol-ahmed-unsplash.jpg'},
-	"3": { name: 'Bananas', weight:"1kg", price: 100, img: 'media/ries-bosch-unsplash.jpg'},
-	"4": { name: 'Pineapples', weight:"1kg", price: 400, img: 'media/phoenix-han-unsplash.jpg'},
-	"5": { name: 'Pears', weight:"1kg", price: 150, img: 'media/maksim-shutov-unsplash.jpg'},
-        "6": { name: 'Grape', weight:"1kg", price: 250, img: 'media/alexander-schimmeck-unsplash.jpg'},
-        "7": { name: 'Cherries', weight:"1kg", price: 100, img: 'media/roksolana-zasiadko-unsplash.jpg'},
-        "8": { name: 'Strawberries', weight:"1kg", price: 400, img: 'media/massimiliano-martini-unsplash.jpg'},
-	"9": { name: 'Peaches', weight:"1kg", price: 400, img: 'media/eric-prouzet-unsplash.jpg'},
+	"1": { name: 'Apples', weight:"1 lb", price: 1.99, img: 'media/shelley-pauls-unsplash.jpg'},
+	"2": { name: 'Tangerines', weight:"1 lb", price: 1.59, img: 'media/erol-ahmed-unsplash.jpg'},
+	"3": { name: 'Bananas', weight:"1 lb", price: 0.56, img: 'media/ries-bosch-unsplash.jpg'},
+	"4": { name: 'Pineapples', weight:"1 lb", price: 0.99, img: 'media/phoenix-han-unsplash.jpg'},
+	"5": { name: 'Pears', weight:"1 lb", price: 2.19, img: 'media/maksim-shutov-unsplash.jpg'},
+        "6": { name: 'Grape', weight:"1 oz", price: 0.19, img: 'media/alexander-schimmeck-unsplash.jpg'},
+        "7": { name: 'Cherries', weight:"1 oz", price: 0.18, img: 'media/roksolana-zasiadko-unsplash.jpg'},
+        "8": { name: 'Strawberries', weight:"1 oz", price: 0.19, img: 'media/massimiliano-martini-unsplash.jpg'},
+	"9": { name: 'Peaches', weight:"1 lb", price: 2.37, img: 'media/eric-prouzet-unsplash.jpg'},
 }
 
 populateProductList();
