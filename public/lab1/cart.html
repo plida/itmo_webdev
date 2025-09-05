@@ -27,17 +27,24 @@
                         </a>
                 </div>
 	</section>
-	<section>
+	<div class="cartPage">
+	<section class="cartContents">
 	<h2>Cart</h2>
 	<button id="emptyCart" onclick="emptyCart()">Empty the cart</button>
-        <button id="placeOrder" onclick="openOrderForm()">Place an order</button>
 	<div id="cart_contents">
 		<ul>
 			...
 		</ul>
 	</div>
-	<div>Item count: <span id="cart_count">0</span>, total sum: <span id="cart_sum">0</span></div>
 	</section>
+	<section class="cartSummary">
+		<div class="cartSummaryContents">
+		<button id="placeOrder" onclick="openOrderForm()">Place an order</button>
+		<div>Count:<span id="cart_count">0</span></div>
+		<div>Total sum: <span id="cart_sum">0</span></div>
+		</div>
+	</section>
+	</div>
 	<section class="orderForm" id="orderForm">
 		<div class="orderFormContents">
 			<h2>Order form</h2>

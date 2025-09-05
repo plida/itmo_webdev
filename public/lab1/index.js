@@ -55,7 +55,7 @@ function updateCart(){
                 }
 
 	if (cartDisplaySum){
-		cartDisplaySum.textContent = sum;
+		cartDisplaySum.textContent = "$" + sum;
 	}
 	if (cartDisplayCount){
                 cartDisplayCount.textContent = count;
@@ -75,7 +75,19 @@ function updateCart(){
 	let emptyBtn = document.getElementById('emptyCart');
         if (emptyBtn && count > 0){emptyBtn.disabled = false;}  
         if (emptyBtn && count === 0){emptyBtn.disabled = true;}
-		
+	
+	for (item of cart){
+		let plusBtn = document.getElementById('plusbtn' + item.id);
+		if (plusBtn){
+			if (item.quantity >= 99){
+				plusBtn.disabled = true;
+			}
+			else{
+				plusBtn.disabled = false;
+			}
+		}
+	}
+
 	for (const [key, value] of Object.entries(lookupTable)){
                 let menuCount = document.getElementById('menuCount' + key);
                 if (menuCount){
@@ -121,6 +133,7 @@ function populateCartContents(cartContents){
                                 plusBtn.id = 'plusbtn' + item.id;
                         let menuCount = document.createElement('span');
                                 menuCount.id = "menuCount" + item.id;
+				menuCount.classList.add('menuCount');
                                 menuCount.innerText = '0';
                         let minsBtn = document.createElement('button');
                                 minsBtn.innerText = '-';
@@ -196,6 +209,7 @@ function populateProductList(){
 				plusBtn.id = 'plusbtn' + key;
 			let menuCount = document.createElement('span');
 				menuCount.id = "menuCount" + key;
+				menuCount.classList.add('menuCount');
 				menuCount.innerText = '0';
 			let minsBtn = document.createElement('button');
 				minsBtn.innerText = '-';

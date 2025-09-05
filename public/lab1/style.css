@@ -108,13 +108,13 @@ body{
 .itemCardButton{
 	padding: 5px 10px 5px 10px;
 	visibility: hidden;
-	height: 50px;
+	height: 60px;
 	margin-top: auto;
 }
 
 .itemCardMenu{
 	padding: 5px 10px 5px 10px;
-	height: 50px;
+	height: 60px;
 	margin-top: auto;
 }
 
@@ -182,14 +182,13 @@ body{
 }
 
 .itemCartContents{
-	flex-shrink: 1;
+	flex-basis: 66.6%;
         background-color: #fff;
         padding: 10px;
         border-radius: 5px 5px 5px 5px;
         margin: 5px 25px 5px 25px;
         height: 100px;
 	min-width: 365px;
-        width: 500px;
         display: flex;
         align-items: center;
         clip-path: circle(100% at 50% 20%);
@@ -203,8 +202,8 @@ body{
 }
 
 .itemCartContentsImage{
-	max-width: 250px;
-	min-width: 150px;
+	max-width: 200px;
+	min-width: 200px;
 	height: 100%;
 	width: 100%;
 	object-fit: cover;
@@ -214,6 +213,56 @@ body{
 	margin-left: auto;
 }
 
+.cartPage{
+	display: flex;
+	justify-content: center;
+	width: 80%;
+	margin: 0 auto;
+}
+
+.cartSummary{
+	display: flex;
+	flex-basis: 33%;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 500px;
+	background-color: #fff;
+	margin-left: auto;
+	right: 0;
+	margin-top: 100px;
+}
+
+.cartContents{
+	flex-basis: 66%;
+}
+
+.cartSummaryContents{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	height: 200px;
+}
+
+.addBtn{
+	padding: 10px;
+}
+.menuCount{
+	display: inline-block;
+	text-align: center;
+	width: 30px;
+}
+.plusBtn{
+	width: 40px;
+	height: 40px;
+	padding: 5px;
+}
+.minsBtn{
+	width: 40px;
+	height: 40px;
+	padding: 5px;
+}
 
 h1{
 	font-size: 36px;
@@ -234,6 +283,10 @@ hr {
   margin-left: 0;
   margin-right: 0;
   width:100%;
+}
+
+ul{
+	padding: 0;
 }
 
 .show{
