@@ -119,6 +119,12 @@ function populateCartContents(cartContents){
 	let list = cartContents.querySelector('ul');
 	listClone = list.cloneNode(true);
 	listClone.innerHTML = '';
+	if (cart.length == 0){
+		listClone.innerHTML = 'Nothing here!';
+		list.parentNode.appendChild(listClone);
+	        list.remove();
+		return;
+	}
 	for (item of cart){
 		let listItem = document.createElement('li');
 			listItem.classList.add('itemCartContents');
@@ -190,8 +196,10 @@ function populateProductList(){
 	let listClone = list.cloneNode(true);
 	listClone.innerHTML = "";
 	for (const [key, value] of Object.entries(lookupTable)){
+		let div = document.createElement('div');
                 let listItem = document.createElement('li');
-			listItem.classList.add('itemCard');
+			listItem.classList.add('itemCard-li');
+			div.classList.add('itemCard');
 		let image = document.createElement('img');
 			image.classList.add('itemCardImage');
 			image.src = value.img;
@@ -238,9 +246,10 @@ function populateProductList(){
 			bottom.appendChild(price);
 			bottom.appendChild(addBtnMenu);
 			bottom.appendChild(menu);
-                listItem.appendChild(image);
-		listItem.appendChild(text);
-		listItem.appendChild(bottom);
+                div.appendChild(image);
+		div.appendChild(text);
+		div.appendChild(bottom);
+		listItem.appendChild(div);
                 listClone.append(listItem);
         }
 
