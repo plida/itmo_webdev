@@ -61,6 +61,9 @@ function updateCart(){
                 cartDisplayCount.textContent = count;
         }
 	if (cartButtonCount){
+		if (count > 99){
+			count = "99+";
+		}
 		cartButtonCount.textContent = count;
 	}
 
@@ -128,7 +131,6 @@ function populateCartContents(cartContents){
                         menu.classList.add('itemCartContentsMenu');
                         menu.id = 'itemCartContentsMenu' + item.id;
                         let plusBtn = document.createElement('button');
-                                plusBtn.innerText = '+';
                                 plusBtn.classList.add('plusBtn');
                                 plusBtn.id = 'plusbtn' + item.id;
                         let menuCount = document.createElement('span');
@@ -136,7 +138,6 @@ function populateCartContents(cartContents){
 				menuCount.classList.add('menuCount');
                                 menuCount.innerText = '0';
                         let minsBtn = document.createElement('button');
-                                minsBtn.innerText = '-';
                                 minsBtn.classList.add('minsBtn');
                                 minsBtn.id = 'minsbtn' + item.id;
                         menu.appendChild(minsBtn);
@@ -204,7 +205,6 @@ function populateProductList(){
 			menu.id = 'cardMenu' + key;
 			menu.classList.add('fully-hide');
 			let plusBtn = document.createElement('button');
-				plusBtn.innerText = '+';
 				plusBtn.classList.add('plusBtn');
 				plusBtn.id = 'plusbtn' + key;
 			let menuCount = document.createElement('span');
@@ -212,7 +212,6 @@ function populateProductList(){
 				menuCount.classList.add('menuCount');
 				menuCount.innerText = '0';
 			let minsBtn = document.createElement('button');
-				minsBtn.innerText = '-';
 				minsBtn.classList.add('minsBtn');
 				minsBtn.id = 'minsbtn' + key;
 			menu.appendChild(minsBtn);

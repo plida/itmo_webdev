@@ -29,7 +29,8 @@
 body{
 	padding-top: 8em;
 	background-color: #f4f4f4;
-	font-family:"Arial";
+	font-family:"Montserrat", sans-serif;
+	font-style: normal;
 }
 
 .header{
@@ -160,8 +161,8 @@ body{
 	display:flex;
 	justify-content: center;
 	align-items: center;
-	width: 30px;
-	height: 30px;
+	width: 35px;
+	height: 35px;
 	border-radius: 9999px;
 	color: black;
 }
@@ -186,7 +187,7 @@ body{
         background-color: #fff;
         padding: 10px;
         border-radius: 5px 5px 5px 5px;
-        margin: 5px 25px 5px 25px;
+        margin: 0px 25px 5px 0px;
         height: 100px;
 	min-width: 365px;
         display: flex;
@@ -211,13 +212,20 @@ body{
 
 .itemCartContentsMenu{
 	margin-left: auto;
+	margin-right: 10px;
 }
 
 .cartPage{
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	width: 80%;
 	margin: 0 auto;
+}
+
+.cartBottom{
+	display: flex;
+	margin-top: 20px;
 }
 
 .cartSummary{
@@ -226,11 +234,11 @@ body{
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	height: 500px;
+	height: 300px;
 	background-color: #fff;
 	margin-left: auto;
+	border-radius: 5px 50px;
 	right: 0;
-	margin-top: 100px;
 }
 
 .cartContents{
@@ -241,8 +249,17 @@ body{
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: space-between;
-	height: 200px;
+	justify-content: space-evenly;
+	width: 95%;
+	height: 95%;
+}
+
+.cartTitle{
+	flex-grow: 2;
+}
+
+#cartSummaryTotal{
+	margin-bottom: 0%;
 }
 
 .addBtn{
@@ -252,6 +269,7 @@ body{
 	display: inline-block;
 	text-align: center;
 	width: 30px;
+	font-weight: 600;
 }
 .plusBtn{
 	width: 40px;
@@ -264,6 +282,15 @@ body{
 	padding: 5px;
 }
 
+#placeOrder{
+	padding: 20px 10px;
+	width: 75%;
+}
+
+#emptyCart{
+	padding: 10px 20px;
+}
+
 h1{
 	font-size: 36px;
 }
@@ -274,9 +301,15 @@ h2{
 
 button{
 	cursor:pointer;
+	background-color: #606C38;
+	color: white;
+	border: 0;
+	border-radius: 5px;
+	font-weight: 600;
 }
 button:disabled{
 	cursor: not-allowed;
+	filter: grayscale(50%) brightness(150%);
 }
 
 hr {
@@ -286,6 +319,7 @@ hr {
 }
 
 ul{
+	margin: 0;
 	padding: 0;
 }
 
@@ -295,6 +329,15 @@ ul{
 
 .fully-hide{
 	display: none !important;
+}
+
+.plusBtn::before {
+ 	content: "\2795";
+	filter: brightness(0) invert(1);
+}
+.minsBtn::before {
+        content: "\2796";
+	filter: brightness(0) invert(1);
 }
 
 @media only screen and (max-width: 1080px) {
@@ -356,3 +399,14 @@ ul{
         }
 
 }
+
+@media only screen and (max-width:410px){
+        .itemCard{
+                padding: 10px;
+                margin: 5px;
+                width: 150px;
+                height: 350px;
+        }
+
+}
+
