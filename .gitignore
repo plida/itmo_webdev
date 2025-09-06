@@ -2,3 +2,6 @@
 *~
 *.swp
 *.swo
+*.css
+*.css.map
+public/sandbox/

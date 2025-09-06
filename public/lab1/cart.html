@@ -1,88 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>Plida's shop</title>
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="style.css">
-
+  <meta charset="UTF-8">
+  <title>Plida's shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-	<header>
-		<a href="index.html" class="header-logo header-button">
-			<img class="header-image" src="media/yes.png" alt="logo">
-			<div class="header-text">
-                                <h1 class="header-text-h1">Plida's cool shop</h1>
-                                <h2 class="header-text-h2">Web programming lab work #1</h2>
-                        </div>
+  <header>
+    <nav>
+      <ul>
+        <li>
+          <img src="media/yes.png" alt="logo"></img>
+          <h1>Plida's cool shop<br>Web programming lab work</h1>
+          <h1 class="hidden">Plida's cool shop</h1>
+        </li>
+        <li></li>
+        <li></li>
+      </ul>  
+    </nav>
+  </header>
+  <main>
 
-                </a>
-		<div class="header-buttons">
-                        <a href="https://github.com/plida/itmo_webdev" class="header-button"><img class="header-image" src="media/Octicons-mark-github.svg.png" alt="Github"></a>
-                        <div class="cart_button">
-                                <img class="header-image" src="media/shopping-cart-114.png" alt="Go to cart">
-                        </div>
-                </div>
-	</header>
-	<div class="cartPage">
-	<div class="cartBottom">
-	<section class="cartContents">
-		<h3>Cart contents</h3>
-	<div id="cart_contents">
-		<div id="cart_contents-div">
-		<ul>
-		</ul>
-		</div>
-		<button id="emptyCart" onclick="emptyCart()">Empty the cart</button>
-	</div>
-	</section>
-	<section class="cartSummary">
-		<h3>Cart summary</h3>
-		<div class="cartSummaryContents">
-		<div id="cartSummaryCount">Item count: <span id="cart_count">0</span></div>
-		<div id="cartSummaryTotal">Total sum: <span id="cart_sum">0</span></div>
-		<button id="placeOrder" onclick="openOrderForm()">Place order</button>
-		</div>
-	</section>
-	</div>
-	</div>
-	<section class="orderForm" id="orderForm">
-		<div class="orderFormContents">
-			<div class="orderFormHeading">
-			<h2>Order form</h2>
-			<button onclick="closeOrderForm()">Close</button>
-			</div>
-			<form>
-				<div>
-				<label for="form-name">First name: </label>
-				<input type="text" id="form-name" placeholder="John" required>
-				</div>
-				<div>
-				<label for="form-surname">Surname: </label>
-                        	<input type="text" id="form-surname" placeholder="Watson" required>
-				</div>
-				<div>
-				<label for="form-address">Address: </label>
-                        	<input type="text" id="form-address" placeholder="221B Baker Street" required>
-				</div>
-				<div>
-				<label for="form-tel">Phone number: </label>
-                       		<input type="tel" id="form-tel" placeholder="+0(123)456-78-90" required>
-				</div>
-				<input type="submit" value="Submit">
-			</form>
-		</div>
-	  </section>
-	  <footer>
-                <p>Plida 2025</p>
-	</footer>
-
-	<script src="index.js"></script>
+  </main>
+  <footer>
+    <p>Plida 2025</p>
+    <p>Photo credit: Unsplash</p>
+  </footer>
 </body>
-
 </html>
-
