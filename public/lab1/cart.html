@@ -45,25 +45,34 @@
 		<div class="cartSummaryContents">
 		<div id="cartSummaryCount">Item count: <span id="cart_count">0</span></div>
 		<div id="cartSummaryTotal">Total sum: <span id="cart_sum">0</span></div>
-		<button id="placeOrder" onclick="openOrderForm()">Place an order</button>
+		<button id="placeOrder" onclick="openOrderForm()">Place order</button>
 		</div>
 	</section>
 	</div>
 	</div>
 	<section class="orderForm" id="orderForm">
 		<div class="orderFormContents">
+			<div class="orderFormHeading">
 			<h2>Order form</h2>
-			<button onclick="closeOrderForm()">Close the form</button>
+			<button onclick="closeOrderForm()">Close</button>
+			</div>
 			<form>
+				<div>
 				<label for="form-name">First name: </label>
 				<input type="text" id="form-name" placeholder="John" required>
+				</div>
+				<div>
 				<label for="form-surname">Surname: </label>
                         	<input type="text" id="form-surname" placeholder="Watson" required>
+				</div>
+				<div>
 				<label for="form-address">Address: </label>
                         	<input type="text" id="form-address" placeholder="221B Baker Street" required>
+				</div>
+				<div>
 				<label for="form-tel">Phone number: </label>
-                       		<input type="tel" id="form-tel" placeholder="7(123)456-78-90" required>
-			
+                       		<input type="tel" id="form-tel" placeholder="+0(123)456-78-90" required>
+				</div>
 				<input type="submit" value="Submit">
 			</form>
 		</div>

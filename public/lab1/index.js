@@ -346,6 +346,7 @@ function openOrderForm(){
 	let orderFormMenu = document.getElementById('orderForm');
 	if (orderFormMenu.classList.contains('show') === false){
 		orderFormMenu.classList.add('show');
+		document.body.classList.add('stop-scrolling');
 	}
 }
 
@@ -353,6 +354,8 @@ function closeOrderForm(){
         let orderFormMenu = document.getElementById('orderForm');
         if (orderFormMenu.classList.contains('show') === true){
                 orderFormMenu.classList.remove('show');
+		document.body.classList.remove('stop-scrolling');
+
         }
 }
 
