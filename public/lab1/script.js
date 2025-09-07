@@ -19,6 +19,29 @@ if (localStorage.getItem('cart')){
 populateProductList();
 updateCart();
 
+document.addEventListener('click', (event) => {
+  if (event.target.classList.contains('empty-cart-btn')){
+    emptyCart();
+  }
+})
+
+document.addEventListener('click', (event) => {
+  if (event.target.classList.contains('open-order-form-btn')){
+    openOrderForm();
+  }
+})
+
+document.addEventListener('click', (event) => {
+  if (event.target.classList.contains('close-order-form-btn')){
+    closeOrderForm();
+  }
+})
+
+let orderForm = document.querySelector('.order-form');
+if (orderForm !== null){
+	orderForm.addEventListener('submit', (event) => {acceptForm(event)});
+}
+
 for (item of cart){
   let addButton = document.querySelector('#item__add-btn' + item.id);
   if (addButton){
@@ -30,7 +53,9 @@ function addToCart(id){
   if (id === undefined){
     return;
   }
+  console.log(id);
   let item = cart.find(item => item.id === id);
+  console.log(item);
   if (item === undefined){
     let newItem = {
       id: id,
@@ -39,6 +64,7 @@ function addToCart(id){
     cart.push(newItem);
   }
   else{
+    console.log("???");
     item.quantity++;
   }
   updateCart();
@@ -303,10 +329,12 @@ function populateProductList(){
 
   listClone.addEventListener('click', (event) => {
 		if (event.target.classList.contains('item__add-btn')){
+      console.log(":(");
 			addToCart(event.target.id.slice(13));
 			swapAddToMenu(event.target);
 		}
 		if (event.target.classList.contains('item__increment-btn')){
+      console.log(":)");
       addToCart(event.target.id.slice(19));
     }
     if (event.target.classList.contains('item__decrement-btn')){
@@ -334,4 +362,27 @@ function swapMenuToAdd(menu){
   menu.classList.add('hidden');
   let addBtn = document.querySelector('#item__add-btn' + menu.id.slice(10));
   addBtn.classList.remove('hidden');
+}
+
+function openOrderForm(){
+	let orderFormMenu = document.querySelector('.order-form');
+	if (orderFormMenu.classList.contains('hidden') === true){
+		orderFormMenu.classList.remove('hidden');
+		document.body.classList.add('stop-scrolling');
+	}
+}
+
+function closeOrderForm(){
+  let orderFormMenu = document.querySelector('.order-form');
+  if (orderFormMenu.classList.contains('hidden') === false){
+    orderFormMenu.classList.add('hidden');
+    document.body.classList.remove('stop-scrolling');
+  }
+}
+
+function acceptForm(event){
+	emptyCart();
+	closeOrderForm();
+	alert("The order was successfuly placed!");
+	event.preventDefault();
 }
