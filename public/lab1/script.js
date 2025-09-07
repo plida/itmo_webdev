@@ -108,7 +108,7 @@ function updateCartCountTotal(){
     let addToCartBtn = document.querySelector('#item__add-btn' + item.id);
     let incrementBtn = document.querySelector('#item__increment-btn' + item.id);
     let decrementBtn = document.querySelector('#item__decrement-btn' + item.id);
-    if (item.quantity > 99){
+    if (item.quantity >= 99){
       if (addToCartBtn){
         addToCartBtn.disabled = true;
       }
@@ -217,14 +217,13 @@ function populateCartContents(){
   }
 
   listClone.addEventListener('click', (event) => {
-		const isButton = event.target.nodeName === 'BUTTON';
-		if (isButton && event.target.classList.contains('item__increment-btn')){
+		if (event.target.classList.contains('item__increment-btn')){
 			addToCart(event.target.id.slice(19));
 		}
-		if (isButton && event.target.classList.contains('item__decrement-btn')){
+		if (event.target.classList.contains('item__decrement-btn')){
 			removeFromCart(event.target.id.slice(19));
 		}
-		if (isButton && event.target.classList.contains('item__remove-btn')){
+		if (event.target.classList.contains('item__remove-btn')){
 			removeFromCart(event.target.id.slice(16), true);
 		}
 	})
@@ -296,15 +295,14 @@ function populateProductList(){
   }
 
   listClone.addEventListener('click', (event) => {
-		const isButton = event.target.nodeName === 'BUTTON';
-		if (isButton && event.target.classList.contains('item__add-btn')){
+		if (event.target.classList.contains('item__add-btn')){
 			addToCart(event.target.id.slice(13));
 			swapAddToMenu(event.target);
 		}
-		if (isButton && event.target.classList.contains('item__increment-btn')){
+		if (event.target.classList.contains('item__increment-btn')){
       addToCart(event.target.id.slice(19));
     }
-    if (isButton && event.target.classList.contains('item__decrement-btn')){
+    if (event.target.classList.contains('item__decrement-btn')){
       removeFromCart(event.target.id.slice(19));
 			let item = cart.find(item => item.id === event.target.id.slice(19));
         if (item === undefined){
