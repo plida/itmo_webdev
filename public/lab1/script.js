@@ -16,7 +16,15 @@ if (localStorage.getItem('cart')){
 	cart = JSON.parse(localStorage.getItem('cart'));
 }
 
+populateProductList();
 updateCart();
+
+for (item of cart){
+  let addButton = document.querySelector('#item__add-btn' + item.id);
+  if (addButton){
+    swapAddToMenu(addButton);
+  }
+}
 
 function addToCart(id){
   if (id === undefined){
@@ -58,7 +66,6 @@ function emptyCart(){
 function updateCart(){
  localStorage.setItem('cart', JSON.stringify(cart)); 
  populateCartContents();
- populateProductList();
  updateCartCountTotal();
 }
 
@@ -163,7 +170,7 @@ function populateCartContents(){
   if (cartContents === null){
     return;
   }
-
+  
   let list = cartContents.querySelector('ul');
   if (cart.length === 0){
     list.innerHTML = 'Nothing here!';
@@ -262,12 +269,12 @@ function populateProductList(){
       price.classList.add('item__price'); 
       
     let addBtn = document.createElement('button');
-      addBtn.classList.add('item_add-btn');
-      addBtn.id = 'item_add-btn' + key;    
+      addBtn.classList.add('item__add-btn');
+      addBtn.id = 'item__add-btn' + key;    
 
     let menu = document.createElement('div');
       menu.classList.add('item__menu');
-      menu.classList.add('.hidden');
+      menu.classList.add('hidden');
       menu.id = 'item__menu' + key;
     let incrementBtn = document.createElement('button');
       incrementBtn.classList.add('item__increment-btn');
@@ -304,13 +311,27 @@ function populateProductList(){
     }
     if (event.target.classList.contains('item__decrement-btn')){
       removeFromCart(event.target.id.slice(19));
+      console.log(event.target.id.slice(19));
 			let item = cart.find(item => item.id === event.target.id.slice(19));
-        if (item === undefined){
-          swapMenuToAdd(event.target.parentNode);
-        };
-      }
+      if (item === undefined){
+        swapMenuToAdd(event.target.parentNode);
+      };
+    }
 	})
 
   list.parentNode.appendChild(listClone);
 	list.remove();
+}
+
+function swapAddToMenu(addBtn){
+  addBtn.classList.add('hidden');
+  let menu = document.querySelector('#item__menu' + addBtn.id.slice(13));
+  menu.classList.remove('hidden');
+}
+
+function swapMenuToAdd(menu){
+  console.log("menu to add!", menu);
+  menu.classList.add('hidden');
+  let addBtn = document.querySelector('#item__add-btn' + menu.id.slice(10));
+  addBtn.classList.remove('hidden');
 }
