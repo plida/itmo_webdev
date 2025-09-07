@@ -57,8 +57,9 @@ function emptyCart(){
 
 function updateCart(){
  localStorage.setItem('cart', JSON.stringify(cart)); 
- updateCartCountTotal();
  populateCartContents();
+ populateProductList();
+ updateCartCountTotal();
 }
 
 function updateCartCountTotal(){
@@ -68,7 +69,7 @@ function updateCartCountTotal(){
     count += item.quantity;
     sum += LOOKUP_TABLE[item.id].price * item.quantity;
   }
-  sum = Math.round(sum * 100) / 100;
+  sum = Math.round((sum * 100) / 100);
   sum = sum.toFixed(2)
 
   let cartCountDisplays = document.querySelectorAll('.cart-count');
@@ -147,12 +148,12 @@ function updateCartCountTotal(){
     
     let menuCounts = document.querySelectorAll('#menu__count' + key);
     for (let menuCount of menuCounts){
-     menuCount.innerText = '$' + itemCount;
+     menuCount.innerText = itemCount;
     }
 
     let itemTotals = document.querySelectorAll('#item__total' + key);
-    for (let itemTotal of itemTotals){
-     itemTotal.innerText = '$' + itemTotal;
+    for (let itemTotalCost of itemTotals){
+     itemTotalCost.innerText = '$' + itemTotal;
     }
   }
 }
@@ -214,6 +215,7 @@ function populateCartContents(){
 
     listClone.append(listItem);
   }
+
   listClone.addEventListener('click', (event) => {
 		const isButton = event.target.nodeName === 'BUTTON';
 		if (isButton && event.target.classList.contains('item__increment-btn')){
@@ -225,6 +227,90 @@ function populateCartContents(){
 		if (isButton && event.target.classList.contains('item__remove-btn')){
 			removeFromCart(event.target.id.slice(16), true);
 		}
+	})
+
+  list.parentNode.appendChild(listClone);
+	list.remove();
+}
+
+function populateProductList(){
+  let productList = document.querySelector('#product-list');
+  if (productList === null){
+    return;
+  }
+
+  let list = productList.querySelector('ul');
+  listClone = list.cloneNode(true);
+  listClone.innerHTML = '';
+  for (const [key, LOOKUP_ITEM] of Object.entries(LOOKUP_TABLE)){
+    let listItem = document.createElement('li');
+      listItem.classList.add('product-list__item');
+
+    let image = document.createElement('img');
+      image.src = LOOKUP_ITEM.img;
+      image.alt = LOOKUP_ITEM.name;
+    
+    let text = document.createElement('div');
+      text.classList.add('item__text');
+    let name = document.createElement('span');
+      name.textContent = LOOKUP_ITEM.name;
+      name.classList.add('item__name');
+    let weight = document.createElement('span');
+      weight.textContent = LOOKUP_ITEM.weight;
+      weight.classList.add('item__weight');
+    let price = document.createElement('span');
+      price.textContent = LOOKUP_ITEM.price;
+      price.classList.add('item__price'); 
+      
+    let addBtn = document.createElement('button');
+      addBtn.classList.add('item_add-btn');
+      addBtn.id = 'item_add-btn' + key;    
+
+    let menu = document.createElement('div');
+      menu.classList.add('item__menu');
+      menu.classList.add('.hidden');
+      menu.id = 'item__menu' + key;
+    let incrementBtn = document.createElement('button');
+      incrementBtn.classList.add('item__increment-btn');
+      incrementBtn.id = 'item__increment-btn' + key;
+    let decrementBtn = document.createElement('button');
+      decrementBtn.classList.add('item__decrement-btn');
+      decrementBtn.id = 'item__decrement-btn' + key;
+    let menuCount = document.createElement('span');
+      menuCount.id = 'menu__count' + key;
+
+    text.append(name);
+    text.append(weight);
+    text.append(price);
+
+    menu.append(decrementBtn);
+    menu.append(menuCount);
+    menu.append(incrementBtn);
+
+    listItem.append(image);
+    listItem.append(text);
+    listItem.append(addBtn);
+    listItem.append(menu);
+
+    listClone.append(listItem);
+  }
+
+  listClone.addEventListener('click', (event) => {
+		const isButton = event.target.nodeName === 'BUTTON';
+		if (isButton && event.target.classList.contains('item__add-btn')){
+			addToCart(event.target.id.slice(13));
+			swapAddToMenu(event.target);
+		}
+		if (isButton && event.target.classList.contains('item__increment-btn')){
+      addToCart(event.target.id.slice(19));
+    }
+    if (isButton && event.target.classList.contains('item__decrement-btn')){
+      removeFromCart(event.target.id.slice(19));
+			let item = cart.find(item => item.id === event.target.id.slice(19));
+        if (item === undefined){
+          swapMenuToAdd(event.target.parentNode);
+        };
+      }
 	})
 
   list.parentNode.appendChild(listClone);
