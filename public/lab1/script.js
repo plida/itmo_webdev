@@ -1,6 +1,6 @@
 const LOOKUP_TABLE = {
-  '1': { name: 'Apples', weight:'1 lb', price: 1.99, img: 'media/shelley-pauls-unsplash.jpg'},
-  '2': { name: 'Tangerines', weight:'1 lb', price: 1.59, img: 'media/erol-ahmed-unsplash.jpg'},
+  '1': { name: 'Apples red crispy farmer market', weight:'1 lb', price: 1.99, img: 'media/shelley-pauls-unsplash.jpg'},
+  '2': { name: 'Tangerines fresh', weight:'1 lb', price: 1.59, img: 'media/erol-ahmed-unsplash.jpg'},
   '3': { name: 'Bananas', weight:'1 lb', price: 0.56, img: 'media/ries-bosch-unsplash.jpg'},
   '4': { name: 'Pineapples', weight:'1 lb', price: 0.99, img: 'media/phoenix-han-unsplash.jpg'},
   '5': { name: 'Pears', weight:'1 lb', price: 2.19, img: 'media/maksim-shutov-unsplash.jpg'},
@@ -136,8 +136,8 @@ function updateCartCountTotal(){
   }
   for (item of cart){
     let addToCartBtn = document.querySelector('#item__add-btn' + item.id);
-    let incrementBtn = document.querySelector('#item__increment-btn' + item.id);
-    let decrementBtn = document.querySelector('#item__decrement-btn' + item.id);
+    let incrementBtn = document.querySelector('#increment-btn' + item.id);
+    let decrementBtn = document.querySelector('#decrement-btn' + item.id);
     if (item.quantity >= 99){
       if (addToCartBtn){
         addToCartBtn.disabled = true;
@@ -189,7 +189,7 @@ function updateCartCountTotal(){
 }
 
 function populateCartContents(){
-  let cartContents = document.querySelector('#cart-contents');
+  let cartContents = document.querySelector('.cart-contents');
   if (cartContents === null){
     return;
   }
@@ -213,7 +213,7 @@ function populateCartContents(){
     let text = document.createElement('span');
       text.classList.add('item__text');
       text.textContent = LOOKUP_ITEM.name + ' ' + 
-      LOOKUP_ITEM.weight + ' ' + LOOKUP_ITEM.price;
+      LOOKUP_ITEM.weight + ' $' + LOOKUP_ITEM.price;
     let totalPrice = document.createElement('span');
       totalPrice.classList.add('item__total');
       totalPrice.id = 'item__total' + item.id;
@@ -222,11 +222,11 @@ function populateCartContents(){
       menu.classList.add('item__menu');
       menu.id = 'item__menu' + item.id;
     let incrementBtn = document.createElement('button');
-      incrementBtn.classList.add('item__increment-btn');
-      incrementBtn.id = 'item__increment-btn' + item.id;
+      incrementBtn.classList.add('increment-btn');
+      incrementBtn.id = 'increment-btn' + item.id;
     let decrementBtn = document.createElement('button');
-      decrementBtn.classList.add('item__decrement-btn');
-      decrementBtn.id = 'item__decrement-btn' + item.id;
+      decrementBtn.classList.add('decrement-btn');
+      decrementBtn.id = 'decrement-btn' + item.id;
     let menuCount = document.createElement('span');
       menuCount.id = 'menu__count' + item.id;
     menu.append(decrementBtn);
@@ -247,11 +247,11 @@ function populateCartContents(){
   }
 
   listClone.addEventListener('click', (event) => {
-		if (event.target.classList.contains('item__increment-btn')){
-			addToCart(event.target.id.slice(19));
+		if (event.target.classList.contains('increment-btn')){
+			addToCart(event.target.id.slice(13));
 		}
-		if (event.target.classList.contains('item__decrement-btn')){
-			removeFromCart(event.target.id.slice(19));
+		if (event.target.classList.contains('decrement-btn')){
+			removeFromCart(event.target.id.slice(13));
 		}
 		if (event.target.classList.contains('item__remove-btn')){
 			removeFromCart(event.target.id.slice(16), true);
@@ -263,7 +263,7 @@ function populateCartContents(){
 }
 
 function populateProductList(){
-  let productList = document.querySelector('#product-list');
+  let productList = document.querySelector('.product-list');
   if (productList === null){
     return;
   }
@@ -275,6 +275,9 @@ function populateProductList(){
     let listItem = document.createElement('li');
       listItem.classList.add('product-list__item');
 
+    let listItemContent = document.createElement('div');
+      listItemContent.classList.add('item__contents')
+
     let image = document.createElement('img');
       image.src = LOOKUP_ITEM.img;
       image.alt = LOOKUP_ITEM.name;
@@ -283,28 +286,33 @@ function populateProductList(){
       text.classList.add('item__text');
     let name = document.createElement('span');
       name.textContent = LOOKUP_ITEM.name;
-      name.classList.add('item__name');
+      name.classList.add('item__text__name');
     let weight = document.createElement('span');
       weight.textContent = LOOKUP_ITEM.weight;
-      weight.classList.add('item__weight');
+      weight.classList.add('item__text__weight');
     let price = document.createElement('span');
-      price.textContent = LOOKUP_ITEM.price;
-      price.classList.add('item__price'); 
+      price.textContent = '$' + LOOKUP_ITEM.price;
+      price.classList.add('item__text__price'); 
       
     let addBtn = document.createElement('button');
       addBtn.classList.add('item__add-btn');
+      addBtn.classList.add('item__button');
+      addBtn.classList.add('item__input-panel');
       addBtn.id = 'item__add-btn' + key;    
 
     let menu = document.createElement('div');
       menu.classList.add('item__menu');
       menu.classList.add('hidden');
+      menu.classList.add('item__input-panel');
       menu.id = 'item__menu' + key;
     let incrementBtn = document.createElement('button');
-      incrementBtn.classList.add('item__increment-btn');
-      incrementBtn.id = 'item__increment-btn' + key;
+      incrementBtn.classList.add('increment-btn');
+      incrementBtn.classList.add('item__button');
+      incrementBtn.id = 'increment-btn' + key;
     let decrementBtn = document.createElement('button');
-      decrementBtn.classList.add('item__decrement-btn');
-      decrementBtn.id = 'item__decrement-btn' + key;
+      decrementBtn.classList.add('decrement-btn');
+      decrementBtn.classList.add('item__button');
+      decrementBtn.id = 'decrement-btn' + key;
     let menuCount = document.createElement('span');
       menuCount.id = 'menu__count' + key;
 
@@ -316,10 +324,12 @@ function populateProductList(){
     menu.append(menuCount);
     menu.append(incrementBtn);
 
-    listItem.append(image);
-    listItem.append(text);
-    listItem.append(addBtn);
-    listItem.append(menu);
+    listItemContent.append(image);
+    listItemContent.append(text);
+    listItemContent.append(addBtn);
+    listItemContent.append(menu);
+
+    listItem.append(listItemContent);
 
     listClone.append(listItem);
   }
@@ -329,12 +339,12 @@ function populateProductList(){
 			addToCart(event.target.id.slice(13));
 			swapAddToMenu(event.target);
 		}
-		if (event.target.classList.contains('item__increment-btn')){
-      addToCart(event.target.id.slice(19));
+		if (event.target.classList.contains('increment-btn')){
+      addToCart(event.target.id.slice(13));
     }
-    if (event.target.classList.contains('item__decrement-btn')){
-      removeFromCart(event.target.id.slice(19));
-			let item = cart.find(item => item.id === event.target.id.slice(19));
+    if (event.target.classList.contains('decrement-btn')){
+      removeFromCart(event.target.id.slice(13));
+			let item = cart.find(item => item.id === event.target.id.slice(13));
       if (item === undefined){
         swapMenuToAdd(event.target.parentNode);
       };
