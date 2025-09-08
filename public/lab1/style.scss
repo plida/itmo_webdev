@@ -507,7 +507,7 @@ footer{
 
 @media only screen and (max-width: 500px) {
 	html{
-    font-size: 0.5rem;
+    font-size: 0.75rem;
   }
   .item__total{
     display: none;
@@ -527,7 +527,6 @@ footer{
       object-fit: cover;
     }
     .item__text{
-      font-size: 1rem;
       width: 30%;
       margin-left: 0.5rem;
     }
@@ -537,5 +536,17 @@ footer{
     .item__remove-btn{
       margin-right: 0.5rem;
     }
+  }
+}
+
+@media only screen and (max-width: 400px) {
+	html{
+    font-size: 0.6rem;
+  }
+}
+
+@media only screen and (max-width: 340px) {
+	.item__text{
+    font-size: 1rem;
   }
 }
