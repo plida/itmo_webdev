@@ -58,16 +58,17 @@ nav{
   li:nth-last-child(2){
     margin-left: auto;
   }
+
   a{
     position: relative;
     text-decoration: none;
     color: $color-black;
-    height: 10rem;
+    height: 8rem;
     display: flex;
     align-items: center;
   }
   img{
-    height: 10rem;
+    height: 8rem;
     margin-right: 1rem;
   }
   .cart-count{
@@ -181,13 +182,23 @@ nav{
   }
 }
 
+.cart-page{
+  display: flex;
+  flex-wrap: wrap-reverse;
+  justify-content: space-evenly;
+  margin-bottom: 2rem;
+}
+
 .cart-contents{
   display: flex;
+  flex-basis: 60%;
+  margin: 0 1rem;
+  flex-grow: 1;
   flex-direction: column;
-  width: 90%;
-  margin: 0 auto 2rem auto;
+  flex-wrap: wrap;
   ul{
     padding: 0;
+    margin: 0;
     list-style-type: none;
     display: flex;
     flex-wrap: wrap;
@@ -208,16 +219,22 @@ nav{
   border-radius: $border-radius-small;
   padding: 1rem;
   width: 100%;
+  height: 8rem;
   margin-bottom: 0.5rem;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   display: flex;
   align-items: center;
   .item__total{
     margin-left: auto;
     margin-right: 2rem;
+    text-align: center;
+    width: 10rem;
+    font-size: 1.5rem;
   }
   .item__text{
-    margin-left: 2rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    width: 50%;
   }
   img{
     border: 0.0625rem solid $color-secondary;
@@ -225,7 +242,7 @@ nav{
     width: 12rem;
   }
   .item__remove-btn{
-    margin: 1rem;
+    margin-right: 1rem;
   }
 }
 
@@ -237,11 +254,41 @@ nav{
   margin-left: auto;
 }
 
+.cart-summary{
+  display: flex;
+  flex-basis: 30%;
+  flex-grow: 0.3;
+  margin: 0 1rem;
+  flex-direction: column;
+  width: 50%;
+  h2{
+    font-size: 1.5rem;
+    background-color: $color-primary;
+	  border: 0.0625rem solid $color-secondary;
+	  border-radius: $border-radius-small;
+    margin: 1.5rem 0 0.5rem 0;
+    padding: 1rem;
+  }
+  &__contents{
+    background-color: $color-primary;
+    border: 0.0625rem solid $color-secondary;
+    height: 15rem;
+    border-radius: 5px 50px;
+    display: flex;
+    font-size: 1.25rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+  }
+  .open-order-form-btn{
+    padding: 0.75rem 4rem;
+  }
+}
+
 .item__button{
-  padding: 0.75rem 0.75rem;
+  padding: 0.75rem;
   &::before{
     display: inline-block;
-    width: 1.25rem;
   }
 }
 
@@ -302,4 +349,122 @@ footer{
 	flex-direction: column;
 	align-items: center;
   margin: auto auto 0 auto;
+}
+
+.store-name-small{
+  display: none;
+  }
+.store-name-middle{
+  display: none;
+}
+
+@media only screen and (max-width: 1080px){
+  .store-name-long{
+    display: none;
+  }
+  .store-name-middle{
+    display: block;
+  }
+  .store-name-small{
+    display: none;
+  }
+}
+@media only screen and (max-width: 960px) {
+  .cart-contents__item{
+    img{
+      width: 8rem;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  .cart-summary{
+    margin: 0;
+  }
+  .cart-contents{
+    margin: 0;
+  }
+}
+@media only screen and (max-width: 720px) {
+	html{
+    font-size: 0.85rem;
+  }
+  .cart-contents__item{
+    img{
+      width: 4rem;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  .product-list{
+    width: 100%;
+    margin: 0 auto;
+  }
+  .product-list__item{
+    margin: 1%;
+  }
+  .product-list__item:hover{
+    transform: none;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+	html{
+    font-size: 0.75rem;
+  }
+  nav a, nav img{
+    height: 4rem;
+  }
+  nav .cart-total{
+    display: none;
+  }
+  .store-name-long{
+    display: none;
+  }
+  .store-name-middle{
+    display: none;
+  }
+  .store-name-small{
+    display: block;
+  }
+}
+
+@media only screen and (max-width: 500px) {
+	html{
+    font-size: 0.65rem;
+  }
+  .cart-page{
+    flex-direction: column-reverse;
+    align-items: center;
+  }
+  .cart-summary{
+    width: 50%;
+    min-width: 240px;
+  }
+  .item__total{
+    display: none;
+  }
+  .item__input-panel{
+    margin-left: auto;
+  }
+  .cart-contents__item{
+    .item__button{
+      padding: 0.5rem;
+    }
+    img{
+      width: 8rem;
+      height: 100%;
+      object-fit: cover;
+    }
+    .item__text{
+      font-size: 1rem;
+      width: 30%;
+      margin-left: 0.5rem;
+    }
+    .item__total{
+      margin-right: 0;
+    }
+    .item__remove-btn{
+      margin-right: 0.5rem;
+    }
+  }
 }

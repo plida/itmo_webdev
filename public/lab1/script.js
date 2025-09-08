@@ -213,7 +213,7 @@ function populateCartContents(){
     let text = document.createElement('span');
       text.classList.add('item__text');
       text.innerHTML = LOOKUP_ITEM.name + ' ' + 
-      LOOKUP_ITEM.weight + '<br />' + '$' + LOOKUP_ITEM.price;
+      LOOKUP_ITEM.weight.replaceAll(' ', '\xa0') + '<br />' + '$' + LOOKUP_ITEM.price;
     let totalPrice = document.createElement('span');
       totalPrice.classList.add('item__total');
       totalPrice.id = 'item__total' + item.id;
@@ -293,7 +293,7 @@ function populateProductList(){
       name.textContent = LOOKUP_ITEM.name;
       name.classList.add('item__text__name');
     let weight = document.createElement('span');
-      weight.textContent = LOOKUP_ITEM.weight;
+      weight.textContent = LOOKUP_ITEM.weight.replaceAll(' ', '\xa0');
       weight.classList.add('item__text__weight');
     let price = document.createElement('span');
       price.textContent = '$' + LOOKUP_ITEM.price;
