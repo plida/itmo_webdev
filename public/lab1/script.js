@@ -212,8 +212,8 @@ function populateCartContents(){
       image.alt = LOOKUP_ITEM.name;
     let text = document.createElement('span');
       text.classList.add('item__text');
-      text.textContent = LOOKUP_ITEM.name + ' ' + 
-      LOOKUP_ITEM.weight + ' $' + LOOKUP_ITEM.price;
+      text.innerHTML = LOOKUP_ITEM.name + ' ' + 
+      LOOKUP_ITEM.weight + '<br />' + '$' + LOOKUP_ITEM.price;
     let totalPrice = document.createElement('span');
       totalPrice.classList.add('item__total');
       totalPrice.id = 'item__total' + item.id;
@@ -221,14 +221,18 @@ function populateCartContents(){
     let menu = document.createElement('div');
       menu.classList.add('item__menu');
       menu.id = 'item__menu' + item.id;
+      menu.classList.add('item__input-panel');
     let incrementBtn = document.createElement('button');
       incrementBtn.classList.add('increment-btn');
+      incrementBtn.classList.add('item__button')
       incrementBtn.id = 'increment-btn' + item.id;
     let decrementBtn = document.createElement('button');
       decrementBtn.classList.add('decrement-btn');
+      decrementBtn.classList.add('item__button')
       decrementBtn.id = 'decrement-btn' + item.id;
     let menuCount = document.createElement('span');
       menuCount.id = 'menu__count' + item.id;
+      
     menu.append(decrementBtn);
     menu.append(menuCount);
     menu.append(incrementBtn);
@@ -236,12 +240,13 @@ function populateCartContents(){
     let removeBtn = document.createElement('button');
       removeBtn.classList.add('item__remove-btn');
       removeBtn.id = 'item__remove-btn' + item.id;
+      removeBtn.classList.add('item__button')
     
+    listItem.append(removeBtn);
     listItem.append(image);
     listItem.append(text);
     listItem.append(totalPrice);
     listItem.append(menu);
-    listItem.append(removeBtn);
 
     listClone.append(listItem);
   }

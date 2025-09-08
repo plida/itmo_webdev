@@ -165,22 +165,81 @@ nav .cart-total {
   margin-top: auto;
   margin-bottom: 1rem;
 }
-.product-list__item .item__button {
-  padding: 0.75rem 0.75rem;
-}
-.product-list__item .item__button::before {
-  display: inline-block;
-  width: 1.25rem;
-}
 .product-list__item .item__add-btn {
   padding: 0.75rem 3.625rem;
 }
-.product-list__item .item__menu {
+
+.cart-contents {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  margin: 0 auto 2rem auto;
+}
+.cart-contents ul {
+  padding: 0;
+  list-style-type: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.cart-contents h2 {
+  font-size: 1.5rem;
+  background-color: #fff;
+  border: 0.0625rem solid #ddd;
+  border-radius: 5px;
+  margin: 1.5rem 0 0.5rem 0;
+  padding: 1rem;
+}
+
+.cart-contents__item {
+  background-color: #fff;
+  border: 0.0625rem solid #ddd;
+  border-radius: 5px;
+  padding: 1rem;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+.cart-contents__item .item__total {
+  margin-left: auto;
+  margin-right: 2rem;
+}
+.cart-contents__item .item__text {
+  margin-left: 2rem;
+}
+.cart-contents__item img {
+  border: 0.0625rem solid #ddd;
+  border-radius: 5px;
+  width: 12rem;
+}
+.cart-contents__item .item__remove-btn {
+  margin: 1rem;
+}
+
+.empty-cart-btn {
+  position: relative;
+  margin-top: 0.75rem;
+  padding: 1rem 2rem;
+  font-size: 1.25rem;
+  margin-left: auto;
+}
+
+.item__button {
+  padding: 0.75rem 0.75rem;
+}
+.item__button::before {
+  display: inline-block;
+  width: 1.25rem;
+}
+
+.item__menu {
   display: flex;
   align-items: center;
   font-weight: 600;
 }
-.product-list__item .item__menu span {
+.item__menu span {
   width: 3rem;
   text-align: center;
 }
@@ -203,6 +262,11 @@ input[type=submit]:hover, button:hover {
 input[type=submit]:disabled, button:disabled {
   cursor: not-allowed;
   filter: grayscale(50%) brightness(175%);
+}
+
+.item__remove-btn::before {
+  content: "❌";
+  filter: brightness(0) invert(1);
 }
 
 .item__add-btn::before, .increment-btn::before {
