@@ -17,6 +17,8 @@
 
 Семантическую разметку можно рассмотреть в html-файле ![главной страницы](index.html) и ![страницы корзины](cart.html).
 
+Результаты валидатора w3: ![главная страница](https://validator.w3.org/nu/?doc=https%3A%2F%2Fwebdevitmo.plida.ru%2Flab1%2Findex.html), ![страница корзины](https://validator.w3.org/nu/?doc=https%3A%2F%2Fwebdevitmo.plida.ru%2Flab1%2Fcart.html).
+
 3. Форма содержит все обязательные поля: имя, фамилия, адрес доставки, контактный номер телефона и кнопку «Создать заказ».
 
 ![](media-report/order-form.png)
