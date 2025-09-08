@@ -4,8 +4,12 @@
 }
 
 .stop-scrolling {
-  height: 100%;
   overflow: hidden;
+  height: 100%;
+}
+
+html {
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -88,7 +92,7 @@ nav .cart-total {
   margin: 0 auto 2rem auto;
 }
 .product-list__contents {
-  border: 0.125rem dashed #ddd;
+  border: 0.1875rem dashed #ddd;
 }
 .product-list h2 {
   font-size: 1.5rem;
@@ -271,6 +275,7 @@ nav .cart-total {
 }
 .cart-summary .open-order-form-btn {
   padding: 0.75rem 4rem;
+  font-size: 1.5rem;
 }
 
 .item__button {
@@ -287,6 +292,75 @@ nav .cart-total {
 }
 .item__menu span {
   width: 3rem;
+  text-align: center;
+}
+
+.order-form {
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.order-form__contents {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 0.125rem solid #ddd;
+  border-radius: 10px;
+  padding: 0.75rem 2rem;
+}
+.order-form .order-form__heading {
+  width: 100%;
+  margin-bottom: 1rem;
+  background-color: #ddd;
+  padding: 1rem;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.order-form .order-form__heading h2 {
+  margin: 0;
+  flex-basis: 60%;
+}
+.order-form .order-form__heading button {
+  flex-basis: 40%;
+  padding: 0.75rem 2rem;
+}
+.order-form form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: #ddd;
+  padding: 1rem;
+  border-radius: 5px;
+}
+.order-form form div {
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+}
+.order-form form label {
+  display: inline-block;
+  flex-basis: 50%;
+}
+.order-form form input[type=tel], .order-form form input[type=text] {
+  width: 100%;
+  flex-basis: 50%;
+  padding: 0.5rem;
+}
+.order-form form input[type=submit] {
+  width: 50%;
+  padding: 1rem 2rem;
+  margin: 10px auto 0 auto;
+  display: flex;
+  justify-content: center;
   text-align: center;
 }
 
@@ -358,11 +432,14 @@ footer {
   .cart-summary {
     margin: 0;
   }
-  .cart-contents {
-    margin: 0;
+  .cart-summary .open-order-form-btn {
+    font-size: 1rem;
+  }
+  .empty-cart-btn {
+    font-size: 1rem;
   }
 }
-@media only screen and (max-width: 720px) {
+@media only screen and (max-width: 760px) {
   html {
     font-size: 0.85rem;
   }
@@ -373,7 +450,6 @@ footer {
   }
   .product-list {
     width: 100%;
-    margin: 0 auto;
   }
   .product-list__item {
     margin: 1%;
@@ -382,24 +458,9 @@ footer {
     transform: none;
   }
 }
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 640px) {
   html {
     font-size: 0.75rem;
-  }
-  nav a, nav img {
-    height: 4rem;
-  }
-  nav .cart-count {
-    top: -10px;
-    left: 50%;
-  }
-  nav .cart-total {
-    display: none;
-  }
-}
-@media only screen and (max-width: 500px) {
-  html {
-    font-size: 0.65rem;
   }
   .cart-page {
     flex-direction: column-reverse;
@@ -408,6 +469,24 @@ footer {
   .cart-summary {
     width: 50%;
     min-width: 240px;
+  }
+  nav {
+    padding: 0 10px;
+  }
+  nav a, nav img {
+    height: 4rem;
+  }
+  nav .cart-count {
+    top: -5px;
+    left: 50%;
+  }
+  nav .cart-total {
+    display: none;
+  }
+}
+@media only screen and (max-width: 500px) {
+  html {
+    font-size: 0.5rem;
   }
   .item__total {
     display: none;

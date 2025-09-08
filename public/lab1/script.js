@@ -128,10 +128,10 @@ function updateCartCountTotal(){
   let emptyCartBtns = document.querySelectorAll('.empty-cart-btn');
   for (let emptyBtn of emptyCartBtns){
     if (count === 0){
-      emptyBtn.disabled = true;
+      emptyBtn.classList.add('hidden');
     }
     else{
-      emptyBtn.disabled = false;
+      emptyBtn.classList.remove('hidden');
     }
   }
   for (item of cart){
