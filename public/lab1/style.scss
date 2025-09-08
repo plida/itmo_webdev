@@ -33,6 +33,9 @@ body{
 header{
   background-color: $color-primary;
   border: $border-size solid $color-secondary;
+  border-radius: $border-radius-regular;
+  width: 96%;
+  margin: 0 auto;
 }
 
 nav{
@@ -216,10 +219,11 @@ input[type='submit'], button{
 footer{
 	background-color: $color-primary;
   border: $border-size solid $color-secondary;
+  border-radius: $border-radius-regular;
   padding: 10px;
-  width: 100%;
+  width: 96%;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	margin-top: auto;
+  margin: auto auto 0 auto;
 }
