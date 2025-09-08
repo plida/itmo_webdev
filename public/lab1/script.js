@@ -53,9 +53,7 @@ function addToCart(id){
   if (id === undefined){
     return;
   }
-  console.log(id);
   let item = cart.find(item => item.id === id);
-  console.log(item);
   if (item === undefined){
     let newItem = {
       id: id,
@@ -64,7 +62,6 @@ function addToCart(id){
     cart.push(newItem);
   }
   else{
-    console.log("???");
     item.quantity++;
   }
   updateCart();
@@ -102,7 +99,7 @@ function updateCartCountTotal(){
     count += item.quantity;
     sum += LOOKUP_TABLE[item.id].price * item.quantity;
   }
-  sum = Math.round((sum * 100) / 100);
+  sum = Math.round(sum * 100)/ 100;
   sum = sum.toFixed(2)
 
   let cartCountDisplays = document.querySelectorAll('.cart-count');
@@ -175,7 +172,7 @@ function updateCartCountTotal(){
     if (item){
       itemCount = item.quantity;
       itemTotal = value.price * item.quantity;
-      itemTotal = Math.round((itemTotal * 100) / 100);
+      itemTotal = Math.round(itemTotal * 100)/ 100;
       itemTotal = itemTotal.toFixed(2);
     }
     
@@ -329,17 +326,14 @@ function populateProductList(){
 
   listClone.addEventListener('click', (event) => {
 		if (event.target.classList.contains('item__add-btn')){
-      console.log(":(");
 			addToCart(event.target.id.slice(13));
 			swapAddToMenu(event.target);
 		}
 		if (event.target.classList.contains('item__increment-btn')){
-      console.log(":)");
       addToCart(event.target.id.slice(19));
     }
     if (event.target.classList.contains('item__decrement-btn')){
       removeFromCart(event.target.id.slice(19));
-      console.log(event.target.id.slice(19));
 			let item = cart.find(item => item.id === event.target.id.slice(19));
       if (item === undefined){
         swapMenuToAdd(event.target.parentNode);
@@ -358,7 +352,6 @@ function swapAddToMenu(addBtn){
 }
 
 function swapMenuToAdd(menu){
-  console.log("menu to add!", menu);
   menu.classList.add('hidden');
   let addBtn = document.querySelector('#item__add-btn' + menu.id.slice(10));
   addBtn.classList.remove('hidden');
