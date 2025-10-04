@@ -1,3 +1,4 @@
+
 // PAGE
 const PAGE_BODY = document.body;
 const PAGE_HEADER = document.createElement('HEADER');
@@ -43,3 +44,28 @@ HEADER_LIST.appendChild(HEADER_GIT);
 const PAGE_FOOTER_TEXT = document.createElement('span');
 PAGE_FOOTER_TEXT.textContent = 'Plida 2025';
 PAGE_FOOTER.append(PAGE_FOOTER_TEXT);
+
+// MAIN
+
+const STATUSES = ["incomplete", "in progress", "complete"];
+
+let taskList = [
+  { name: "1", description: "aaa", status: 0 },
+  { name: "2", description: "bbb", status: 0 },
+  { name: "3", description: "ccc", status: 0 },
+
+];
+
+const TASK_LIST = document.createElement('section');
+TASK_LIST.classList.add('task-list')
+const TASK_LIST_UL = document.createElement('ul');
+TASK_LIST.append(TASK_LIST_UL);
+for (task of taskList){
+  let taskElem = document.createElement('li');
+  taskElem.textContent = task.name + ' ' + task.description;
+  let taskStatus = document.createElement('span');
+  taskStatus.textContent = task.status;
+  taskElem.appendChild(taskStatus);
+  TASK_LIST_UL.appendChild(taskElem);
+}
+PAGE_MAIN.append(TASK_LIST);

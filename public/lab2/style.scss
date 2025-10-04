@@ -58,6 +58,23 @@ footer{
   margin: auto auto 0 auto;
 }
 
+.task-list{
+  
+  width: 5rem;
+  ul{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0;
+  }
+  li{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+
 .site-name-middle{
   display: none;
 }
