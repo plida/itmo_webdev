@@ -8,9 +8,9 @@ $color-black: #000;
 $color-white: #fff;
 
 body {
-    background-color: grey;
-    min-height: 100svh;
-    font-family:"Montserrat", sans-serif;
+  background-color: grey;
+  min-height: 100svh;
+  font-family:"Montserrat", sans-serif;
 }
 
 nav{
@@ -22,25 +22,24 @@ nav{
     align-items: center;
     justify-content: space-evenly;
   }
-  li{
-    filter: grayscale(100%);
-    transition: all $transition-primary;
-  }
-  li:hover{
-    filter: grayscale(0%);
-	  transform: scale(1.025);	
-  }
   li:nth-last-child(1){
     margin-left: auto;
   }
-
   a{
+    transition: all $transition-primary;
     position: relative;
     text-decoration: none;
     color: $color-black;
     height: 8rem;
     display: flex;
     align-items: center;
+  }
+  a.disabled {
+    pointer-events: none;
+    cursor: default;
+  }
+  a:hover{
+    transform: scale(1.025);	
   }
   img{
     height: 8rem;
@@ -52,14 +51,12 @@ nav{
 }
 
 footer{
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: auto auto 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto auto 0 auto;
 }
-
-
 
 .site-name-middle{
   display: none;
