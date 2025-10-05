@@ -197,13 +197,24 @@ function listTasks(){
   }
   for (task of taskListClone){
     let taskElem = document.createElement('li');
+    taskElem.id = 'task' + task.id;
     taskElem.textContent = task.name + ' ' + task.description + ' ' + task.date;
-    let taskElemBtn = document.createElement('button');
-    taskElemBtn.classList.add('task__remove-btn');
-    taskElemBtn.id = 'task_remove-btn' + task.id;
-    taskElem.appendChild(taskElemBtn);
-    taskElemBtn.addEventListener('click', (event) => {
+    let taskElemRmBtn = document.createElement('button');
+    taskElemRmBtn.classList.add('task__remove-btn');
+    taskElemRmBtn.id = 'task_remove-btn' + task.id;
+    taskElem.appendChild(taskElemRmBtn);
+    taskElemRmBtn.addEventListener('click', (event) => {
 		  removeTask(event.target.id.slice('task_remove-btn'.length));
+    })
+    let taskElemEditBtn = document.createElement('button');
+    taskElemEditBtn.classList.add('task__edit-btn');
+    taskElemEditBtn.id = 'task_edit-btn' + task.id;
+    taskElem.appendChild(taskElemEditBtn);
+    taskElemEditBtn.addEventListener('click', (event) => {
+      if (taskElem.classList.contains('form-opened') === false){
+		    createEditForm(event.target.id.slice('task_edit-btn'.length));
+        taskElem.classList.add('form-opened');
+      }
     })
     let taskStatus = document.createElement('span');
     taskStatus.textContent = STATUSES[task.status];
@@ -213,7 +224,6 @@ function listTasks(){
     if (statusFilter > 0){
       statusFilter = parseInt(statusFilter);
       if (task.status === statusFilter){
-        console.log("!", task.status);
         taskElem.style.display = "";
       }
       else{
@@ -233,11 +243,46 @@ function listTasks(){
   list_UL.remove();
 }
 
+function createEditForm(id){
+  let editForm = document.createElement('form');
+  editForm.id = 'editForm' + id;
+  let editForm_CLOSE = document.createElement('button');
+  editForm_CLOSE.addEventListener('click', (event) => removeEditForm(id))
+  editForm_CLOSE.textContent = '-';
+  editForm.appendChild(editForm_CLOSE);
+  let editForm_NAME = document.createElement('input');
+  editForm_NAME.name = 'name';
+  let editForm_DESCRIPTION = document.createElement('input');
+  editForm_DESCRIPTION.name = 'description';
+  let editForm_DATE = document.createElement('input');
+  editForm_DATE.name = 'date';
+  editForm_DATE.type = 'date';
+  let editForm_SUBMIT = document.createElement('input');
+  editForm_SUBMIT.type = 'submit';
+  editForm.appendChild(editForm_NAME);
+  editForm.appendChild(editForm_DESCRIPTION);
+  editForm.appendChild(editForm_DATE);
+  editForm.appendChild(editForm_SUBMIT);
+  document.getElementById('task' + id).appendChild(editForm);
+  editForm.addEventListener('submit', (event) => {
+    event.preventDefault(); 
+    updateTask(event.target.id.slice('editForm'.length), event);
+  });
+}
+
+function removeEditForm(id){
+  document.getElementById('editForm' + id).remove();
+  document.getElementById('task' + id).classList.remove('form-opened');
+}
+
 function addTask(){
   const data = new FormData(TASK_FORM);
-  let taskListClone = structuredClone(taskList);
-  taskListClone.sort(compareID);
-  let highestID = taskListClone[0].id;
+  let highestID = 0;
+  if (taskList.length > 0){
+    let taskListClone = structuredClone(taskList);
+    taskListClone.sort(compareID);
+    highestID = taskListClone[0].id;
+  }
   taskList.push({
     id: highestID + 1,
     name: data.get('name'), 
@@ -257,6 +302,24 @@ function removeTask(id){
   taskList.splice(n, 1);
   item.quantity = 0;
   updateTasks();
+}
+
+function updateTask(id, event){
+  let item = taskList.find(item => item.id === parseInt(id));
+  const data = new FormData(event.target);
+  if (item === undefined){
+    return;
+  }
+  if (data.get('name') != ''){
+    item.name = data.get('name');
+  }
+  if (data.get('description') != ''){
+    item.description = data.get('description');
+  }
+  if (data.get('date') != ''){
+    item.date = data.get('date');
+  }
+  listTasks();
 }
 
 function updateTasks(){

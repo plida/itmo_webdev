@@ -102,8 +102,21 @@ input[type='submit'], button{
   margin: 0.125rem;
 }
 
+.task__edit-btn{
+  background-color: rgb(219, 219, 122);
+  display: flex;
+  justify-content: center;
+  padding: 0.75rem;
+  margin: 0.125rem;
+}
+
 .task__remove-btn::before{
   content: "\274C";
+  filter: brightness(0) invert(1);
+}
+
+.task__edit-btn::before{
+  content: "*";
   filter: brightness(0) invert(1);
 }
 
