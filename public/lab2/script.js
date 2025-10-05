@@ -46,29 +46,89 @@ PAGE_FOOTER.append(PAGE_FOOTER_TEXT);
 
 // MAIN
 const TASK_LIST = document.createElement('section');
-TASK_LIST.classList.add('task-list')
+TASK_LIST.classList.add('task-list');
+const TASK_LIST_SEARCH = document.createElement('input');
+TASK_LIST_SEARCH.addEventListener('keyup', (event) => {listTasks(event.target.value)})
+TASK_LIST.appendChild(TASK_LIST_SEARCH);
+
+const TASK_LIST_SORT = document.createElement('section');
+TASK_LIST.appendChild(TASK_LIST_SORT);
+const TASK_LIST_SORT_DATE = document.createElement('button');
+TASK_LIST_SORT_DATE.textContent = "Sort by date";
+TASK_LIST_SORT_DATE.addEventListener('click', (event) => {
+  if (sorttype === "date"){
+    sorttype = "dateinv";
+  }
+  else{
+    sorttype = "date";
+  }
+  listTasks();
+})
+TASK_LIST_SORT.appendChild(TASK_LIST_SORT_DATE);
+
+const TASK_LIST_FILTER = document.createElement('section');
+const FILTER_INCOMPLETE = document.createElement('input');
+FILTER_INCOMPLETE.type = 'radio';
+FILTER_INCOMPLETE.name = 'status';
+FILTER_INCOMPLETE.value = 1;
+const FILTER_INPROGRESS = document.createElement('input');
+FILTER_INPROGRESS.type = 'radio';
+FILTER_INPROGRESS.name = 'status';
+FILTER_INPROGRESS.value = 2;
+const FILTER_COMPLETE = document.createElement('input');
+FILTER_COMPLETE.type = 'radio';
+FILTER_COMPLETE.name = 'status';
+FILTER_COMPLETE.value = 3;
+const FILTER_RESET = document.createElement('input');
+FILTER_RESET.type = 'radio';
+FILTER_RESET.name = 'status';
+FILTER_RESET.value = 0;
+FILTER_FORM = document.createElement('form');
+FILTER_FIELDSET = document.createElement('fieldset');
+TASK_LIST_FILTER.appendChild(FILTER_FORM);
+FILTER_FORM.appendChild(FILTER_FIELDSET);
+FILTER_FIELDSET.appendChild(FILTER_INCOMPLETE)
+FILTER_FIELDSET.appendChild(FILTER_INPROGRESS)
+FILTER_FIELDSET.appendChild(FILTER_COMPLETE)
+FILTER_FIELDSET.appendChild(FILTER_RESET)
+TASK_LIST.appendChild(TASK_LIST_FILTER);
+
+TASK_LIST_SEARCH.addEventListener('keyup', (event) => {nameFilter = event.target.value; listTasks()})
+TASK_LIST.appendChild(TASK_LIST_SEARCH);
+
 const TASK_LIST_UL = document.createElement('ul');
 TASK_LIST.append(TASK_LIST_UL);
 PAGE_MAIN.append(TASK_LIST);
 const TASK_FORM = document.createElement('form');
 const TASK_FORM_NAME = document.createElement('input');
 TASK_FORM_NAME.name = 'name';
+TASK_FORM_NAME.required = true;
 const TASK_FORM_DESCRIPTION = document.createElement('input');
 TASK_FORM_DESCRIPTION.name = 'description';
+const TASK_FORM_DATE = document.createElement('input');
+TASK_FORM_DATE.name = 'date';
+TASK_FORM_DATE.type = 'date';
+TASK_FORM_DATE.required = true;
 const TASK_FORM_SUBMIT = document.createElement('input');
 TASK_FORM_SUBMIT.type = 'submit';
 TASK_FORM.appendChild(TASK_FORM_NAME);
 TASK_FORM.appendChild(TASK_FORM_DESCRIPTION);
+TASK_FORM.appendChild(TASK_FORM_DATE);
 TASK_FORM.appendChild(TASK_FORM_SUBMIT);
 PAGE_MAIN.appendChild(TASK_FORM);
 
-const STATUSES = ['incomplete', 'in progress', 'complete'];
+const STATUSES = ['', 'incomplete', 'in progress', 'complete'];
 
 let taskList = [
-  { id: 0, name: '1', description: 'aaa', status: 0 },
-  { id: 1, name: '2', description: 'bbb', status: 1 },
-  { id: 2, name: '3', description: 'ccc', status: 2 },
+  { id: 0, name: '1', description: 'aaa', date: "2018-07-22", status: 1 },
+  { id: 1, name: '2', description: 'bbb', date: "2019-07-22", status: 2 },
+  { id: 2, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
 ];
+
+sorttype = "status";
+
+nameFilter = "";
+statusFilter = 0;
 
 function compareID( a, b ) {
   if ( a.id < b.id ){
@@ -80,14 +140,64 @@ function compareID( a, b ) {
   return 0;
 }
 
+function compareDate( a, b ) {
+  if ( a.date < b.date ){
+    return 1;
+  }
+  if ( a.date > b.date ){
+    return -1;
+  }
+  return 0;
+}
+
+function compareDateInv( a, b ) {
+  if ( a.date < b.date ){
+    return -1;
+  }
+  if ( a.date > b.date ){
+    return 1;
+  }
+  return 0;
+}
+
+function compareStatus( a, b ) {
+  if ( a.status < b.status ){
+    return 1;
+  }
+  if ( a.status > b.status ){
+    return -1;
+  }
+  return 0;
+}
+
+function compareStatusInv( a, b ) {
+  if ( a.status < b.status ){
+    return -1;
+  }
+  if ( a.status > b.status ){
+    return 1;
+  }
+  return 0;
+}
+
+
 
 function listTasks(){
   let list_UL = TASK_LIST.querySelector('ul');
   let list_UL_clone = list_UL.cloneNode(true)
   list_UL_clone.textContent = '';
-  for (task of taskList){
+
+  let taskListClone = structuredClone(taskList);
+
+  if (sorttype === "date"){
+    taskListClone = taskListClone.sort(compareDate);
+  }
+  else if (sorttype === "dateinv"){
+    taskListClone = taskListClone.sort(compareDateInv);
+  }
+  for (task of taskListClone){
     let taskElem = document.createElement('li');
-    taskElem.textContent = task.name + ' ' + task.description;
+    taskElem.textContent = task.name + ' ' + task.description + ' ' + task.date;
     let taskElemBtn = document.createElement('button');
     taskElemBtn.classList.add('task__remove-btn');
     taskElemBtn.id = 'task_remove-btn' + task.id;
@@ -98,6 +208,25 @@ function listTasks(){
     let taskStatus = document.createElement('span');
     taskStatus.textContent = STATUSES[task.status];
     taskElem.appendChild(taskStatus);
+    txtValue = taskElem.textContent;
+      
+    if (statusFilter > 0){
+      statusFilter = parseInt(statusFilter);
+      if (task.status === statusFilter){
+        console.log("!", task.status);
+        taskElem.style.display = "";
+      }
+      else{
+        taskElem.style.display = "none";
+      }
+    }
+
+    nameFilter = nameFilter.toUpperCase();
+    if (txtValue.toUpperCase().indexOf(nameFilter) === -1) {
+      taskElem.style.display = "none";
+    } 
+    
+
     list_UL_clone.appendChild(taskElem);
   }
   TASK_LIST.appendChild(list_UL_clone);
@@ -113,6 +242,7 @@ function addTask(){
     id: highestID + 1,
     name: data.get('name'), 
     description: data.get('description'),
+    date: data.get('date'),
     status: 0
   });
   updateTasks();
@@ -138,6 +268,11 @@ TASK_FORM.addEventListener('submit', (event) => {
   event.preventDefault(); 
   addTask(event);
 });
+
+document.querySelectorAll('input[type="radio"][name="status"]').forEach(radio => {
+    radio.addEventListener('change', (event) => {statusFilter = event.target.value; listTasks()});
+});
+
 
 if (localStorage.getItem('tasklist')){
 	taskList = JSON.parse(localStorage.getItem('tasklist'));
