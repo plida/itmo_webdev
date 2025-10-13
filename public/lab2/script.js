@@ -65,8 +65,21 @@ TASK_LIST_SORT_DATE.addEventListener('click', (event) => {
   listTasks();
 })
 TASK_LIST_SORT.appendChild(TASK_LIST_SORT_DATE);
+const TASK_LIST_SORT_ID = document.createElement('button');
+TASK_LIST_SORT_ID.textContent = "Sort by ID";
+TASK_LIST_SORT_ID.addEventListener('click', (event) => {
+  if (sorttype === "id"){
+    sorttype = "idinv";
+  }
+  else{
+    sorttype = "id";
+  }
+  listTasks();
+})
+TASK_LIST_SORT.appendChild(TASK_LIST_SORT_ID);
 
 const TASK_LIST_FILTER = document.createElement('section');
+TASK_LIST_FILTER.classList.add("task-list__filter");
 const FILTER_INCOMPLETE = document.createElement('input');
 FILTER_INCOMPLETE.type = 'radio';
 FILTER_INCOMPLETE.name = 'status';
@@ -83,6 +96,7 @@ const FILTER_RESET = document.createElement('input');
 FILTER_RESET.type = 'radio';
 FILTER_RESET.name = 'status';
 FILTER_RESET.value = 0;
+FILTER_INCOMPLETE.checked = "checked";
 FILTER_FORM = document.createElement('form');
 FILTER_FIELDSET = document.createElement('fieldset');
 TASK_LIST_FILTER.appendChild(FILTER_FORM);
@@ -123,14 +137,47 @@ let taskList = [
   { id: 0, name: '1', description: 'aaa', date: "2018-07-22", status: 1 },
   { id: 1, name: '2', description: 'bbb', date: "2019-07-22", status: 2 },
   { id: 2, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 3, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 4, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 5, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 6, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 7, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 8, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 9, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 10, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 11, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 12, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 13, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 14, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 15, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 16, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 17, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 18, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 19, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 20, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 21, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 22, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
+  { id: 23, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
 ];
 
-sorttype = "status";
+let listItems = [];
+
+sorttype = "id";
 
 nameFilter = "";
-statusFilter = 0;
+statusFilter = 1;
 
 function compareID( a, b ) {
+  if ( a.id > b.id ){
+    return 1;
+  }
+  if ( a.id < b.id ){
+    return -1;
+  }
+  return 0;
+}
+
+function compareIDInv( a, b ) {
   if ( a.id < b.id ){
     return 1;
   }
@@ -183,44 +230,107 @@ function compareStatusInv( a, b ) {
 
 
 function listTasks(){
+  
+  listItems = [];
   let list_UL = TASK_LIST.querySelector('ul');
   let list_UL_clone = list_UL.cloneNode(true)
   list_UL_clone.textContent = '';
 
   let taskListClone = structuredClone(taskList);
-
   if (sorttype === "date"){
     taskListClone = taskListClone.sort(compareDate);
   }
   else if (sorttype === "dateinv"){
     taskListClone = taskListClone.sort(compareDateInv);
   }
+  else if (sorttype === "idinv"){
+    taskListClone = taskListClone.sort(compareIDInv);
+  }
+  else{
+    taskListClone = taskListClone.sort(compareID);
+  }
+  const dragListItems = document.querySelectorAll('.draggable-list li');
+
   for (task of taskListClone){
     let taskElem = document.createElement('li');
     taskElem.id = 'task' + task.id;
+
+    taskElem.setAttribute('index', task.id);
+    taskElem.classList.add("task-elem");
+    if (sorttype === "id" || sorttype === "idinv"){
+      taskElem.draggable = true;
+      taskElem.addEventListener('dragstart', dragStart);
+      taskElem.addEventListener('drop', dragDrop);
+      taskElem.addEventListener('dragover', dragOver);
+      taskElem.addEventListener('dragenter', dragEnter);
+      taskElem.addEventListener('dragleave', dragLeave);
+    }
+    
     taskElem.textContent = task.name + ' ' + task.description + ' ' + task.date;
-    let taskElemRmBtn = document.createElement('button');
-    taskElemRmBtn.classList.add('task__remove-btn');
-    taskElemRmBtn.id = 'task_remove-btn' + task.id;
-    taskElem.appendChild(taskElemRmBtn);
-    taskElemRmBtn.addEventListener('click', (event) => {
-		  removeTask(event.target.id.slice('task_remove-btn'.length));
-    })
+    
     let taskElemEditBtn = document.createElement('button');
     taskElemEditBtn.classList.add('task__edit-btn');
     taskElemEditBtn.id = 'task_edit-btn' + task.id;
     taskElem.appendChild(taskElemEditBtn);
+    let brk = document.createElement('div');
+    brk.classList.add('flex-break');
+    
     taskElemEditBtn.addEventListener('click', (event) => {
       if (taskElem.classList.contains('form-opened') === false){
-		    createEditForm(event.target.id.slice('task_edit-btn'.length));
+        createEditForm(event.target.id.slice('task_edit-btn'.length));
         taskElem.classList.add('form-opened');
+      }
+      else{
+        removeEditForm(event.target.id.slice('task_edit-btn'.length));
       }
     })
     let taskStatus = document.createElement('span');
+    taskStatus.classList.add('task-status');
     taskStatus.textContent = STATUSES[task.status];
     taskElem.appendChild(taskStatus);
     txtValue = taskElem.textContent;
-      
+   
+    let statusForm = document.createElement('form');
+    let statusFieldset = document.createElement('fieldset');
+    let statusIncomplete = document.createElement('input');
+    statusIncomplete.value = 1
+    statusIncomplete.name = 'status' + task.id;
+    statusIncomplete.type = 'radio';
+    let statusInProgress = document.createElement('input');
+    statusInProgress.value = 2
+    statusInProgress.name = 'status' + task.id;
+    statusInProgress.type = 'radio';
+    let statusComplete = document.createElement('input');
+    statusComplete.value = 3
+    statusComplete.name = 'status' + task.id;
+    statusComplete.type = 'radio';
+    statusFieldset.appendChild(statusIncomplete);
+    statusFieldset.appendChild(statusInProgress);
+    statusFieldset.appendChild(statusComplete);
+    statusForm.appendChild(statusFieldset);
+    taskElem.appendChild(statusForm);
+
+    statusIncomplete.addEventListener('change', (event) => {
+		    changeTaskStatus(event.target.name.slice('status'.length), 1);
+    })
+    statusInProgress.addEventListener('change', (event) => {
+		    changeTaskStatus(event.target.name.slice('status'.length), 2);
+    })
+    statusComplete.addEventListener('change', (event) => {
+		    changeTaskStatus(event.target.name.slice('status'.length), 3);
+    })
+    switch (task.status){
+      case 1:
+        statusIncomplete.checked = "checked";
+        break;
+      case 2:
+        statusInProgress.checked = "checked";
+        break;
+      case 3:
+        statusComplete.checked = "checked";
+        break;
+    }
+
     if (statusFilter > 0){
       statusFilter = parseInt(statusFilter);
       if (task.status === statusFilter){
@@ -230,26 +340,64 @@ function listTasks(){
         taskElem.style.display = "none";
       }
     }
-
+    
     nameFilter = nameFilter.toUpperCase();
     if (txtValue.toUpperCase().indexOf(nameFilter) === -1) {
       taskElem.style.display = "none";
     } 
-    
-
+    if (sorttype === "id" || sorttype === "idinv"){
+      taskElem.classList.add("draggable-style");
+    }
+    let taskElemRmBtn = document.createElement('button');
+    taskElemRmBtn.classList.add('task__remove-btn');
+    taskElemRmBtn.id = 'task_remove-btn' + task.id;
+    taskElem.appendChild(taskElemRmBtn);
+    taskElemRmBtn.addEventListener('click', (event) => {
+      removeTask(event.target.id.slice('task_remove-btn'.length));
+    })
+    taskElem.appendChild(brk);
     list_UL_clone.appendChild(taskElem);
+    listItems.push(taskElem);
   }
+  list_UL_clone.classList.add("draggable-list");
   TASK_LIST.appendChild(list_UL_clone);
   list_UL.remove();
+}
+
+let dragStartID;
+function dragStart() {
+  dragStartID = +this.closest('li').getAttribute('index');
+}
+function dragEnter() {
+  this.classList.add('over');
+}
+function dragLeave() {
+  this.classList.remove('over');
+}
+function dragOver(e) {
+  e.preventDefault();
+}
+function dragDrop() {
+  const dragEndID = +this.getAttribute('index');
+  swapItems(dragStartID, dragEndID);
+
+  this.classList.remove('over');
+}
+function swapItems(fromID, toID) {
+  let item1 = taskList.find(item => item.id === parseInt(fromID));
+  let item2 = taskList.find(item => item.id === parseInt(toID));
+  if (item1 != undefined && item2 != undefined){
+    let n1 = taskList.indexOf(item1);
+    let n2 = taskList.indexOf(item2);
+    taskList[n1].id = toID;
+    taskList[n2].id = fromID;
+  } 
+  updateTasks();
 }
 
 function createEditForm(id){
   let editForm = document.createElement('form');
   editForm.id = 'editForm' + id;
-  let editForm_CLOSE = document.createElement('button');
-  editForm_CLOSE.addEventListener('click', (event) => removeEditForm(id))
-  editForm_CLOSE.textContent = '-';
-  editForm.appendChild(editForm_CLOSE);
   let editForm_NAME = document.createElement('input');
   editForm_NAME.name = 'name';
   let editForm_DESCRIPTION = document.createElement('input');
@@ -280,7 +428,7 @@ function addTask(){
   let highestID = 0;
   if (taskList.length > 0){
     let taskListClone = structuredClone(taskList);
-    taskListClone.sort(compareID);
+    taskListClone.sort(compareIDInv);
     highestID = taskListClone[0].id;
   }
   taskList.push({
@@ -288,8 +436,17 @@ function addTask(){
     name: data.get('name'), 
     description: data.get('description'),
     date: data.get('date'),
-    status: 0
+    status: 1
   });
+  updateTasks();
+}
+
+function changeTaskStatus(id, newStatus){
+  let item = taskList.find(item => item.id === parseInt(id));
+  if (item === undefined){
+    return;
+  } 
+  item.status = newStatus;
   updateTasks();
 }
 
@@ -300,7 +457,6 @@ function removeTask(id){
   } 
   let n = taskList.indexOf(item);
   taskList.splice(n, 1);
-  item.quantity = 0;
   updateTasks();
 }
 
@@ -319,7 +475,7 @@ function updateTask(id, event){
   if (data.get('date') != ''){
     item.date = data.get('date');
   }
-  listTasks();
+  updateTasks();
 }
 
 function updateTasks(){
@@ -332,7 +488,7 @@ TASK_FORM.addEventListener('submit', (event) => {
   addTask(event);
 });
 
-document.querySelectorAll('input[type="radio"][name="status"]').forEach(radio => {
+FILTER_FIELDSET.querySelectorAll('input[type="radio"][name="status"]').forEach(radio => {
     radio.addEventListener('change', (event) => {statusFilter = event.target.value; listTasks()});
 });
 

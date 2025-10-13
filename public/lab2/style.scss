@@ -59,10 +59,11 @@ footer{
 }
 
 .task-list{
-  width: 30rem;
+  width: 50rem;
   ul{
     display: flex;
     flex-direction: column;
+    list-style-type: none;
     width: 100%;
     padding: 0;
   }
@@ -70,13 +71,54 @@ footer{
     width: 100%;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
   }
   
 }
 
+.task-list__filter{
+  input{
+    transform: scale(2);
+    margin: 0.75rem 0.75rem;
+  }
+}
+
+.task-status{
+  width: 7rem;
+}
+
+.task-elem{
+  cursor: default;
+  background-color: #ddd;
+  padding: 0.25rem;
+  margin: 0.5rem;
+  border-radius: 0.25rem;
+  fieldset{
+    min-width: 5rem;
+    min-height: 2rem;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    input{
+      margin: 0 0.75rem;
+      transform: scale(2); 
+    }
+  }
+}
+
+.flex-break{
+  flex-basis: 100%;
+  height: 0;
+}
+
+.draggable-style{
+  cursor: grab;
+}
+
 input[type='submit'], button{
   cursor: pointer;
-  color: $color-white;
   border-radius: $border-radius-small;
   font-weight: 600;
   border: none;
