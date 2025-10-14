@@ -133,11 +133,100 @@ function listTasks(){
     let taskElem = document.createElement('li');
     taskElem.setAttribute('index', task.id)
     setTaskDOM(task, taskElem);
+    setTaskListeners(task, taskElem);
     listUL_clone.appendChild(taskElem);
   }
 }
 
 
+function addTask(){
+  let data = new FormData(task_form);
+  let highestID = 0;
+  if (taskList.length > 0){
+    let sortedTaskList = getSortedTaskList('idinv');
+    highestID = sortedTaskList[0].id;
+  }
+  taskList.push(
+    {
+      id: highestID + 1,
+      name: data.get('name'), 
+      description: data.get('description'),
+      date: data.get('date'),
+      status: 1
+    }
+  )
+  updateTasks();
+}
+
+
+function removeTask(id){
+  let item = taskList.find(item => item.id === parseInt(id));
+  if (item === undefined){
+    return;
+  } 
+  let n = taskList.indexOf(item);
+  taskList.splice(n, 1);
+  updateTasks();
+}
+
+
+function updateTask(id, event){
+  let item = taskList.find(item => item.id === parseInt(id));
+  if (item === undefined){
+    return;
+  }
+  const data = new FormData(event.target);
+  if (data.get('name') != ''){
+    item.name = data.get('name');
+  }
+  if (data.get('description') != ''){
+    item.description = data.get('description');
+  }
+  if (data.get('date') != ''){
+    item.date = data.get('date');
+  }
+  updateTasks();
+}
+
+
+function changeTaskStatus(id, newStatus){
+  let item = taskList.find(item => item.id === parseInt(id));
+  if (item === undefined){
+    return;
+  } 
+  item.status = newStatus;
+  updateTasks();
+}
+
+let dragStartID;
+function dragStart() {
+  dragStartID = +this.closest('li').getAttribute('index');
+}
+function dragEnter() {
+  this.classList.add('over');
+}
+function dragLeave() {
+  this.classList.remove('over');
+}
+function dragOver(e) {
+  e.preventDefault();
+}
+function dragDrop() {
+  const dragEndID = +this.getAttribute('index');
+  swapItems(dragStartID, dragEndID);
+  this.classList.remove('over');
+}
+function swapItems(fromID, toID) {
+  let item1 = taskList.find(item => item.id === parseInt(fromID));
+  let item2 = taskList.find(item => item.id === parseInt(toID));
+  if (item1 != undefined && item2 != undefined){
+    let n1 = taskList.indexOf(item1);
+    let n2 = taskList.indexOf(item2);
+    taskList[n1].id = toID;
+    taskList[n2].id = fromID;
+  } 
+  updateTasks();
+}
 
 // PAGE SETUP
 const page = document.body;
@@ -400,6 +489,60 @@ function setTaskDOM(task, taskElem){
   task_remove.classList.add('task__remove-btn');
   task_remove.id = 'task_remove-btn' + task.id;
   taskElem.appendChild(task_remove);
+}
+
+function setTaskListeners(task, taskElem){
+  if (sorttype === 'id' || sorttype === 'idinv'){
+    taskElem.draggable = true;
+    taskElem.addEventListener('dragstart', dragStart);
+    taskElem.addEventListener('drop', dragDrop);
+    taskElem.addEventListener('dragover', dragOver);
+    taskElem.addEventListener('dragenter', dragEnter);
+    taskElem.addEventListener('dragleave', dragLeave);
+  }
+
+  taskElem.querySelector('button[class="task__edit-btn"]').addEventListener('click', () =>{
+    if (taskElem.classList.contains('form-opened')){
+      removeEditForm(task.id);
+      taskElem.classList.remove('form-opened');
+    }
+    else{
+      createEditForm(task.id, taskElem, task);
+      taskElem.classList.add('form-opened');
+    }
+  })
+
+  taskElem.querySelector('button[class="task__remove-btn"]').addEventListener('click', () =>{
+    removeTask(task.id);
+  })
+}
+
+
+function createEditForm(id, taskElem){
+  let edit_form = document.createElement('form');
+  edit_form.id = 'edit_form' + id;
+  taskElem.appendChild(edit_form);
+  let edit_form_name = document.createElement('input');
+  edit_form_name.name = 'name';
+  edit_form.appendChild(edit_form_name);
+  let edit_form_description = document.createElement('input');
+  edit_form_description.name = 'description';
+  edit_form.appendChild(edit_form_description);
+  let edit_form_date = document.createElement('input');
+  edit_form_date.name = 'date';
+  edit_form_date.type = 'date';
+  edit_form.appendChild(edit_form_date);
+  let edit_form_submit = document.createElement('input');
+  edit_form_submit.type = 'submit';
+  edit_form.appendChild(edit_form_submit);
+  edit_form.addEventListener('submit', (event) => {
+    event.preventDefault(); 
+    updateTask(id, event);
+  });
+}
+
+function removeEditForm(id){
+  document.getElementById('edit_form' + id).remove();
 }
 
 
