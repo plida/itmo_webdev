@@ -6,7 +6,7 @@ $border-radius-small: 5px;
 $border-radius-regular: 10px;
 $color-black: #000;
 $color-white: #fff;
-$settings-basis: 49%;
+$settings-basis: 45%;
 
 body{
   background-color: #444;
@@ -14,6 +14,10 @@ body{
   button, input{
     font-family:"Montserrat", sans-serif;
   }
+}
+
+button, input[type='radio'], input[type='date'], input[type='submit']{
+  cursor: pointer;
 }
 
 .main-container{
@@ -68,15 +72,20 @@ nav{
 }
 
 .task-settings{
-  height: 4rem;
+  height: 6rem;
   display: flex;
   justify-content: space-between;
   &__search, fieldset, button{
     padding: 0;
     margin: 0;
     border: none;
-    background-color: $color-primary;
     border-radius: 0.25rem;
+  }
+  button{
+    background-color: $color-primary;
+  }
+  section{
+    margin: 0 0.25rem;
   }
   &__left{
     display: flex;
@@ -86,10 +95,28 @@ nav{
   }
   &__search{
     flex-basis: $settings-basis;
+    background-color: $color-primary;
+    display: flex;
+    align-items: center;
+    &-search{
+      flex-basis: 20%;
+    }
+    img{
+      height: 1.25rem;
+      width: auto;
+      margin: 0 0.5rem;
+    }
     input{
+      background-color: $color-secondary;
+      border-radius: $border-radius-small;
       border: none;
-      width: 100%;
-      height: 100%;
+      height: 80%;
+      flex-basis: 90%;
+    }
+    &-icon{
+      display: flex;
+      justify-content: center;
+      flex-basis: 5%;
     }
   }
   &__sort{
@@ -97,7 +124,7 @@ nav{
     justify-content: space-between;
     flex-basis: $settings-basis;
     button{
-      flex-basis: 49%;
+      flex-basis: calc($settings-basis + (50% - $settings-basis) / 3 * 2);
       cursor: pointer;
       transition: all $transition-primary;
       &:hover{
@@ -112,14 +139,40 @@ nav{
   }
   &__filter{
     flex-basis: 50%;
+    background-color: $color-secondary;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    span{
+    align-items: center;
+    &-legend{
+      display: flex;
+      align-items: center;
       flex-basis: $settings-basis;
+      border-radius: 0.25rem;
+      background-color: $color-primary;
+      width: 100%;
+      span{
+        padding: 0.25rem;
+        margin-left: 1rem;
+      }
     }
     &-buttons{
       display: flex;
+      align-items: center;
+      flex-basis: $settings-basis;
+      justify-content: space-evenly;
+      border-radius: 0.25rem;
+      background-color: $color-primary;
+      width: 100%;
+      div{
+        display: flex;
+        align-items: center;
+      }
+      input{
+        margin: 0 1rem;
+        height: 1rem;
+        width: 1rem;
+      }
     }
   }
 }

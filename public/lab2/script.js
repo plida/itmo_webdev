@@ -295,6 +295,12 @@ task_settings.appendChild(task_settings_left);
 const task_search = document.createElement('section');
 task_search.classList.add('task-settings__search');
 task_settings_left.appendChild(task_search);
+const task_search_label = document.createElement('div');
+task_search_label.classList.add('task-settings__search-icon');
+task_search.appendChild(task_search_label);
+const task_search_img = document.createElement('img');
+task_search_img.src = 'media/Magnifying_glass_icon.svg.png';
+task_search_label.appendChild(task_search_img);
 const task_search_input = document.createElement('input');
 task_search_input.addEventListener('keyup', (event) => {nameFilter = event.target.value; listTasks()})
 task_search.appendChild(task_search_input);
@@ -324,9 +330,12 @@ const task_filter = document.createElement('fieldset');
 task_filter.classList.add('task-settings__filter');
 task_settings.appendChild(task_filter);
 
-const task_filter_legend = document.createElement('span');
-task_filter_legend.textContent = 'filter by status';
+const task_filter_legend = document.createElement('div');
+task_filter_legend.classList.add('task-settings__filter-legend');
 task_filter.appendChild(task_filter_legend);
+const task_filter_legend_text = document.createElement('span');
+task_filter_legend_text.textContent = 'filter by status';
+task_filter_legend.appendChild(task_filter_legend_text);
 
 let task_filter_buttons = document.createElement('section');
 task_filter_buttons.classList.add('task-settings__filter-buttons');
