@@ -1,5 +1,5 @@
 // VARIABLES
-const STATUSES = ['', 'incomplete', 'in progress', 'complete'];
+const STATUSES = ['', 'new', 'in progress', 'done'];
 
 let taskList = [
   { id: 0, name: '1', description: 'aaa', date: "2018-07-22", status: 1 },
@@ -126,7 +126,7 @@ function listTasks(){
     if (task.name.toUpperCase().indexOf(nameFilter) === -1) {
       continue;
     }
-    if (task.status > 0 && task.status != statusFilter){
+    if (statusFilter > 0 && task.status != statusFilter){
       continue;
     }
 
@@ -276,48 +276,79 @@ footer_text.textContent = 'Plida 2025';
 footer.appendChild(footer_text);
 
 // MAIN
+const main_container = document.createElement('div');
+main_container.classList.add('main-container');
+main.appendChild(main_container);
+
 const task_window = document.createElement('section');
-main.appendChild(task_window);
+task_window.classList.add('task-window');
+main_container.appendChild(task_window);
+
+const task_settings = document.createElement('section');
+task_settings.classList.add('task-settings');
+task_window.appendChild(task_settings);
 
 
+const task_settings_left = document.createElement('div');
+task_settings_left.classList.add('task-settings__left');
+task_settings.appendChild(task_settings_left);
 const task_search = document.createElement('section');
-task_window.appendChild(task_search);
+task_search.classList.add('task-settings__search');
+task_settings_left.appendChild(task_search);
 const task_search_input = document.createElement('input');
+task_search_input.addEventListener('keyup', (event) => {nameFilter = event.target.value; listTasks()})
 task_search.appendChild(task_search_input);
 
 
 const task_sort = document.createElement('section');
-task_window.appendChild(task_sort);
+task_sort.classList.add('task-settings__sort');
+task_settings_left.appendChild(task_sort);
 const task_sort_date = document.createElement('button');
 task_sort_date.textContent = 'sort by date';
+task_sort_date.addEventListener('click', () => {
+  if (sorttype === "date"){sorttype = "dateinv";}
+  else{sorttype = "date";}
+  listTasks();
+})
 task_sort.appendChild(task_sort_date);
 const task_sort_id = document.createElement('button');
 task_sort_id.textContent = 'sort by ID';
+task_sort_id.addEventListener('click', () => {
+  if (sorttype === "id"){sorttype = "idinv";}
+  else{sorttype = "id";}
+  listTasks();
+})
 task_sort.appendChild(task_sort_id);
 
-
 const task_filter = document.createElement('fieldset');
-task_window.appendChild(task_filter);
-const task_filter_legend = document.createElement('legend');
+task_filter.classList.add('task-settings__filter');
+task_settings.appendChild(task_filter);
+
+const task_filter_legend = document.createElement('span');
 task_filter_legend.textContent = 'filter by status';
 task_filter.appendChild(task_filter_legend);
 
-const task_filter_incomplete = document.createElement('div');
-task_filter.appendChild(task_filter_incomplete);
-const task_filter_incomplete_input = document.createElement('input');
-task_filter_incomplete_input.type = 'radio';
-task_filter_incomplete_input.name = 'task-filter-status';
-task_filter_incomplete_input.id = 'task-filter-status__incomplete';
-task_filter_incomplete_input.value = 1;
-task_filter_incomplete_input.checked = 'checked';
-task_filter_incomplete.appendChild(task_filter_incomplete_input);
-const task_filter_incomplete_label = document.createElement('label');
-task_filter_incomplete_label.for = 'task-filter-status__incomplete';
-task_filter_incomplete_label.textContent = 'incomplete';
-task_filter_incomplete.appendChild(task_filter_incomplete_label);
+let task_filter_buttons = document.createElement('section');
+task_filter_buttons.classList.add('task-settings__filter-buttons');
+task_filter.appendChild(task_filter_buttons)
+
+
+const task_filter_new = document.createElement('div');
+task_filter_buttons.appendChild(task_filter_new);
+const task_filter_new_input = document.createElement('input');
+task_filter_new_input.type = 'radio';
+task_filter_new_input.name = 'task-filter-status';
+task_filter_new_input.id = 'task-filter-status__new';
+task_filter_new_input.value = 1;
+task_filter_new_input.checked = 'checked';
+task_filter_new.appendChild(task_filter_new_input);
+const task_filter_new_label = document.createElement('label');
+task_filter_new_label.for = 'task-filter-status__new';
+task_filter_new_label.textContent = 'new';
+task_filter_new.appendChild(task_filter_new_label);
 
 const task_filter_inprogress = document.createElement('div');
-task_filter.appendChild(task_filter_inprogress);
+task_filter_buttons.appendChild(task_filter_inprogress);
 const task_filter_inprogress_input = document.createElement('input');
 task_filter_inprogress_input.type = 'radio';
 task_filter_inprogress_input.name = 'task-filter-status';
@@ -329,35 +360,192 @@ task_filter_inprogress_label.for = 'task-filter-status__inprogress';
 task_filter_inprogress_label.textContent = 'in progress';
 task_filter_inprogress.appendChild(task_filter_inprogress_label);
 
-const task_filter_complete = document.createElement('div');
-task_filter.appendChild(task_filter_complete);
-const task_filter_complete_input = document.createElement('input');
-task_filter_complete_input.type = 'radio';
-task_filter_complete_input.name = 'task-filter-status';
-task_filter_complete_input.id = 'task-filter-status__complete';
-task_filter_complete_input.value = 3;
-task_filter_complete.appendChild(task_filter_complete_input);
-const task_filter_complete_label = document.createElement('label');
-task_filter_complete_label.for = 'task-filter-status__complete';
-task_filter_complete_label.textContent = 'complete';
-task_filter_complete.appendChild(task_filter_complete_label);
+const task_filter_done = document.createElement('div');
+task_filter_buttons.appendChild(task_filter_done);
+const task_filter_done_input = document.createElement('input');
+task_filter_done_input.type = 'radio';
+task_filter_done_input.name = 'task-filter-status';
+task_filter_done_input.id = 'task-filter-status__done';
+task_filter_done_input.value = 3;
+task_filter_done.appendChild(task_filter_done_input);
+const task_filter_done_label = document.createElement('label');
+task_filter_done_label.for = 'task-filter-status__done';
+task_filter_done_label.textContent = 'done';
+task_filter_done.appendChild(task_filter_done_label);
 
 const task_filter_all = document.createElement('div');
-task_filter.appendChild(task_filter_all);
+task_filter_buttons.appendChild(task_filter_all);
 const task_filter_all_input = document.createElement('input');
 task_filter_all_input.type = 'radio';
 task_filter_all_input.name = 'task-filter-status';
 task_filter_all_input.id = 'task-filter-status__all';
-task_filter_all_input.value = 4;
+task_filter_all_input.value = 0;
 task_filter_all.appendChild(task_filter_all_input);
 const task_filter_all_label = document.createElement('label');
 task_filter_all_label.for = 'task-filter-status__all';
 task_filter_all_label.textContent = 'all';
 task_filter_all.appendChild(task_filter_all_label);
 
+task_filter.querySelectorAll('input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', (event) => {statusFilter = event.target.value; listTasks()});
+});
+
+const task_list = document.createElement('ul');
+task_window.appendChild(task_list);
+
+
+function setTaskDOM(task, taskElem){
+  let task_name = document.createElement('span');
+  task_name.textContent = task.name;
+  taskElem.appendChild(task_name);
+  let task_description = document.createElement('p');
+  task_description.textContent = task.description;
+  taskElem.appendChild(task_description);
+  let task_date = document.createElement('span');
+  task_date.textContent = task.date;
+  taskElem.appendChild(task_date);
+
+  let task_edit = document.createElement('button');
+  task_edit.classList.add('task__edit-btn');
+  task_edit.id = 'task_edit-btn' + task.id;
+  taskElem.appendChild(task_edit);
+
+
+  let task_status_form = document.createElement('form');
+  taskElem.appendChild(task_status_form);
+  let task_status_fieldset = document.createElement('fieldset');
+  task_status_form.appendChild(task_status_fieldset);
+
+  let task_status_legend = document.createElement('legend');
+  task_status_legend.textContent = 'status';
+  task_status_fieldset.appendChild(task_status_legend);
+
+  let task_status_new = document.createElement('div');
+  task_status_fieldset.appendChild(task_status_new);
+  let task_status_new_input = document.createElement('input');
+  task_status_new_input.type = 'radio';
+  task_status_new_input.name = 'task-status';
+  task_status_new_input.id = 'task-status__new';
+  task_status_new_input.value = 1;
+  task_status_new_input.checked = 'checked';
+  task_status_new.appendChild(task_status_new_input);
+  let task_status_new_label = document.createElement('label');
+  task_status_new_label.for = 'task-status__new';
+  task_status_new_label.textContent = 'new';
+  task_status_new.appendChild(task_status_new_label);
+
+  let task_status_inprogress = document.createElement('div');
+  task_status_fieldset.appendChild(task_status_inprogress);
+  let task_status_inprogress_input = document.createElement('input');
+  task_status_inprogress_input.type = 'radio';
+  task_status_inprogress_input.name = 'task-status';
+  task_status_inprogress_input.id = 'task-status__inprogress';
+  task_status_inprogress_input.value = 2;
+  task_status_inprogress.appendChild(task_status_inprogress_input);
+  let task_status_inprogress_label = document.createElement('label');
+  task_status_inprogress_label.for = 'task-status__inprogress';
+  task_status_inprogress_label.textContent = 'in progress';
+  task_status_inprogress.appendChild(task_status_inprogress_label);
+
+  let task_status_done = document.createElement('div');
+  task_status_fieldset.appendChild(task_status_done);
+  let task_status_done_input = document.createElement('input');
+  task_status_done_input.type = 'radio';
+  task_status_done_input.name = 'task-status';
+  task_status_done_input.id = 'task-status__done';
+  task_status_done_input.value = 3;
+  task_status_done.appendChild(task_status_done_input);
+  let task_status_done_label = document.createElement('label');
+  task_status_done_label.for = 'task-status__done';
+  task_status_done_label.textContent = 'done';
+  task_status_done.appendChild(task_status_done_label);
+
+  switch (task.status){
+    case 1:
+      task_status_new_input.checked = 'checked';
+      break;
+    case 2:
+      task_status_inprogress_input.checked = 'checked';
+      break;
+    case 3:
+      task_status_done_input.checked = 'checked';
+      break;
+  }
+
+  let task_remove = document.createElement('button');
+  task_remove.classList.add('task__remove-btn');
+  task_remove.id = 'task_remove-btn' + task.id;
+  taskElem.appendChild(task_remove);
+}
+
+function createEditForm(id, taskElem){
+  let edit_form = document.createElement('form');
+  edit_form.id = 'edit_form' + id;
+  taskElem.appendChild(edit_form);
+  let edit_form_name = document.createElement('input');
+  edit_form_name.name = 'name';
+  edit_form.appendChild(edit_form_name);
+  let edit_form_description = document.createElement('input');
+  edit_form_description.name = 'description';
+  edit_form.appendChild(edit_form_description);
+  let edit_form_date = document.createElement('input');
+  edit_form_date.name = 'date';
+  edit_form_date.type = 'date';
+  edit_form.appendChild(edit_form_date);
+  let edit_form_submit = document.createElement('input');
+  edit_form_submit.type = 'submit';
+  edit_form.appendChild(edit_form_submit);
+  edit_form.addEventListener('submit', (event) => {
+    event.preventDefault(); 
+    updateTask(id, event);
+  });
+}
+
+function removeEditForm(id){
+  document.getElementById('edit_form' + id).remove();
+}
+
+function setTaskListeners(task, taskElem){
+  if (sorttype === 'id' || sorttype === 'idinv'){
+    taskElem.draggable = true;
+    taskElem.addEventListener('dragstart', dragStart);
+    taskElem.addEventListener('drop', dragDrop);
+    taskElem.addEventListener('dragover', dragOver);
+    taskElem.addEventListener('dragenter', dragEnter);
+    taskElem.addEventListener('dragleave', dragLeave);
+  }
+
+  taskElem.querySelector('button[class="task__edit-btn"]').addEventListener('click', () =>{
+    if (taskElem.classList.contains('form-opened')){
+      removeEditForm(task.id);
+      taskElem.classList.remove('form-opened');
+    }
+    else{
+      createEditForm(task.id, taskElem, task);
+      taskElem.classList.add('form-opened');
+    }
+  })
+
+  taskElem.querySelector('button[class="task__remove-btn"]').addEventListener('click', () =>{
+    removeTask(task.id);
+  })
+
+  taskElem.querySelector('#task-status__new').addEventListener('change', () => {
+		changeTaskStatus(task.id, 1);
+  })
+  taskElem.querySelector('#task-status__inprogress').addEventListener('change', () => {
+		changeTaskStatus(task.id, 2);
+  })
+  taskElem.querySelector('#task-status__done').addEventListener('change', () => {
+		changeTaskStatus(task.id, 3);
+  })
+}
+
+const add_task_window = document.createElement('section');
+main_container.appendChild(add_task_window);
 
 const task_form = document.createElement('form');
-task_window.appendChild(task_form);
+add_task_window.appendChild(task_form);
 
 const task_form_name = document.createElement('div');
 task_form.appendChild(task_form_name);
@@ -394,159 +582,14 @@ task_form_date.appendChild(task_form_date_input);
 
 const task_form_submit = document.createElement('input');
 task_form_submit.type = 'submit';
-task_form_submit.value = 'add new task';
 task_form.appendChild(task_form_submit);
+task_form.addEventListener('submit', (event) => {
+  event.preventDefault(); 
+  addTask(event);
+});
+task_form_submit.value = 'add new task';
 
-
-const task_list = document.createElement('ul');
-task_window.appendChild(task_list);
-
-
-function setTaskDOM(task, taskElem){
-  let task_name = document.createElement('span');
-  task_name.textContent = task.name;
-  taskElem.appendChild(task_name);
-  let task_description = document.createElement('p');
-  task_description.textContent = task.description;
-  taskElem.appendChild(task_description);
-  let task_date = document.createElement('span');
-  task_date.textContent = task.date;
-  taskElem.appendChild(task_date);
-
-  let task_edit = document.createElement('button');
-  task_edit.classList.add('task__edit-btn');
-  task_edit.id = 'task_edit-btn' + task.id;
-  taskElem.appendChild(task_edit);
-
-
-  let task_status = document.createElement('span');
-  task_status.classList.add('task__status');
-  task_status.textContent = STATUSES[task.status];
-
-  let task_status_form = document.createElement('form');
-  taskElem.appendChild(task_status_form);
-  let task_status_fieldset = document.createElement('fieldset');
-  task_status_form.appendChild(task_status_fieldset);
-
-  let task_status_legend = document.createElement('legend');
-  task_status_legend.textContent = 'status';
-  task_status_fieldset.appendChild(task_status);
-
-  let task_status_incomplete = document.createElement('div');
-  task_status.appendChild(task_status_incomplete);
-  let task_status_incomplete_input = document.createElement('input');
-  task_status_incomplete_input.type = 'radio';
-  task_status_incomplete_input.name = 'task-status';
-  task_status_incomplete_input.id = 'task-status__incomplete';
-  task_status_incomplete_input.value = 1;
-  task_status_incomplete_input.checked = 'checked';
-  task_status_incomplete.appendChild(task_status_incomplete_input);
-  let task_status_incomplete_label = document.createElement('label');
-  task_status_incomplete_label.for = 'task-status__incomplete';
-  task_status_incomplete_label.textContent = 'incomplete';
-  task_status_incomplete.appendChild(task_status_incomplete_label);
-
-  let task_status_inprogress = document.createElement('div');
-  task_status.appendChild(task_status_inprogress);
-  let task_status_inprogress_input = document.createElement('input');
-  task_status_inprogress_input.type = 'radio';
-  task_status_inprogress_input.name = 'task-status';
-  task_status_inprogress_input.id = 'task-status__inprogress';
-  task_status_inprogress_input.value = 2;
-  task_status_inprogress.appendChild(task_status_inprogress_input);
-  let task_status_inprogress_label = document.createElement('label');
-  task_status_inprogress_label.for = 'task-status__inprogress';
-  task_status_inprogress_label.textContent = 'in progress';
-  task_status_inprogress.appendChild(task_status_inprogress_label);
-
-  let task_status_complete = document.createElement('div');
-  task_status.appendChild(task_status_complete);
-  let task_status_complete_input = document.createElement('input');
-  task_status_complete_input.type = 'radio';
-  task_status_complete_input.name = 'task-status';
-  task_status_complete_input.id = 'task-status__complete';
-  task_status_complete_input.value = 3;
-  task_status_complete.appendChild(task_status_complete_input);
-  let task_status_complete_label = document.createElement('label');
-  task_status_complete_label.for = 'task-status__complete';
-  task_status_complete_label.textContent = 'complete';
-  task_status_complete.appendChild(task_status_complete_label);
-
-  switch (task.status){
-    case 1:
-      task_status_incomplete_input.checked = 'checked';
-      break;
-    case 2:
-      task_status_inprogress_input.checked = 'checked';
-      break;
-    case 3:
-      task_status_complete_input.checked = 'checked';
-      break;
-  }
-
-
-  let task_remove = document.createElement('button');
-  task_remove.classList.add('task__remove-btn');
-  task_remove.id = 'task_remove-btn' + task.id;
-  taskElem.appendChild(task_remove);
-}
-
-function setTaskListeners(task, taskElem){
-  if (sorttype === 'id' || sorttype === 'idinv'){
-    taskElem.draggable = true;
-    taskElem.addEventListener('dragstart', dragStart);
-    taskElem.addEventListener('drop', dragDrop);
-    taskElem.addEventListener('dragover', dragOver);
-    taskElem.addEventListener('dragenter', dragEnter);
-    taskElem.addEventListener('dragleave', dragLeave);
-  }
-
-  taskElem.querySelector('button[class="task__edit-btn"]').addEventListener('click', () =>{
-    if (taskElem.classList.contains('form-opened')){
-      removeEditForm(task.id);
-      taskElem.classList.remove('form-opened');
-    }
-    else{
-      createEditForm(task.id, taskElem, task);
-      taskElem.classList.add('form-opened');
-    }
-  })
-
-  taskElem.querySelector('button[class="task__remove-btn"]').addEventListener('click', () =>{
-    removeTask(task.id);
-  })
-}
-
-
-function createEditForm(id, taskElem){
-  let edit_form = document.createElement('form');
-  edit_form.id = 'edit_form' + id;
-  taskElem.appendChild(edit_form);
-  let edit_form_name = document.createElement('input');
-  edit_form_name.name = 'name';
-  edit_form.appendChild(edit_form_name);
-  let edit_form_description = document.createElement('input');
-  edit_form_description.name = 'description';
-  edit_form.appendChild(edit_form_description);
-  let edit_form_date = document.createElement('input');
-  edit_form_date.name = 'date';
-  edit_form_date.type = 'date';
-  edit_form.appendChild(edit_form_date);
-  let edit_form_submit = document.createElement('input');
-  edit_form_submit.type = 'submit';
-  edit_form.appendChild(edit_form_submit);
-  edit_form.addEventListener('submit', (event) => {
-    event.preventDefault(); 
-    updateTask(id, event);
-  });
-}
-
-function removeEditForm(id){
-  document.getElementById('edit_form' + id).remove();
-}
-
-
-if (localStorage.getItem('tasklist')){
+if (localStorage.getItem('tasklist-test')){
 	taskList = JSON.parse(localStorage.getItem('tasklist-test'));
 }
 
