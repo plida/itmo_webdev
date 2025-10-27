@@ -2,16 +2,16 @@
 const STATUSES = ['', 'new', 'in progress', 'done'];
 
 let taskList = [
-  { id: 0, name: '1', description: 'aaa', date: "2018-07-22", status: 1 },
-  { id: 1, name: '2', description: 'bbb', date: "2019-07-22", status: 2 },
-  { id: 2, name: '3', description: 'ccc', date: "2020-07-22", status: 3 },
-  { id: 3, name: '4', description: 'ccc', date: "2020-07-22", status: 1 },
-  { id: 4, name: '5', description: 'ccc', date: "2020-07-22", status: 2 },
-  { id: 5, name: '6', description: 'ccc', date: "2020-07-22", status: 3 },
-  { id: 6, name: '7', description: 'ccc', date: "2020-07-22", status: 1 },
-  { id: 7, name: '8', description: 'ccc', date: "2020-07-22", status: 2 },
-  { id: 8, name: '9', description: 'ccc', date: "2020-07-22", status: 3 },
-  { id: 9, name: '10', description: 'ccc', date: "2020-07-22", status: 1 },
+  { id: 0, name: '1', date: "2018-07-22", status: 1 },
+  { id: 1, name: '2', date: "2019-07-22", status: 2 },
+  { id: 2, name: '3', date: "2020-07-22", status: 3 },
+  { id: 3, name: '4', date: "2020-07-22", status: 1 },
+  { id: 4, name: '5', date: "2020-07-22", status: 2 },
+  { id: 5, name: '6', date: "2020-07-22", status: 3 },
+  { id: 6, name: '7', date: "2020-07-22", status: 1 },
+  { id: 7, name: '8', date: "2020-07-22", status: 2 },
+  { id: 8, name: '9', date: "2020-07-22", status: 3 },
+  { id: 9, name: '10', date: "2020-07-22", status: 1 },
 ];
 
 sorttype = "id";
@@ -141,6 +141,7 @@ function listTasks(){
 
 function addTask(){
   let data = new FormData(task_form);
+  console.log(data);
   let highestID = 0;
   if (taskList.length > 0){
     let sortedTaskList = getSortedTaskList('idinv');
@@ -149,9 +150,8 @@ function addTask(){
   taskList.push(
     {
       id: highestID + 1,
-      name: data.get('name'), 
-      description: data.get('description'),
-      date: data.get('date'),
+      name: data.get('task-name'), 
+      date: data.get('task-date'),
       status: 1
     }
   )
@@ -178,9 +178,6 @@ function updateTask(id, event){
   const data = new FormData(event.target);
   if (data.get('name') != ''){
     item.name = data.get('name');
-  }
-  if (data.get('description') != ''){
-    item.description = data.get('description');
   }
   if (data.get('date') != ''){
     item.date = data.get('date');
@@ -260,6 +257,10 @@ const header_logo_middle = document.createElement('h1');
 header_logo_middle.textContent = "Plida's cool To-Do list"
 header_logo_middle.classList.add('site-name-middle');
 header_logo_link.appendChild(header_logo_middle);
+const header_logo_short = document.createElement('h1');
+header_logo_short.textContent = "To-Do list"
+header_logo_short.classList.add('site-name-short');
+header_logo_link.appendChild(header_logo_short);
 
 const header_git = document.createElement('li');
 header_nav_list.appendChild(header_git);
@@ -404,12 +405,22 @@ task_window.appendChild(task_list);
 
 
 function setTaskDOM(task, taskElem){
+  switch (task.status){
+    case 1:
+      taskElem.classList.add('task-status_new');
+      break;
+    case 2:
+      taskElem.classList.add('task-status_inprogress');
+      break;
+    case 3:
+      taskElem.classList.add('task-status_done');
+      break;
+  }
+
   let task_name = document.createElement('span');
   task_name.textContent = task.name;
+  task_name.title = task.name;
   taskElem.appendChild(task_name);
-  let task_description = document.createElement('p');
-  task_description.textContent = task.description;
-  taskElem.appendChild(task_description);
   let task_date = document.createElement('span');
   task_date.textContent = task.date;
   taskElem.appendChild(task_date);
@@ -418,6 +429,9 @@ function setTaskDOM(task, taskElem){
   task_edit.classList.add('task__edit-btn');
   task_edit.id = 'task_edit-btn' + task.id;
   taskElem.appendChild(task_edit);
+  let task_edit_image = document.createElement('img');
+  task_edit_image.src = 'media/pencil-edit-button.svg';
+  task_edit.appendChild(task_edit_image);
 
 
   let task_status_form = document.createElement('form');
@@ -488,15 +502,28 @@ function setTaskDOM(task, taskElem){
 }
 
 function createEditForm(id, taskElem){
+  if (document.body.classList.contains('stop-scrolling')){
+    return;
+  }
+  let edit_form_container = document.createElement('div');
+  edit_form_container.classList.add('edit-form-container');
+  document.body.appendChild(edit_form_container);
+  document.body.classList.add('stop-scrolling');
+  
   let edit_form = document.createElement('form');
   edit_form.id = 'edit_form' + id;
-  taskElem.appendChild(edit_form);
+  edit_form_container.appendChild(edit_form);
+
+  let edit_form_close = document.createElement('button');
+  edit_form_close.textContent = 'close';
+  edit_form.appendChild(edit_form_close);
+  edit_form_close.addEventListener('click', (event) => {
+    removeEditForm(id);
+    document.body.classList.remove('stop-scrolling');
+  });
   let edit_form_name = document.createElement('input');
   edit_form_name.name = 'name';
   edit_form.appendChild(edit_form_name);
-  let edit_form_description = document.createElement('input');
-  edit_form_description.name = 'description';
-  edit_form.appendChild(edit_form_description);
   let edit_form_date = document.createElement('input');
   edit_form_date.name = 'date';
   edit_form_date.type = 'date';
@@ -507,11 +534,15 @@ function createEditForm(id, taskElem){
   edit_form.addEventListener('submit', (event) => {
     event.preventDefault(); 
     updateTask(id, event);
+    removeEditForm(id);
+    document.body.classList.remove('stop-scrolling');
   });
 }
 
 function removeEditForm(id){
-  document.getElementById('edit_form' + id).remove();
+  for (item of document.getElementsByClassName('edit-form-container')){
+    item.remove();
+  }
 }
 
 function setTaskListeners(task, taskElem){
@@ -566,16 +597,6 @@ const task_form_name_input = document.createElement('input');
 task_form_name_input.name = 'task-name';
 task_form_name_input.required = true;
 task_form_name.appendChild(task_form_name_input);
-
-const task_form_description = document.createElement('div');
-task_form.appendChild(task_form_description);
-const task_form_description_label = document.createElement('label');
-task_form_description_label.textContent = 'description:';
-task_form_description_label.for = 'task-description';
-task_form_description.appendChild(task_form_description_label);
-const task_form_description_input = document.createElement('textarea');
-task_form_description_input.name = 'task-description';
-task_form_description.appendChild(task_form_description_input);
 
 const task_form_date = document.createElement('div');
 task_form.appendChild(task_form_date);
