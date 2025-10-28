@@ -2,21 +2,21 @@
 const STATUSES = ['', 'new', 'in progress', 'done'];
 
 let taskList = [
-  { id: 0, name: 'WebProg lab2', date: "2015-10-22", status: 3 },
   { id: 1, name: 'PRINF lab4', date: "2025-11-01", status: 1 },
   { id: 2, name: 'Halloween art', date: "2025-10-31", status: 2 },
-  { id: 3, name: 'WebProg lab3', date: "2025-11-30", status: 2 },
+  { id: 3, name: 'WebProg lab3: 1024', date: "2025-11-30", status: 2 },
   { id: 4, name: 'WebProg lab4', date: "2025-12-31", status: 1 },
   { id: 5, name: 'Physics report 2', date: "2025-10-11", status: 3 },
   { id: 6, name: 'Physics report 3', date: "2025-10-25", status: 3 },
-  { id: 7, name: 'Physics report 4', date: "2025-11-8", status: 2 },
+  { id: 7, name: 'Physics report 4', date: "2025-11-08", status: 2 },
   { id: 8, name: 'Testing lab2', date: "2025-11-30", status: 1 },
   { id: 9, name: 'Testing lab3', date: "2025-12-31", status: 1 },
+  { id: 10, name: 'WebProg lab2: Task List', date: "2025-10-22", status: 3 },
 ];
 
-sorttype = "id";
+sorttype = "dateinv";
 nameFilter = "";
-statusFilter = 1;
+statusFilter = [1, 1, 0];
 
 
 
@@ -123,10 +123,10 @@ function listTasks(){
   let sortedTaskList = getSortedTaskList(sorttype);
 
   for (task of sortedTaskList){
-    if (task.name.toUpperCase().indexOf(nameFilter) === -1) {
+    if (task.name.toUpperCase().indexOf(nameFilter.toUpperCase()) === -1) {
       continue;
     }
-    if (statusFilter > 0 && task.status != statusFilter){
+    if (statusFilter[task.status-1] == 0){
       continue;
     }
 
@@ -225,6 +225,35 @@ function swapItems(fromID, toID) {
   updateTasks();
 }
 
+function updateSortButtons(){
+  switch (sorttype){
+    case 'id':
+      task_sort_id.classList.add('sort_active');
+      task_sort_id.classList.remove('sort_active-inv');
+      task_sort_date.classList.remove('sort_active');
+      task_sort_date.classList.remove('sort_active-inv');
+      break;
+    case 'idinv':
+      task_sort_id.classList.remove('sort_active');
+      task_sort_id.classList.add('sort_active-inv');
+      task_sort_date.classList.remove('sort_active');
+      task_sort_date.classList.remove('sort_active-inv');
+      break;
+    case 'date':
+      task_sort_id.classList.remove('sort_active');
+      task_sort_id.classList.remove('sort_active-inv');
+      task_sort_date.classList.add('sort_active');
+      task_sort_date.classList.remove('sort_active-inv');
+      break;
+    case 'dateinv':
+      task_sort_id.classList.remove('sort_active');
+      task_sort_id.classList.remove('sort_active-inv');
+      task_sort_date.classList.remove('sort_active');
+      task_sort_date.classList.add('sort_active-inv');
+      break;
+  }
+}
+
 // PAGE SETUP
 const page = document.body;
 const header = document.createElement('header');
@@ -250,15 +279,15 @@ const header_logo_image = document.createElement('img');
 header_logo_image.src = 'media/3.png';
 header_logo_link.appendChild(header_logo_image);
 const header_logo_long = document.createElement('h1');
-header_logo_long.textContent = "Plida's cool To-Do list \r\nWeb programming lab work #2"
+header_logo_long.textContent = "Plida's cool ToDo list \r\nWeb programming lab work #2"
 header_logo_long.classList.add('site-name-long');
 header_logo_link.appendChild(header_logo_long);
 const header_logo_middle = document.createElement('h1');
-header_logo_middle.textContent = "Plida's cool To-Do list"
+header_logo_middle.textContent = "Plida's cool ToDo list"
 header_logo_middle.classList.add('site-name-middle');
 header_logo_link.appendChild(header_logo_middle);
 const header_logo_short = document.createElement('h1');
-header_logo_short.textContent = "To-Do list"
+header_logo_short.textContent = ""
 header_logo_short.classList.add('site-name-short');
 header_logo_link.appendChild(header_logo_short);
 
@@ -313,16 +342,18 @@ task_settings_left.appendChild(task_sort);
 const task_sort_date = document.createElement('button');
 task_sort_date.textContent = 'sort by date';
 task_sort_date.addEventListener('click', () => {
-  if (sorttype === "date"){sorttype = "dateinv";}
-  else{sorttype = "date";}
+  if (sorttype === 'date'){sorttype = 'dateinv';}
+  else{sorttype = 'date';}
+  updateSortButtons();
   listTasks();
 })
 task_sort.appendChild(task_sort_date);
 const task_sort_id = document.createElement('button');
 task_sort_id.textContent = 'sort by ID';
 task_sort_id.addEventListener('click', () => {
-  if (sorttype === "id"){sorttype = "idinv";}
-  else{sorttype = "id";}
+  if (sorttype === 'id'){sorttype = 'idinv';}
+  else{sorttype = 'id';}
+  updateSortButtons();
   listTasks();
 })
 task_sort.appendChild(task_sort_id);
@@ -344,9 +375,10 @@ task_filter.appendChild(task_filter_buttons)
 
 
 const task_filter_new = document.createElement('div');
+task_filter_new.classList.add('task-filter__new');
 task_filter_buttons.appendChild(task_filter_new);
 const task_filter_new_input = document.createElement('input');
-task_filter_new_input.type = 'radio';
+task_filter_new_input.type = 'checkbox';
 task_filter_new_input.name = 'task-filter-status';
 task_filter_new_input.id = 'task-filter-status__new';
 task_filter_new_input.value = 1;
@@ -358,12 +390,14 @@ task_filter_new_label.textContent = 'new';
 task_filter_new.appendChild(task_filter_new_label);
 
 const task_filter_inprogress = document.createElement('div');
+task_filter_inprogress.classList.add('task-filter__inprogress');
 task_filter_buttons.appendChild(task_filter_inprogress);
 const task_filter_inprogress_input = document.createElement('input');
-task_filter_inprogress_input.type = 'radio';
+task_filter_inprogress_input.type = 'checkbox';
 task_filter_inprogress_input.name = 'task-filter-status';
 task_filter_inprogress_input.id = 'task-filter-status__inprogress';
 task_filter_inprogress_input.value = 2;
+task_filter_inprogress_input.checked = 'checked';
 task_filter_inprogress.appendChild(task_filter_inprogress_input);
 const task_filter_inprogress_label = document.createElement('label');
 task_filter_inprogress_label.for = 'task-filter-status__inprogress';
@@ -371,9 +405,10 @@ task_filter_inprogress_label.textContent = 'in progress';
 task_filter_inprogress.appendChild(task_filter_inprogress_label);
 
 const task_filter_done = document.createElement('div');
+task_filter_done.classList.add('task-filter__done');
 task_filter_buttons.appendChild(task_filter_done);
 const task_filter_done_input = document.createElement('input');
-task_filter_done_input.type = 'radio';
+task_filter_done_input.type = 'checkbox';
 task_filter_done_input.name = 'task-filter-status';
 task_filter_done_input.id = 'task-filter-status__done';
 task_filter_done_input.value = 3;
@@ -383,21 +418,15 @@ task_filter_done_label.for = 'task-filter-status__done';
 task_filter_done_label.textContent = 'done';
 task_filter_done.appendChild(task_filter_done_label);
 
-const task_filter_all = document.createElement('div');
-task_filter_buttons.appendChild(task_filter_all);
-const task_filter_all_input = document.createElement('input');
-task_filter_all_input.type = 'radio';
-task_filter_all_input.name = 'task-filter-status';
-task_filter_all_input.id = 'task-filter-status__all';
-task_filter_all_input.value = 0;
-task_filter_all.appendChild(task_filter_all_input);
-const task_filter_all_label = document.createElement('label');
-task_filter_all_label.for = 'task-filter-status__all';
-task_filter_all_label.textContent = 'all';
-task_filter_all.appendChild(task_filter_all_label);
-
-task_filter.querySelectorAll('input[type="radio"]').forEach(radio => {
-    radio.addEventListener('change', (event) => {statusFilter = event.target.value; listTasks()});
+task_filter.querySelectorAll('input[type="checkbox"]').forEach(radio => {
+    radio.addEventListener('change', (event) => {
+      if (radio.checked){
+        statusFilter[event.target.value-1] = 1; listTasks();
+      }  
+      else{
+        statusFilter[event.target.value-1] = 0; listTasks();
+      }
+    });
 });
 
 const task_list = document.createElement('ul');
@@ -405,34 +434,45 @@ task_window.appendChild(task_list);
 
 
 function setTaskDOM(task, taskElem){
+  let task_card = document.createElement('div');
+  task_card.classList.add('task__card');
+  taskElem.appendChild(task_card);
+
   switch (task.status){
     case 1:
-      taskElem.classList.add('task-status_new');
+      taskElem.classList.add('task-container_new');
+      task_card.classList.add('task-status_new');
       break;
     case 2:
-      taskElem.classList.add('task-status_inprogress');
+      taskElem.classList.add('task-container_inprogress');
+      task_card.classList.add('task-status_inprogress');
       break;
     case 3:
-      taskElem.classList.add('task-status_done');
+      taskElem.classList.add('task-container_done');
+      task_card.classList.add('task-status_done');
       break;
   }
 
+  let task_info = document.createElement('div');
+  task_info.classList.add('task__info');
+  task_card.appendChild(task_info);
   let task_name = document.createElement('span');
   task_name.textContent = task.name;
   task_name.title = task.name;
-  taskElem.appendChild(task_name);
+  task_info.appendChild(task_name);
   let task_date = document.createElement('span');
   task_date.textContent = task.date;
-  taskElem.appendChild(task_date);
+  task_info.appendChild(task_date);
 
   let task_status_form = document.createElement('form');
+  task_status_form.classList.add('task-status__form');
   taskElem.appendChild(task_status_form);
   let task_status_fieldset = document.createElement('fieldset');
   task_status_form.appendChild(task_status_fieldset);
 
   let task_status_legend = document.createElement('legend');
   task_status_legend.textContent = 'status';
-  task_status_fieldset.appendChild(task_status_legend);
+  //task_status_fieldset.appendChild(task_status_legend);
 
   let task_status_new = document.createElement('div');
   task_status_fieldset.appendChild(task_status_new);
@@ -446,7 +486,7 @@ function setTaskDOM(task, taskElem){
   let task_status_new_label = document.createElement('label');
   task_status_new_label.for = 'task-status__new';
   task_status_new_label.textContent = 'new';
-  task_status_new.appendChild(task_status_new_label);
+  //task_status_new.appendChild(task_status_new_label);
 
   let task_status_inprogress = document.createElement('div');
   task_status_fieldset.appendChild(task_status_inprogress);
@@ -459,7 +499,7 @@ function setTaskDOM(task, taskElem){
   let task_status_inprogress_label = document.createElement('label');
   task_status_inprogress_label.for = 'task-status__inprogress';
   task_status_inprogress_label.textContent = 'in progress';
-  task_status_inprogress.appendChild(task_status_inprogress_label);
+  //task_status_inprogress.appendChild(task_status_inprogress_label);
 
   let task_status_done = document.createElement('div');
   task_status_fieldset.appendChild(task_status_done);
@@ -472,7 +512,7 @@ function setTaskDOM(task, taskElem){
   let task_status_done_label = document.createElement('label');
   task_status_done_label.for = 'task-status__done';
   task_status_done_label.textContent = 'done';
-  task_status_done.appendChild(task_status_done_label);
+  //task_status_done.appendChild(task_status_done_label);
 
   switch (task.status){
     case 1:
@@ -485,10 +525,19 @@ function setTaskDOM(task, taskElem){
       task_status_done_input.checked = 'checked';
       break;
   }
+  
+  let task_bottom = document.createElement('div');
+  task_bottom.classList.add('task__bottom');
+  task_card.appendChild(task_bottom);
 
+  
+  let task_id = document.createElement('span');
+  task_id.textContent = '#' + task.id;
+  task_bottom.appendChild(task_id);
+  
   let task_buttons = document.createElement('div');
   task_buttons.classList.add('task__buttons');
-  taskElem.appendChild(task_buttons);
+  task_bottom.appendChild(task_buttons);
 
   let task_edit = document.createElement('button');
   task_edit.classList.add('task__edit-btn');
@@ -521,6 +570,7 @@ function createEditForm(id, taskElem){
   edit_form_close.textContent = 'close';
   edit_form.appendChild(edit_form_close);
   edit_form_close.addEventListener('click', (event) => {
+    taskElem.classList.remove('form-opened');
     removeEditForm(id);
     document.body.classList.remove('stop-scrolling');
   });
@@ -631,4 +681,5 @@ if (localStorage.getItem('tasklist-test')){
 	taskList = JSON.parse(localStorage.getItem('tasklist-test'));
 }
 
+updateSortButtons();
 updateTasks();
