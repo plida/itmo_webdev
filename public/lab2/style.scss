@@ -25,15 +25,15 @@ button, input[type='radio'], input[type='date'], input[type='submit']{
 .main-container{
   display: flex;
   width: 85%;
-  justify-content: space-between;
+  justify-content: space-around;
   margin: 0 auto;
 }
 
 .task-window{
-  flex-basis: 66%;
+  flex-basis: 60%;
 }
 .add-task-window{
-  flex-basis: 33%
+  flex-basis: 20%
 }
 
 nav{
@@ -72,6 +72,16 @@ nav{
   h1 {
     white-space: pre;
   }
+}
+
+.site-name-long{
+  display: block;
+}
+.site-name-middle{
+  display: none;
+}
+.site-name-short{
+  display: none;
 }
 
 .task-settings{
@@ -147,6 +157,9 @@ nav{
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    h2{
+      margin: 0 0 0 2rem;
+    }
     &-legend{
       display: flex;
       align-items: center;
@@ -170,9 +183,10 @@ nav{
       div{
         display: flex;
         align-items: center;
+        margin: 0 0.125rem;
       }
       input{
-        margin: 0 1rem;
+        margin: 0 0.5rem;
         height: 1rem;
         width: 1rem;
       }
@@ -223,6 +237,13 @@ nav{
       cursor: default;
     }
   }
+  .task__buttons{
+    display: flex;
+    margin-top: 0.5rem;
+    button{
+      margin: 0 0.5rem;
+    }
+  }
   button{
     border: none;
     border-radius: $border-radius-small;
@@ -235,7 +256,6 @@ nav{
   justify-content: center;
   width: 2rem;
   height: 2rem;
-  margin: 0.5rem 0.125rem 0 0.125rem;
 }
 
 .task__remove-btn::before{
@@ -252,7 +272,6 @@ nav{
   align-items: center;
   width: 2rem;
   height: 2rem;
-  margin: 0.125rem;
   img{
     width: 1.25rem;
     height: 1.25rem;
@@ -282,11 +301,38 @@ html{
   align-items: center;
 }
 
+.task-form{
+  background-color: $color-primary;
+  border-radius: $border-radius-regular;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  padding: 1rem;
+  max-width: 15rem;
+  h2{
+      margin: 0;
+    }
+  div{
+    display: flex;
+    flex-direction: column;
+  }
+  label{
+    width: 5rem;
+    display: inline-block;
+  }
+  input[type='submit']{
+    margin-top: 1rem;
+  }
+}
+
+
 @media only screen and (max-width: 850px){
   .task-settings{
     flex-direction: column;
     height: auto;
     flex-basis: 100%;
+    margin: auto;
+    max-width: 20rem;
   }
   .task-window{
     ul{
@@ -297,9 +343,7 @@ html{
       }
     }
   }
-  .main-container{
-    flex-direction: column-reverse;
-  }
+  
   nav h1{
     white-space: normal;
   }
@@ -314,6 +358,9 @@ html{
         border-width: 0.3125rem;
       }
     }
+  }
+  .main-container{
+    flex-direction: column-reverse;
   }
   nav{
     img{

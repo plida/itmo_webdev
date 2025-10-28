@@ -2,16 +2,16 @@
 const STATUSES = ['', 'new', 'in progress', 'done'];
 
 let taskList = [
-  { id: 0, name: '1', date: "2018-07-22", status: 1 },
-  { id: 1, name: '2', date: "2019-07-22", status: 2 },
-  { id: 2, name: '3', date: "2020-07-22", status: 3 },
-  { id: 3, name: '4', date: "2020-07-22", status: 1 },
-  { id: 4, name: '5', date: "2020-07-22", status: 2 },
-  { id: 5, name: '6', date: "2020-07-22", status: 3 },
-  { id: 6, name: '7', date: "2020-07-22", status: 1 },
-  { id: 7, name: '8', date: "2020-07-22", status: 2 },
-  { id: 8, name: '9', date: "2020-07-22", status: 3 },
-  { id: 9, name: '10', date: "2020-07-22", status: 1 },
+  { id: 0, name: 'WebProg lab2', date: "2015-10-22", status: 3 },
+  { id: 1, name: 'PRINF lab4', date: "2025-11-01", status: 1 },
+  { id: 2, name: 'Halloween art', date: "2025-10-31", status: 2 },
+  { id: 3, name: 'WebProg lab3', date: "2025-11-30", status: 2 },
+  { id: 4, name: 'WebProg lab4', date: "2025-12-31", status: 1 },
+  { id: 5, name: 'Physics report 2', date: "2025-10-11", status: 3 },
+  { id: 6, name: 'Physics report 3', date: "2025-10-25", status: 3 },
+  { id: 7, name: 'Physics report 4', date: "2025-11-8", status: 2 },
+  { id: 8, name: 'Testing lab2', date: "2025-11-30", status: 1 },
+  { id: 9, name: 'Testing lab3', date: "2025-12-31", status: 1 },
 ];
 
 sorttype = "id";
@@ -334,7 +334,7 @@ task_settings.appendChild(task_filter);
 const task_filter_legend = document.createElement('div');
 task_filter_legend.classList.add('task-settings__filter-legend');
 task_filter.appendChild(task_filter_legend);
-const task_filter_legend_text = document.createElement('span');
+const task_filter_legend_text = document.createElement('h2');
 task_filter_legend_text.textContent = 'filter by status';
 task_filter_legend.appendChild(task_filter_legend_text);
 
@@ -425,15 +425,6 @@ function setTaskDOM(task, taskElem){
   task_date.textContent = task.date;
   taskElem.appendChild(task_date);
 
-  let task_edit = document.createElement('button');
-  task_edit.classList.add('task__edit-btn');
-  task_edit.id = 'task_edit-btn' + task.id;
-  taskElem.appendChild(task_edit);
-  let task_edit_image = document.createElement('img');
-  task_edit_image.src = 'media/pencil-edit-button.svg';
-  task_edit.appendChild(task_edit_image);
-
-
   let task_status_form = document.createElement('form');
   taskElem.appendChild(task_status_form);
   let task_status_fieldset = document.createElement('fieldset');
@@ -495,10 +486,22 @@ function setTaskDOM(task, taskElem){
       break;
   }
 
+  let task_buttons = document.createElement('div');
+  task_buttons.classList.add('task__buttons');
+  taskElem.appendChild(task_buttons);
+
+  let task_edit = document.createElement('button');
+  task_edit.classList.add('task__edit-btn');
+  task_edit.id = 'task_edit-btn' + task.id;
+  task_buttons.appendChild(task_edit);
+  let task_edit_image = document.createElement('img');
+  task_edit_image.src = 'media/pencil-edit-button.svg';
+  task_edit.appendChild(task_edit_image);
+
   let task_remove = document.createElement('button');
   task_remove.classList.add('task__remove-btn');
   task_remove.id = 'task_remove-btn' + task.id;
-  taskElem.appendChild(task_remove);
+  task_buttons.appendChild(task_remove);
 }
 
 function createEditForm(id, taskElem){
@@ -585,7 +588,12 @@ const add_task_window = document.createElement('section');
 main_container.appendChild(add_task_window);
 
 const task_form = document.createElement('form');
+task_form.classList.add('task-form');
 add_task_window.appendChild(task_form);
+
+const task_form_heading = document.createElement('h2');
+task_form_heading.textContent = 'New task';
+task_form.appendChild(task_form_heading);
 
 const task_form_name = document.createElement('div');
 task_form.appendChild(task_form_name);
@@ -617,7 +625,7 @@ task_form.addEventListener('submit', (event) => {
   event.preventDefault(); 
   addTask(event);
 });
-task_form_submit.value = 'add new task';
+task_form_submit.value = 'add';
 
 if (localStorage.getItem('tasklist-test')){
 	taskList = JSON.parse(localStorage.getItem('tasklist-test'));
