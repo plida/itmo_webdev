@@ -225,30 +225,24 @@ function swapItems(fromID, toID) {
   updateTasks();
 }
 
+
 function updateSortButtons(){
+  task_sort_id.classList.remove('sort_active');
+  task_sort_id.classList.remove('sort_active-inv');
+  task_sort_date.classList.remove('sort_active');
+  task_sort_date.classList.remove('sort_active-inv');
+
   switch (sorttype){
     case 'id':
       task_sort_id.classList.add('sort_active');
-      task_sort_id.classList.remove('sort_active-inv');
-      task_sort_date.classList.remove('sort_active');
-      task_sort_date.classList.remove('sort_active-inv');
       break;
     case 'idinv':
-      task_sort_id.classList.remove('sort_active');
       task_sort_id.classList.add('sort_active-inv');
-      task_sort_date.classList.remove('sort_active');
-      task_sort_date.classList.remove('sort_active-inv');
       break;
     case 'date':
-      task_sort_id.classList.remove('sort_active');
-      task_sort_id.classList.remove('sort_active-inv');
       task_sort_date.classList.add('sort_active');
-      task_sort_date.classList.remove('sort_active-inv');
       break;
     case 'dateinv':
-      task_sort_id.classList.remove('sort_active');
-      task_sort_id.classList.remove('sort_active-inv');
-      task_sort_date.classList.remove('sort_active');
       task_sort_date.classList.add('sort_active-inv');
       break;
   }
@@ -340,7 +334,6 @@ const task_sort = document.createElement('section');
 task_sort.classList.add('task-settings__sort');
 task_settings_left.appendChild(task_sort);
 const task_sort_date = document.createElement('button');
-task_sort_date.textContent = 'sort by date';
 task_sort_date.addEventListener('click', () => {
   if (sorttype === 'date'){sorttype = 'dateinv';}
   else{sorttype = 'date';}
@@ -348,8 +341,11 @@ task_sort_date.addEventListener('click', () => {
   listTasks();
 })
 task_sort.appendChild(task_sort_date);
+const task_sort_date_text = document.createElement('span');
+task_sort_date_text.textContent = 'sort by date';
+task_sort_date.appendChild(task_sort_date_text);
+
 const task_sort_id = document.createElement('button');
-task_sort_id.textContent = 'sort by ID';
 task_sort_id.addEventListener('click', () => {
   if (sorttype === 'id'){sorttype = 'idinv';}
   else{sorttype = 'id';}
@@ -357,6 +353,9 @@ task_sort_id.addEventListener('click', () => {
   listTasks();
 })
 task_sort.appendChild(task_sort_id);
+const task_sort_id_text = document.createElement('span');
+task_sort_id_text.textContent = 'sort by id';
+task_sort_id.appendChild(task_sort_id_text);
 
 const task_filter = document.createElement('fieldset');
 task_filter.classList.add('task-settings__filter');
@@ -553,7 +552,7 @@ function setTaskDOM(task, taskElem){
   task_buttons.appendChild(task_remove);
 }
 
-function createEditForm(id, taskElem){
+function createEditForm(task, taskElem){
   if (document.body.classList.contains('stop-scrolling')){
     return;
   }
@@ -563,7 +562,7 @@ function createEditForm(id, taskElem){
   document.body.classList.add('stop-scrolling');
   
   let edit_form = document.createElement('form');
-  edit_form.id = 'edit_form' + id;
+  edit_form.id = 'edit_form' + task.id;
   edit_form_container.appendChild(edit_form);
 
   let edit_form_close = document.createElement('button');
@@ -571,23 +570,25 @@ function createEditForm(id, taskElem){
   edit_form.appendChild(edit_form_close);
   edit_form_close.addEventListener('click', (event) => {
     taskElem.classList.remove('form-opened');
-    removeEditForm(id);
+    removeEditForm(task.id);
     document.body.classList.remove('stop-scrolling');
   });
   let edit_form_name = document.createElement('input');
   edit_form_name.name = 'name';
+  edit_form_name.value = task.name;
   edit_form.appendChild(edit_form_name);
   let edit_form_date = document.createElement('input');
   edit_form_date.name = 'date';
   edit_form_date.type = 'date';
+  edit_form_date.value = task.date;
   edit_form.appendChild(edit_form_date);
   let edit_form_submit = document.createElement('input');
   edit_form_submit.type = 'submit';
   edit_form.appendChild(edit_form_submit);
   edit_form.addEventListener('submit', (event) => {
     event.preventDefault(); 
-    updateTask(id, event);
-    removeEditForm(id);
+    updateTask(task.id, event);
+    removeEditForm(task.id);
     document.body.classList.remove('stop-scrolling');
   });
 }
@@ -614,7 +615,7 @@ function setTaskListeners(task, taskElem){
       taskElem.classList.remove('form-opened');
     }
     else{
-      createEditForm(task.id, taskElem, task);
+      createEditForm(task, taskElem, task);
       taskElem.classList.add('form-opened');
     }
   })
@@ -635,6 +636,7 @@ function setTaskListeners(task, taskElem){
 }
 
 const add_task_window = document.createElement('section');
+add_task_window.classList.add('add-task-window');
 main_container.appendChild(add_task_window);
 
 const task_form = document.createElement('form');
@@ -642,7 +644,7 @@ task_form.classList.add('task-form');
 add_task_window.appendChild(task_form);
 
 const task_form_heading = document.createElement('h2');
-task_form_heading.textContent = 'New task';
+task_form_heading.textContent = 'new task';
 task_form.appendChild(task_form_heading);
 
 const task_form_name = document.createElement('div');

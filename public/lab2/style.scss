@@ -4,6 +4,8 @@ $color-secondary: #a6c6ef;
 $transition-primary: 0.25s ease;
 $border-radius-small: 0.3125rem;
 $border-radius-regular: 0.625rem;
+$border-size-regular: 0.125rem;
+$arrow-size: 2rem;
 $color-black: #000;
 $color-white: #fff;
 $color-active: #a6c6ef;
@@ -15,6 +17,7 @@ $task_scale: 1;
 body{
   background-color: $color-background;
   min-height: 100svh;
+  width: 95%;
   margin: 0 auto;
   font-family: "Montserrat", sans-serif;
   button, input{
@@ -30,16 +33,19 @@ button, input[type='radio'], input[type='date'], input[type='submit']{
   background-color: $color-secondary;
 }
 
+input{
+  border: $border-size-regular solid $color-background;
+}
+
 .main-container{
   display: flex;
   width: 85%;
   justify-content: space-around;
-  margin: 1.5rem auto 0.5rem auto;
-  
+  margin: 1.5rem auto 0.5rem auto; 
 }
 
 header{
-  width: 85%;
+  width: 100%;
   background-color: $color-primary;
   border: 0.0625rem solid $color-primary;
   border-radius: $border-radius-regular;
@@ -47,10 +53,10 @@ header{
 }
 
 .task-window{
-  flex-basis: 60%;
+  flex-basis: 66%;
 }
 .add-task-window{
-  flex-basis: 20%
+  flex-basis: 33%
 }
 
 nav{
@@ -128,21 +134,12 @@ nav{
   display: none;
 }
 
-.sort_active{
-  background-color: $color-active !important;
-}
-
-.sort_active-inv{
-  background-color: $color-active-inv !important;
-}
-
 .task-settings{
   height: 6rem;
   display: flex;
   justify-content: space-between;
-  &__search, fieldset, button{
+  &__search, fieldset{
     padding: 0;
-    margin: 0;
     border: none;
     border-radius: 0.25rem;
   }
@@ -171,9 +168,7 @@ nav{
     input{
       background-color: $color-secondary;
       border-radius: $border-radius-small;
-      border: none;
-      margin: 0.5rem;
-      height: 80%;
+      line-height: 2rem;
       flex-basis: 90%;
     }
     &-icon{
@@ -187,6 +182,9 @@ nav{
     justify-content: space-between;
     flex-basis: $settings-basis;
     button{
+      display: flex;
+      justify-content: center;
+      align-items: center;
       flex-basis: calc($settings-basis + (50% - $settings-basis) / 3 * 2);
       cursor: pointer;
       transition: all $transition-primary;
@@ -199,6 +197,37 @@ nav{
         filter: brightness(50%);
       }
     }
+
+    span{
+      position: relative;
+      z-index: 2;
+    }
+
+    .sort_active:after, .sort_active-inv:after{
+      content: "";
+      width: 0; 
+      height: 0; 
+      position: absolute;
+      border-left: $arrow-size solid transparent;
+      border-right: $arrow-size solid transparent;
+    }
+    
+    .sort_active{
+      background-color: $color-active !important;
+      &:after{
+        border-bottom: $arrow-size solid rgba(255, 0, 0, 0.25);
+      }
+    }
+
+    .sort_active-inv{
+      background-color: $color-active-inv !important;
+      &:after{
+        border-top: $arrow-size solid rgba(0, 0, 255, 0.25);
+      }
+    }
+
+
+
   }
   &__filter{
     flex-basis: 49%;
@@ -236,8 +265,8 @@ nav{
         margin: 0 0.125rem;
       }
       input{
-        height: 1rem;
-        width: 1rem;
+        height: 2rem;
+        width: 2rem;
         margin: 0 0.5rem;
         cursor: pointer;
       }
@@ -365,7 +394,6 @@ nav{
     }
   }
   button{
-    border: none;
     border-radius: $border-radius-small;
   }
 }
@@ -426,9 +454,13 @@ html{
   border-radius: $border-radius-regular;
   display: flex;
   flex-direction: column;
-  margin: auto;
   padding: 1rem;
   max-width: 15rem;
+  margin: 0 auto 1rem auto;
+  input{
+    border-radius: $border-radius-small;
+    line-height: 2rem;
+  }
   h2{
       margin: 0;
     }
@@ -445,18 +477,40 @@ html{
   }
 }
 
+footer{
+  width: 100%;
+	background-color: $color-primary;
+  border: 0.0625rem solid $color-primary;
+  border-radius: $border-radius-regular;
+  padding: 1rem 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+  margin: auto auto 0 auto;
+}
+
+@media only screen and (max-width: 1020px){
+  .main-container{
+    width: 90%;
+  }
+}
 
 @media only screen and (max-width: 850px){
-  header, footer, .main-container{
+  .task-settings__filter-legend{
+    display: none;
+  }
+  .task-settings__filter-buttons{
+    flex-direction: column;
+    align-items: flex-start;
+    flex-basis: 100%;
+  }
+  body{
     width: 95%;
   }
   $border-radius-regular: 0.2rem;
   .task-settings{
-    flex-direction: column;
-    height: auto;
     flex-basis: 100%;
     margin: auto;
-    max-width: 20rem;
   }
   .task-window{
     ul{
@@ -478,18 +532,6 @@ html{
   nav h1{
     white-space: normal;
   }
-}
-
-footer{
-  width: 85%;
-	background-color: $color-primary;
-  border: 0.0625rem solid $color-primary;
-  border-radius: $border-radius-regular;
-  padding: 1rem 0;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-  margin: auto auto 0 auto;
 }
 
 @media only screen and (max-width: 572px){
