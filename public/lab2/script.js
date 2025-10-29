@@ -14,11 +14,9 @@ let taskList = [
   { id: 10, name: 'WebProg lab2: Task List', date: "2025-10-22", status: 3 },
 ];
 
-sorttype = "dateinv";
+sorttype = "date";
 nameFilter = "";
 statusFilter = [1, 1, 0];
-
-
 
 
 // SORTING
@@ -43,20 +41,20 @@ function compareIDInv( a, b ) {
 }
 
 function compareDate( a, b ) {
-  if ( a.date < b.date ){
+  if ( a.date > b.date ){
     return 1;
   }
-  if ( a.date > b.date ){
+  if ( a.date < b.date ){
     return -1;
   }
   return 0;
 }
 
 function compareDateInv( a, b ) {
-  if ( a.date < b.date ){
+  if ( a.date > b.date ){
     return -1;
   }
-  if ( a.date > b.date ){
+  if ( a.date < b.date ){
     return 1;
   }
   return 0;
@@ -87,7 +85,9 @@ function compareStatusInv( a, b ) {
 
 // TASKS
 function updateTasks(){
+  taskList = getSortedTaskList('id');
   localStorage.setItem('tasklist-test', JSON.stringify(taskList)); 
+  localStorage.setItem('sorttype', JSON.stringify(sorttype)); 
   listTasks();
 }
 
@@ -121,7 +121,6 @@ function listTasks(){
   task_window.appendChild(listUL_clone);
   listUL.remove();
   let sortedTaskList = getSortedTaskList(sorttype);
-
   for (task of sortedTaskList){
     if (task.name.toUpperCase().indexOf(nameFilter.toUpperCase()) === -1) {
       continue;
@@ -141,7 +140,6 @@ function listTasks(){
 
 function addTask(){
   let data = new FormData(task_form);
-  console.log(data);
   let highestID = 0;
   if (taskList.length > 0){
     let sortedTaskList = getSortedTaskList('idinv');
@@ -195,6 +193,7 @@ function changeTaskStatus(id, newStatus){
   updateTasks();
 }
 
+
 let dragStartID;
 function dragStart() {
   dragStartID = +this.closest('li').getAttribute('index');
@@ -208,19 +207,34 @@ function dragLeave() {
 function dragOver(e) {
   e.preventDefault();
 }
-function dragDrop() {
-  const dragEndID = +this.getAttribute('index');
-  swapItems(dragStartID, dragEndID);
+function dragDrop(e) {
+  let dragEnd = this;
+  if (dragEnd.classList.draggable == false){
+    return;
+  }
+  let dragEndID = +this.getAttribute('index');
+  let dragEndCoord = this.getBoundingClientRect();
+  let dragEndCenter = dragEndCoord.x + dragEndCoord.width / 2;
+  let cursorPosition = e.clientX;
+  const nextElement = (cursorPosition < dragEndCenter) ?
+      dragEnd :
+      dragEnd.nextElementSibling;
   this.classList.remove('over');
+  insertBefore(dragStartID, dragEndID);
 }
-function swapItems(fromID, toID) {
-  let item1 = taskList.find(item => item.id === parseInt(fromID));
-  let item2 = taskList.find(item => item.id === parseInt(toID));
+function insertBefore(movingID, beforeID) {
+  taskList = getSortedTaskList('id')
+  let item1 = taskList.find(item => item.id === parseInt(movingID));
+  let item2 = taskList.find(item => item.id === parseInt(beforeID));
   if (item1 != undefined && item2 != undefined){
     let n1 = taskList.indexOf(item1);
     let n2 = taskList.indexOf(item2);
-    taskList[n1].id = toID;
-    taskList[n2].id = fromID;
+    console.log(n1, n2);
+    taskList.splice(n2, 0, taskList.splice(n1, 1)[0]);
+    console.log(taskList);
+    for (let i = 0; i < taskList.length; i++){
+      taskList[i].id = i+1;
+    }
   } 
   updateTasks();
 }
@@ -246,6 +260,8 @@ function updateSortButtons(){
       task_sort_date.classList.add('sort_active-inv');
       break;
   }
+
+  localStorage.setItem('sorttype', JSON.stringify(sorttype)); 
 }
 
 // PAGE SETUP
@@ -326,7 +342,7 @@ const task_search_img = document.createElement('img');
 task_search_img.src = 'media/Magnifying_glass_icon.svg.png';
 task_search_label.appendChild(task_search_img);
 const task_search_input = document.createElement('input');
-task_search_input.addEventListener('keyup', (event) => {nameFilter = event.target.value; listTasks()})
+task_search_input.addEventListener('keyup', (event) => {nameFilter = event.target.value.trim(); listTasks()})
 task_search.appendChild(task_search_input);
 
 
@@ -583,6 +599,7 @@ function createEditForm(task, taskElem){
   edit_form_date.value = task.date;
   edit_form.appendChild(edit_form_date);
   let edit_form_submit = document.createElement('input');
+  edit_form_submit.value = 'edit task #' + task.id;
   edit_form_submit.type = 'submit';
   edit_form.appendChild(edit_form_submit);
   edit_form.addEventListener('submit', (event) => {
@@ -644,7 +661,7 @@ task_form.classList.add('task-form');
 add_task_window.appendChild(task_form);
 
 const task_form_heading = document.createElement('h2');
-task_form_heading.textContent = 'new task';
+task_form_heading.textContent = 'add a new task';
 task_form.appendChild(task_form_heading);
 
 const task_form_name = document.createElement('div');
@@ -681,6 +698,7 @@ task_form_submit.value = 'add';
 
 if (localStorage.getItem('tasklist-test')){
 	taskList = JSON.parse(localStorage.getItem('tasklist-test'));
+  sorttype = JSON.parse(localStorage.getItem('sorttype'));
 }
 
 updateSortButtons();

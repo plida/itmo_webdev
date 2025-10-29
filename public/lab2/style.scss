@@ -28,13 +28,38 @@ body{
   justify-content: space-between;
 }
 
-button, input[type='radio'], input[type='date'], input[type='submit']{
+button, input[type='radio'], input[type='submit']{
   cursor: pointer;
   background-color: $color-secondary;
 }
 
+input[type='date']{
+  cursor: pointer;
+}
+
 input{
   border: $border-size-regular solid $color-background;
+  transition: all $transition-primary;
+  &:hover{
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.05);
+    filter: brightness(85%);
+  }
+  &:active, &:focus{
+    box-shadow: none;
+    filter: brightness(100%);
+  }
+}
+button{
+  border: 0 solid $color-background;
+  transition: all $transition-primary;
+  &:hover{
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.05);
+    filter: brightness(85%);
+  }
+  &:active{
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.05);
+    filter: brightness(65%);
+  }
 }
 
 .main-container{
@@ -56,7 +81,13 @@ header{
   flex-basis: 66%;
 }
 .add-task-window{
-  flex-basis: 33%
+  flex-basis: 33%;
+  display: flex;
+  justify-content: center;
+}
+
+li[draggable='true']{
+  cursor: grab;
 }
 
 nav{
@@ -151,6 +182,7 @@ nav{
     flex-direction: column;
     justify-content: space-between;
     flex-basis: $settings-basis;
+    min-width: 0;
   }
   &__search{
     flex-basis: $settings-basis;
@@ -170,6 +202,8 @@ nav{
       border-radius: $border-radius-small;
       line-height: 2rem;
       flex-basis: 90%;
+      margin: 0.5rem;
+      min-width: 0;
     }
     &-icon{
       display: flex;
@@ -180,22 +214,19 @@ nav{
   &__sort{
     display: flex;
     justify-content: space-between;
-    flex-basis: $settings-basis;
+    flex-basis: 40%;
+
+    min-width: 0;
+    overflow: hidden;
+
     button{
       display: flex;
       justify-content: center;
       align-items: center;
-      flex-basis: calc($settings-basis + (50% - $settings-basis) / 3 * 2);
+      flex-basis: calc($settings-basis + (50% - $settings-basis) / 3 * 2 - 0.5%);
       cursor: pointer;
-      transition: all $transition-primary;
-      &:hover{
-        box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.05);
-        filter: brightness(75%);
-      }
-      &:active{
-        box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.05);
-        filter: brightness(50%);
-      }
+      min-width: 0;
+      overflow: hidden;
     }
 
     span{
@@ -254,15 +285,25 @@ nav{
     &-buttons{
       display: flex;
       align-items: center;
+      flex-shrink: 1;
       flex-basis: $settings-basis;
       justify-content: space-evenly;
       border-radius: 0.25rem;
       background-color: $color-primary;
       width: 100%;
       div{
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
         display: flex;
         align-items: center;
-        margin: 0 0.125rem;
+        margin: 0 0.25rem;
+      }
+      label{
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        min-width: 0;
       }
       input{
         height: 2rem;
@@ -279,10 +320,16 @@ nav{
     padding: 0;
     list-style-type: none;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax($task_min-width, 1fr));
+    grid-template-columns: repeat(4, minmax(10rem, 1fr));
     grid-template-rows: repeat(auto-fit, minmax(10rem, 1fr));
+    align-items: end;
     column-gap: 1rem;
-
+  }
+  li{
+    transition: 0.15s ease;
+  }
+  li:hover{
+    transform: scale(1.05);
   }
   .task-container_{
     &new form{
@@ -321,16 +368,12 @@ nav{
   }
   .task__card{
     border-style: inset;
-    border-width: 0.75rem;
+    border-width: 0.5rem;
     background-color: $color-primary;
     padding: 1rem 1rem 0.25rem 1rem;
-    cursor: grab;
     display: flex;
     flex-direction: column;
     align-items: center;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
     .task__info{
       width: 95%;
       display: flex;
@@ -381,7 +424,6 @@ nav{
     fieldset{
       border: none;
       display: flex;
-      font-size: 1rem;
       padding: 0.5rem 0;
       margin: 0;
       div{
@@ -447,6 +489,24 @@ html{
   display: flex;
   justify-content: center;
   align-items: center;
+  form{
+    background-color: $color-primary;
+    border-radius: $border-radius-regular;
+    border: $border-size-regular solid $color-background;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    height: 10rem;
+    justify-content: space-evenly;
+    button, input{
+      border-radius: $border-radius-small;
+      line-height: 1.5rem;
+    }
+    button{
+      width: 40%;
+      border: $border-size-regular solid $color-background;
+    }
+  }
 }
 
 .task-form{
@@ -456,7 +516,9 @@ html{
   flex-direction: column;
   padding: 1rem;
   max-width: 15rem;
-  margin: 0 auto 1rem auto;
+  min-width: 12.5rem;
+  max-height: 12.5rem;
+  margin: 0 1rem;
   input{
     border-radius: $border-radius-small;
     line-height: 2rem;
@@ -489,13 +551,16 @@ footer{
   margin: auto auto 0 auto;
 }
 
-@media only screen and (max-width: 1020px){
+@media only screen and (max-width: 1080px){
+  .task-form{
+    margin: 0 0 0 1rem;
+  }
   .main-container{
     width: 90%;
   }
 }
 
-@media only screen and (max-width: 850px){
+@media only screen and (max-width: 1080px){
   .task-settings__filter-legend{
     display: none;
   }
@@ -503,6 +568,10 @@ footer{
     flex-direction: column;
     align-items: flex-start;
     flex-basis: 100%;
+    input{
+      height: 1rem;
+      width: 1rem;
+    }
   }
   body{
     width: 95%;
@@ -514,7 +583,7 @@ footer{
   }
   .task-window{
     ul{
-      grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+      grid-template-columns: repeat(2, minmax(9rem, 1fr));
       grid-template-rows: repeat(auto-fit, minmax(9rem, 1fr));
       li{
         border-width: 0.5rem;
@@ -534,10 +603,19 @@ footer{
   }
 }
 
-@media only screen and (max-width: 572px){
+@media only screen and (max-width: 720px){
+  .add-task-window{
+    transform: scale(1);
+    width: 100%;
+    margin: 0 auto 1rem auto;
+  }
+  .task-form{
+    margin: 0 0;
+    width: 100%;
+  }
   .task-window{
     ul{
-      grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+      grid-template-columns: repeat(2, minmax(8rem, 1fr));
       grid-template-rows: repeat(auto-fit, minmax(8rem, 1fr));
       li{
         border-width: 0.3125rem;
@@ -550,6 +628,12 @@ footer{
     .task-status__form{
       border-width: 0.25rem;
     }
+  }
+  .task-settings__filter{
+    flex-basis: 39%;
+  }
+  .task-settings__left{
+    flex-basis: 57%;
   }
   .main-container{
     flex-direction: column-reverse;
@@ -577,7 +661,7 @@ footer{
     }
   }
   body{
-    font-size: 0.75rem;
+    font-size: 0.75rem !important;
   }
   .task__remove-btn{
     width: 1.5rem;
