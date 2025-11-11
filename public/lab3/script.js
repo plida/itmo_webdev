@@ -1,5 +1,12 @@
 // VARIABLES
 
+// FUNCTIONS
+
+function moveBoard(direction){
+  direction = direction.toLowerCase();
+  console.log(direction);
+}
+
 // PAGE SETUP
 const page = document.body;
 const header = document.createElement('header');
@@ -50,6 +57,51 @@ header_git_link.appendChild(header_git_image);
 const footer_text = document.createElement('span');
 footer_text.textContent = 'Plida 2025';
 footer.appendChild(footer_text);
+
+// MAIN
+const main_container = document.createElement('div');
+main_container.classList.add('main-container');
+main.appendChild(main_container);
+
+const board = document.createElement('section');
+board.classList.add('gameboard');
+main_container.appendChild(board);
+for (let i = 1; i < 17; i++){
+  let board_tile = document.createElement('div');
+  board_tile.classList.add('gameboard__tile');
+  board.appendChild(board_tile);
+}
+
+const controls = document.createElement('section');
+controls.classList.add('controls');
+main_container.appendChild(controls);
+const controls_left = document.createElement('button');
+controls_left.classList.add('controls__arrow');
+controls_left.classList.add('controls__arrow-left');
+controls_left.addEventListener('click', () => {moveBoard('left')});
+controls.appendChild(controls_left);
+const controls_right = document.createElement('button');
+controls_right.classList.add('controls__arrow');
+controls_right.classList.add('controls__arrow-right');
+controls_right.addEventListener('click', () => {moveBoard('right')});
+controls.appendChild(controls_right);
+const controls_down = document.createElement('button');
+controls_down.classList.add('controls__arrow');
+controls_down.classList.add('controls__arrow-down');
+controls_down.addEventListener('click', () => {moveBoard('down')});
+controls.appendChild(controls_down);
+const controls_up = document.createElement('button');
+controls_up.classList.add('controls__arrow');
+controls_up.classList.add('controls__arrow-up');
+controls_up.addEventListener('click', () => {moveBoard('up')});
+controls.appendChild(controls_up);
+
+document.addEventListener("keydown", (e) => {
+  if (e.code.indexOf('Arrow') == 0){
+    moveBoard(e.code.slice(5));
+  }
+})
+
 
 
 if (localStorage.getItem('tasklist-test')){

@@ -1,6 +1,6 @@
-$color-background: #F5E9DA;
-$color-primary: #F5D389;
-$color-secondary: #F5C489;
+$color-background: #f8f7f3;
+$color-primary: #F5E9DA;
+$color-secondary: #F5D389;
 $transition-primary: 0.25s ease;
 $border-radius-small: 0.3125rem;
 $border-radius-regular: 0.625rem;
@@ -13,6 +13,7 @@ $color-active-inv: #89b3ea;
 $settings-basis: 49%;
 $task_min-width: 12.5rem;
 $task_scale: 1;
+$tile-size: 6rem;
 
 body{
   background-color: $color-background;
@@ -35,9 +36,11 @@ button, input[type='radio'], input[type='submit']{
 
 .main-container{
   display: flex;
-  width: 85%;
+  flex-direction: column;
   justify-content: space-around;
-  margin: 1.5rem auto 0.5rem auto; 
+  align-items: center;
+  width: 85%;
+  margin: 1.5rem auto; 
 }
 
 header{
@@ -131,6 +134,76 @@ footer{
   margin: auto auto 0 auto;
 }
 
+.gameboard{
+  background-color: $color-background;
+
+  padding: 0.125rem;
+  border-radius: 0.5rem;
+
+  display: grid;
+  grid-template-columns:  repeat(4, $tile-size);
+  grid-template-rows: repeat(4, $tile-size);
+
+  &__tile{
+    background-color: $color-primary;
+    margin: 0.125rem;
+    border-radius: 0.5rem;
+  }
+}
+
+.controls{
+  display: grid;
+  grid-template-columns: repeat(3, calc($tile-size - 1rem));
+  grid-template-rows: repeat(2, calc($tile-size - 1rem));
+  margin: 2rem auto auto auto;
+  &__arrow{
+    border: none;
+    border-radius: 0.25rem;
+    margin: 0.125rem;
+    font-size: 2rem;
+    &-left{
+      grid-column: 1;
+      grid-row: 2;
+    }
+    &-up{
+      grid-column: 2;
+      grid-row: 1;
+    }
+    &-right{
+      grid-column: 3;
+      grid-row: 2;
+    }
+    &-down{
+      grid-column: 2;
+      grid-row: 2;
+    }
+    &:after{
+      display: inline-block;
+      font-family: sans-serif;
+      position: relative;
+      top: -0.125rem;
+      height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    &-left:after{
+      content: '\2190';
+    }
+    &-up:after{
+      content: '\2191';
+    }
+    &-right:after{
+      content: '\2192';
+    }
+    &-down:after{
+      content: '\2193';
+    }
+  }
+
+}
+
+
 @media only screen and (max-width: 1080px){
   .main-container{
     width: 90%;
@@ -184,6 +257,18 @@ footer{
 }
 
 @media only screen and (max-width: 512px){
+  $tile-size: 4rem;
+  .gameboard{
+    grid-template-columns: repeat(4, $tile-size);
+    grid-template-rows: repeat(4, $tile-size);
+  }
+  .controls{
+    grid-template-columns: repeat(3, calc($tile-size - 0.5rem));
+    grid-template-rows: repeat(2, calc($tile-size - 0.5rem));
+    &__arrow{
+      font-size: 1.5rem;
+    }
+  }
   .site-name-long{
     display: none;
   }
