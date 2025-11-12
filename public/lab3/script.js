@@ -19,29 +19,188 @@ let tileColors = [
 
 // FUNCTIONS
 
+function moveBoard(direction){
+  direction = direction.toLowerCase();
+  switch (direction){
+    case 'up':
+      moveBoardUp();
+      break;
+    case 'right':
+      moveBoardRight();
+      break;
+    case 'down':
+      moveBoardDown();
+      break;
+    case 'left':
+      moveBoardLeft();
+      break;
+  }
+  addNewRandomTile();
+  updateBoardVisual();
+}
+
+const combineTile = [
+  { transform: "rotate(0) scale(1)" },
+  { transform: "rotate(0) scale(1.25)" },
+  { transform: "rotate(0) scale(1)" },
+];
+
+const combineTileTiming = {
+  duration: 200,
+  iterations: 1,
+};
+
+function moveBoardUp(){
+  let visualTiles = board.querySelectorAll('.gameboard__tile');
+  for (let i = 0; i < 3; i++){
+    console.log(i);
+    for (let j = 0; j < 4; j++){
+      if (gameBoard[i][j] != 0){
+        for (let k = i + 1; k < 4; k++){
+          if (gameBoard[k][j] == gameBoard[i][j]){
+            console.log(i, j, k, "|", gameBoard[k][j], gameBoard[i][j]);
+            gameBoard[i][j] = gameBoard[i][j] * 2;
+            visualTiles[i*4 + j].animate(combineTile, combineTileTiming)
+            gameBoard[k][j] = 0;
+            break
+          }
+          else if (gameBoard[k][j] != 0){
+            break
+          }
+        }
+      }
+      else{
+        for (let k = i + 1; k < 4; k++){
+          if (gameBoard[k][j] != 0){
+            gameBoard[i][j] = gameBoard[k][j];
+            gameBoard[k][j] = 0;
+            break
+          }
+        }
+      }
+    }
+  }
+}
+function moveBoardRight(){
+  let visualTiles = board.querySelectorAll('.gameboard__tile');
+  for (let i = 0; i < 4; i++){
+    for (let j = 3; j > 0; j--){
+      if (gameBoard[i][j] != 0){
+        for (let k = j - 1; k >= 0; k--){
+          if (gameBoard[i][k] == gameBoard[i][j]){
+            gameBoard[i][j] = gameBoard[i][j] * 2;
+            visualTiles[i*4 + j].animate(combineTile, combineTileTiming)
+            gameBoard[i][k] = 0;
+            break
+          }
+          else if (gameBoard[k][j] != 0){
+            break
+          }
+        }
+      }
+      else{
+        for (let k = j - 1; k >= 0; k--){
+          if (gameBoard[i][k] != 0){
+            gameBoard[i][j] = gameBoard[i][k];
+            gameBoard[i][k] = 0;
+            break
+          }
+        }
+      }
+    }
+  }
+}
+function moveBoardDown(){
+  let visualTiles = board.querySelectorAll('.gameboard__tile');
+  for (let i = 3; i > 0; i--){
+    for (let j = 0; j < 4; j++){
+      if (gameBoard[i][j] != 0){
+        for (let k = i - 1; k >= 0; k--){
+          if (gameBoard[k][j] == gameBoard[i][j]){
+            gameBoard[i][j] = gameBoard[i][j] * 2;
+            visualTiles[i*4 + j].animate(combineTile, combineTileTiming)
+            gameBoard[k][j] = 0;
+            break
+          }
+          else if (gameBoard[k][j] != 0){
+            break
+          }
+        }
+      }
+      else{
+        for (let k = i - 1; k >= 0; k--){
+          if (gameBoard[k][j] != 0){
+            gameBoard[i][j] = gameBoard[k][j];
+            gameBoard[k][j] = 0;
+            break
+          }
+        }
+      }
+    }
+  }
+}
+function moveBoardLeft(){
+  let visualTiles = board.querySelectorAll('.gameboard__tile');
+  for (let i = 0; i < 4; i++){
+    for (let j = 0; j < 3; j++){
+      if (gameBoard[i][j] != 0){
+        for (let k = j + 1; k < 4; k++){
+          if (gameBoard[i][k] == gameBoard[i][j]){
+            gameBoard[i][j] = gameBoard[i][j] * 2;
+            visualTiles[i*4 + j].animate(combineTile, combineTileTiming)
+            gameBoard[i][k] = 0;
+            break
+          }
+          else if (gameBoard[k][j] != 0){
+            break
+          }
+        }
+      }
+      else{
+        for (let k = j + 1; k < 4; k++){
+          if (gameBoard[i][k] != 0){
+            gameBoard[i][j] = gameBoard[i][k];
+            gameBoard[i][k] = 0;
+            break
+          }
+        }
+      }
+    }
+  }
+}
+
+
 function getBaseLog(x, y) {
   return Math.log(y) / Math.log(x);
 }
 
-function moveBoard(direction){
-  direction = direction.toLowerCase();
-  console.log(direction);
-}
 
 function getRandomInteger(max){
   return Math.floor(Math.random() * max)
 }
+const newTileAppear = [
+  { transform: "rotate(0) scale(0)" },
+  { transform: "rotate(0) scale(1)" },
+];
+
+const newTileTiming = {
+  duration: 200,
+  iterations: 1,
+};
 
 function addNewRandomTile(){
   let freeTiles = getFreeTiles();
   if (freeTiles.length == 0){
+    alert('the game is over!');
+    startNewGame();
     return;
   }
   let randomRow = freeTiles[getRandomInteger(freeTiles.length)];
   let newTileCoords = randomRow[getRandomInteger(randomRow.length)];
   let tileValue = (getRandomInteger(2) + 1) * 2;
   gameBoard[newTileCoords[0]][newTileCoords[1]] = tileValue;
-  console.log("Added tile " + tileValue + " at: " + newTileCoords);
+  let visualTiles = board.querySelectorAll('.gameboard__tile');
+  visualTiles[newTileCoords[0]*4 + newTileCoords[1]].animate(newTileAppear, newTileTiming);
 }
 
 function getFreeTiles(){
@@ -62,14 +221,22 @@ function getFreeTiles(){
 
 function startNewGame(){
   gameBoard = [
+    [4, 0, 0, 0],
+    [0, 2, 0, 0],
+    [0, 0, 2, 0],
+    [0, 0, 0, 4]
+  ]
+  //color testing
+  /*gameBoard = [
     [0, 2, 4, 8],
     [16, 32, 64, 128],
     [256, 512, 1024, 2048],
     [16384, 131072, 1048576, 1073741824]
-  ]
-  //for (let i = 0; i < getRandomInteger(3) + 1; i++){
-    //addNewRandomTile();
-  //}
+  ]*/
+  /*for (let i = 0; i < getRandomInteger(3) + 1; i++){
+    console.log(getFreeTiles().length);
+    addNewRandomTile();
+  }*/
   updateBoardVisual();
 }
 
@@ -82,6 +249,9 @@ function updateBoardVisual(){
       chosenTile.setAttribute('tile-value', tileValue);
       if (tileValue != 0){
         chosenTile.textContent = tileValue;
+      }
+      else{
+        chosenTile.textContent = '';
       }
       let tileVisual = Math.max(1, tileFont - tileFontRate * tileValue.toString().length);
       chosenTile.style.fontSize = tileVisual.toString() + 'rem';
@@ -119,6 +289,7 @@ function pickHex(color1, color2, weight) {
 function changeTileColor(tile){
   let tileValue = tile.getAttribute('tile-value');
   if (tileValue == 0){
+    tile.style.background = '';
     return;
   }
   let tileValuePercent = Math.min(1, getBaseLog(2, tileValue) / getBaseLog(2, maxTileValue));
@@ -126,13 +297,8 @@ function changeTileColor(tile){
   let firstColor = tileColors[gradientEdge];
   let secondColor = tileColors[Math.min(gradientEdge + 1, tileColors.length - 1)];
   let weight = (tileValuePercent * 100 / 25 - (Math.min(gradientEdge) - 1));
-  console.log('Visualising tile with value ', tileValue);
-  console.log('Calculating weight: ', tileValuePercent, tileValuePercent * 100 / 25, weight);
-  console.log('Calculating color: ', firstColor, secondColor, gradientEdge);
   let color = pickHex(firstColor, secondColor, weight);
-  console.log('color: ', color);
   tile.style.background = 'rgb('+color[0]+', '+color[1]+', '+color[2]+')';
-  console.log('\n');
 }
 
 // PAGE SETUP
@@ -195,9 +361,12 @@ const board = document.createElement('section');
 board.classList.add('gameboard');
 main_container.appendChild(board);
 for (let i = 1; i < 17; i++){
+  let board_tile_wrapper = document.createElement('div');
+  board_tile_wrapper.classList.add('gameboard__tile-wrapper');
+  board.appendChild(board_tile_wrapper);
   let board_tile = document.createElement('div');
   board_tile.classList.add('gameboard__tile');
-  board.appendChild(board_tile);
+  board_tile_wrapper.appendChild(board_tile);
 }
 
 const controls = document.createElement('section');

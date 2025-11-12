@@ -146,15 +146,20 @@ footer{
 
   &__tile{
     background-color: $color-primary;
-    margin: 0.125rem;
     border-radius: 0.5rem;
-
+    
     font-size: 2rem;
     overflow: hidden;
-
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    &-wrapper{
+      margin: 0.125rem;
+      border-radius: 0.5rem;
+      font-size: 2rem;
+      background-color: $color-primary;
+    }
   }
 }
 
