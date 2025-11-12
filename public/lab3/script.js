@@ -5,12 +5,6 @@ let gameBoard = [
   [0, 0, 0, 0],
   [0, 0, 0, 0]
 ]
-let visualGameBoard = [
-  [0, 0, 0, 0],
-  [0, 0, 0, 0],
-  [0, 0, 0, 0],
-  [0, 0, 0, 0]
-]
 let gameScore = 0;
 let tileFont = 0;
 let tileFontRate = 0;
@@ -25,7 +19,7 @@ let tileColors = [
 ]
 
 let isBoardPaused = false;
-let animationSpeed = 1000;
+let animationSpeed = 300;
 
 // FUNCTIONS
 
@@ -40,9 +34,8 @@ function updateBoard(){
   updateBoardVisual();
   setTimeout(function(){
     addNewRandomTile();
-    visualGameBoard = gameBoard;
-    updateBoardVisual();
     isBoardPaused = false;
+    updateBoardVisual();
   }, pauseTime)
 }
 
@@ -108,7 +101,6 @@ function moveBoard(direction){
 function moveTileList(tiles, visual, axis, dir = 1){
   let shift = 0;
   let n = tiles.length;
-  let visualTiles = tiles;
   for (let k = 0; k < n; k++){
     if (tiles[k] == 0){
       for (let l = k + 1; l < n; l++){
@@ -122,7 +114,6 @@ function moveTileList(tiles, visual, axis, dir = 1){
           }
           animateTile('moved', visual[k], shift);
           tiles[l] = 0;
-          visualTiles = tiles;
           break;
         }
       }
@@ -146,7 +137,6 @@ function moveTileList(tiles, visual, axis, dir = 1){
             animateTile('combined', visual[k]);
             updateBoardVisual();
           }, animationSpeed)
-          visualTiles = tiles;
           tiles[l] = 0;
           updateScore(tiles[l]*2);
         }
@@ -154,8 +144,7 @@ function moveTileList(tiles, visual, axis, dir = 1){
       }
     }
   }
-  console.log(tiles,visualTiles);
-  return tiles, visualTiles;
+  return tiles;
 }
 
 function moveBoardUp(){
@@ -169,13 +158,12 @@ function moveBoardUp(){
       for (let k = i; k < 4; k++){
         visualColumn.push(visualTiles[k * 4 + j]);
       }
-      let changedColumn, changedColumnVisual = moveTileList(column, visualColumn, 'vertical', 1);
+      let changedColumn = moveTileList(column, visualColumn, 'vertical', 1);
       if (changedColumn == -1){
         continue;
       }
       for (let k = i; k < 4; k++){
         gameBoard[k][j] = changedColumn[k - i];
-        visualGameBoard[k][j] = changedColumnVisual[k - i];
       }
     }
   }
@@ -192,13 +180,12 @@ function moveBoardDown(){
       for (let k = i; k >= 0; k--){
         visualColumn.push(visualTiles[k * 4 + j]);
       }
-      let changedColumn, changedColumnVisual = moveTileList(column, visualColumn, 'vertical', -1);
+      let changedColumn = moveTileList(column, visualColumn, 'vertical', -1);
       if (changedColumn == -1){
         continue;
       }
       for (let k = i; k >= 0; k--){
         gameBoard[k][j] = changedColumn[i - k];
-        visualGameBoard[k][j] = changedColumnVisual[i - k];
       }
     }
   }
@@ -215,13 +202,12 @@ function moveBoardRight(){
       for (let k = j; k >= 0; k--){
         visualColumn.push(visualTiles[i * 4 + k]);
       }
-      let changedColumn, changedColumnVisual = moveTileList(column, visualColumn, 'horisontal', -1);
+      let changedColumn = moveTileList(column, visualColumn, 'horisontal', -1);
       if (changedColumn == -1){
         continue;
       }
       for (let k = j; k >= 0; k--){
         gameBoard[i][k] = changedColumn[j - k];
-        visualGameBoard[i][k] = changedColumnVisual[j - k];
       }
     }
   }
@@ -238,13 +224,12 @@ function moveBoardLeft(){
       for (let k = j; k < 4; k++){
         visualColumn.push(visualTiles[i * 4 + k]);
       }
-      let changedColumn, changedColumnVisual = moveTileList(column, visualColumn, 'horisontal', 1);
+      let changedColumn = moveTileList(column, visualColumn, 'horisontal', 1);
       if (changedColumn == -1){
         continue;
       }
       for (let k = j; k < 4; k++){
         gameBoard[i][k] = changedColumn[k - j];
-        visualGameBoard[i][k] = changedColumnVisual[k - j];
       }
     }
   }
@@ -312,11 +297,10 @@ function startNewGame(){
     [16, 32, 64, 128],
     [256, 512, 1024, 2048],
     [16384, 131072, 1048576, 1073741824]
-    ]*/
+  ]*/
   for (let i = 0; i < getRandomInteger(3) + 1; i++){
     addNewRandomTile();
   }
-  visualGameBoard = gameBoard;
   updateBoardVisual();
 }
 
@@ -340,7 +324,7 @@ function updateBoardVisual(){
   for (let i = 0; i < 4; i++){
     for (let j = 0; j < 4; j++){
       let chosenTile = visualTiles[i*4 + j];
-      let tileValue = visualGameBoard[i][j];
+      let tileValue = gameBoard[i][j];
       chosenTile.setAttribute('tile-value', tileValue);
       if (tileValue != 0){
         chosenTile.textContent = tileValue;
