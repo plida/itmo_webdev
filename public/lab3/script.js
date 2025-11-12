@@ -1,10 +1,138 @@
 // VARIABLES
+let gameBoard = [
+  [0, 0, 0, 0],
+  [0, 0, 0, 0],
+  [0, 0, 0, 0],
+  [0, 0, 0, 0]
+]
+let tileFont = 0;
+let tileFontRate = 0;
+let maxTileValue = 2048;
+let tileColors = [
+  [237, 216, 190], 
+  [237, 216, 190], 
+  [240, 178, 111], 
+  [237, 79, 65], 
+  [173, 54, 39], 
+  [115, 32, 15]
+]
 
 // FUNCTIONS
+
+function getBaseLog(x, y) {
+  return Math.log(y) / Math.log(x);
+}
 
 function moveBoard(direction){
   direction = direction.toLowerCase();
   console.log(direction);
+}
+
+function getRandomInteger(max){
+  return Math.floor(Math.random() * max)
+}
+
+function addNewRandomTile(){
+  let freeTiles = getFreeTiles();
+  if (freeTiles.length == 0){
+    return;
+  }
+  let randomRow = freeTiles[getRandomInteger(freeTiles.length)];
+  let newTileCoords = randomRow[getRandomInteger(randomRow.length)];
+  let tileValue = (getRandomInteger(2) + 1) * 2;
+  gameBoard[newTileCoords[0]][newTileCoords[1]] = tileValue;
+  console.log("Added tile " + tileValue + " at: " + newTileCoords);
+}
+
+function getFreeTiles(){
+  let freeTiles = [];
+  for (let i = 0; i < 4; i++){
+    let row = [];
+    for (let j = 0; j < 4; j++){
+      if (gameBoard[i][j] == 0){
+        row.push([i, j]);
+      }
+    }
+    if (row.length > 0){
+      freeTiles.push(row);
+    }
+  }
+  return freeTiles;
+}
+
+function startNewGame(){
+  gameBoard = [
+    [0, 2, 4, 8],
+    [16, 32, 64, 128],
+    [256, 512, 1024, 2048],
+    [16384, 131072, 1048576, 1073741824]
+  ]
+  //for (let i = 0; i < getRandomInteger(3) + 1; i++){
+    //addNewRandomTile();
+  //}
+  updateBoardVisual();
+}
+
+function updateBoardVisual(){
+  let visualTiles = board.querySelectorAll('.gameboard__tile');
+  for (let i = 0; i < 4; i++){
+    for (let j = 0; j < 4; j++){
+      let chosenTile = visualTiles[i*4 + j];
+      let tileValue = gameBoard[i][j];
+      chosenTile.setAttribute('tile-value', tileValue);
+      if (tileValue != 0){
+        chosenTile.textContent = tileValue;
+      }
+      let tileVisual = Math.max(1, tileFont - tileFontRate * tileValue.toString().length);
+      chosenTile.style.fontSize = tileVisual.toString() + 'rem';
+      changeTileColor(chosenTile);
+    }
+  }
+}
+
+function changeTileFont(x){
+  if (x.matches){
+    if (tileFont != 2){
+      tileFont = 2;
+      tileFontRate = 0.25;
+      updateBoardVisual();
+    }
+  }
+  else{
+    if (tileFont != 2.25){
+      tileFont = 2.25;
+      tileFontRate = 0.125;
+      updateBoardVisual();
+    }
+  }
+}
+
+function pickHex(color1, color2, weight) {
+  var w2 = weight;
+  var w1 = 1 - w2;
+  var rgb = [Math.round(color1[0] * w1 + color2[0] * w2),
+      Math.round(color1[1] * w1 + color2[1] * w2),
+      Math.round(color1[2] * w1 + color2[2] * w2)];
+  return rgb;
+}
+
+function changeTileColor(tile){
+  let tileValue = tile.getAttribute('tile-value');
+  if (tileValue == 0){
+    return;
+  }
+  let tileValuePercent = Math.min(1, getBaseLog(2, tileValue) / getBaseLog(2, maxTileValue));
+  let gradientEdge = Math.round(tileValuePercent * 100 / 25);
+  let firstColor = tileColors[gradientEdge];
+  let secondColor = tileColors[Math.min(gradientEdge + 1, tileColors.length - 1)];
+  let weight = (tileValuePercent * 100 / 25 - (Math.min(gradientEdge) - 1));
+  console.log('Visualising tile with value ', tileValue);
+  console.log('Calculating weight: ', tileValuePercent, tileValuePercent * 100 / 25, weight);
+  console.log('Calculating color: ', firstColor, secondColor, gradientEdge);
+  let color = pickHex(firstColor, secondColor, weight);
+  console.log('color: ', color);
+  tile.style.background = 'rgb('+color[0]+', '+color[1]+', '+color[2]+')';
+  console.log('\n');
 }
 
 // PAGE SETUP
@@ -102,7 +230,13 @@ document.addEventListener("keydown", (e) => {
   }
 })
 
-
+let x = window.matchMedia("(max-width: 512px)")
+x.addEventListener("change", function() {
+  changeTileFont(x);
+}); 
 
 if (localStorage.getItem('tasklist-test')){
 }
+
+changeTileFont(x);
+startNewGame();
