@@ -77,6 +77,20 @@ function moveBoardUp(){
             break
           }
         }
+        if (gameBoard[i][j] != 0){
+        for (let k = i + 1; k < 4; k++){
+          if (gameBoard[k][j] == gameBoard[i][j]){
+            console.log(i, j, k, "|", gameBoard[k][j], gameBoard[i][j]);
+            gameBoard[i][j] = gameBoard[i][j] * 2;
+            visualTiles[i*4 + j].animate(combineTile, combineTileTiming)
+            gameBoard[k][j] = 0;
+            break
+          }
+          else if (gameBoard[k][j] != 0){
+            break
+          }
+        }
+      }
       }
     }
   }
@@ -106,6 +120,19 @@ function moveBoardRight(){
             break
           }
         }
+        if (gameBoard[i][j] != 0){
+        for (let k = j - 1; k >= 0; k--){
+          if (gameBoard[i][k] == gameBoard[i][j]){
+            gameBoard[i][j] = gameBoard[i][j] * 2;
+            visualTiles[i*4 + j].animate(combineTile, combineTileTiming)
+            gameBoard[i][k] = 0;
+            break
+          }
+          else if (gameBoard[k][j] != 0){
+            break
+          }
+        }
+      }
       }
     }
   }
@@ -135,6 +162,19 @@ function moveBoardDown(){
             break
           }
         }
+        if (gameBoard[i][j] != 0){
+        for (let k = i - 1; k >= 0; k--){
+          if (gameBoard[k][j] == gameBoard[i][j]){
+            gameBoard[i][j] = gameBoard[i][j] * 2;
+            visualTiles[i*4 + j].animate(combineTile, combineTileTiming)
+            gameBoard[k][j] = 0;
+            break
+          }
+          else if (gameBoard[k][j] != 0){
+            break
+          }
+        }
+      }
       }
     }
   }
@@ -164,6 +204,19 @@ function moveBoardLeft(){
             break
           }
         }
+        if (gameBoard[i][j] != 0){
+        for (let k = j + 1; k < 4; k++){
+          if (gameBoard[i][k] == gameBoard[i][j]){
+            gameBoard[i][j] = gameBoard[i][j] * 2;
+            visualTiles[i*4 + j].animate(combineTile, combineTileTiming)
+            gameBoard[i][k] = 0;
+            break
+          }
+          else if (gameBoard[k][j] != 0){
+            break
+          }
+        }
+      }
       }
     }
   }
