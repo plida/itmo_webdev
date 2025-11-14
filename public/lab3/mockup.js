@@ -19,7 +19,7 @@ let tileColors = [
 ]
 
 let isBoardPaused = false;
-let animationSpeed = 100;
+let animationSpeed = 300;
 
 // FUNCTIONS
 
@@ -28,72 +28,20 @@ function updateScore(newAmount){
   score.textContent = gameScore;
 }
 
-function updateBoardMove(direction){
-  if (isBoardPaused){
-    return;
-  }
+function updateBoard(){
+  let pauseTime = animationSpeed;
   isBoardPaused = true;
-  let movedTiles = [];
-  movedTiles = collectMovedTiles(direction);
   setTimeout(function(){
-    updateBoardSnap(movedTiles);
-  }, animationSpeed)
-}
-
-function updateBoardSnap(movedTiles){
-  console.log(movedTiles);
-  let animations = [];
-  for (tile of movedTiles){
-    let oldTile = gameBoard[tile[0][0]][tile[0][1]];
-    let newTile = gameBoard[tile[1][0]][tile[1][1]];
-    if (oldTile != newTile){
-      let shift = tile[2];
-      let animation = animateTile('moved', visualTiles[tile[0][0]*4 + tile[0][1]], shift)
-      animations.push(animation);
-    }
-    else{
-      let shift = tile[2];
-      let animation = animateTile('moved', visualTiles[tile[0][0]*4 + tile[0][1]], shift)
-      animations.push(animation);
-    }
-  }
-  //updateBoardVisual();
-
-  setTimeout(function(){
-    for (let animation of animations){
-      animation.cancel();
-    }
-    for (tile of movedTiles){
-      let oldTile = gameBoard[tile[0][0]][tile[0][1]];
-      let newTile = gameBoard[tile[1][0]][tile[1][1]];
-      if (oldTile != newTile){
-        gameBoard[tile[0][0]][tile[0][1]] = 0;
-        gameBoard[tile[1][0]][tile[1][1]] = oldTile;
-      }
-      else{
-        gameBoard[tile[0][0]][tile[0][1]] = 0;
-        gameBoard[tile[1][0]][tile[1][1]] = oldTile * 2;
-        updateScore(oldTile * 2);
-      }
-    }
+    addNewRandomTile();
+    isBoardPaused = false;
     updateBoardVisual();
-    updateBoardAdd();
-  }, animationSpeed)
-}
-
-function updateBoardAdd(){
-  addNewRandomTile();
-  isBoardPaused = false;
-  setTimeout(function(){
-    updateBoardVisual();
-  }, animationSpeed)
+  }, pauseTime)
 }
 
 function animateTile(type, tile, shift='0%, 0%'){
-  let animation = '';
   switch (type){
     case 'appeared':
-      animation = tile.animate(
+      tile.animate(
       [
         { transform: 'scale(0)' },
         { transform: 'scale(1)' },
@@ -105,7 +53,7 @@ function animateTile(type, tile, shift='0%, 0%'){
       });
     break;
     case 'combined':
-      animation = tile.animate(
+      tile.animate(
       [
         { transform: 'scale(1)' },
         { transform: 'scale(1.25)' },
@@ -118,30 +66,18 @@ function animateTile(type, tile, shift='0%, 0%'){
       });
       break;
     case 'moved':
-      animation = tile.animate([
+      tile.animate([
         {transform: 'translate(0)'},
         {transform: 'translate(' + shift + ')'},
       ], 
       {
-        duration: animationSpeed,
+        duration: animationSpeed + 10,
         iterations: 1,
-        fill: 'forwards'
       });
       break;
-    case 'stopped':
-      animation = tile.animate([
-        {transform: 'translate(0)'},
-      ], 
-      {
-        duration: animationSpeed,
-        iterations: 1,
-        fill: 'forwards'
-      });
-      break;
-    case 'movedreverse':
-      animation = tile.animate([
+    case 'movedtocombine':
+      tile.animate([
         {transform: 'translate(' + shift + ')'},
-        {transform: 'translate(0)'},
       ], 
       {
         duration: animationSpeed,
@@ -150,129 +86,165 @@ function animateTile(type, tile, shift='0%, 0%'){
       
       break;
   }
-  return animation;
 }
 
-function collectMovedTiles(direction){
-  let movedTiles = [];
+function moveBoard(direction){
+  if (isBoardPaused){
+    return;
+  }
   direction = direction.toLowerCase();
   switch (direction){
     case 'up':
-      movedTiles = moveBoardUp();
+      moveBoardUp();
       break;
     case 'right':
-      movedTiles = moveBoardRight();
+      moveBoardRight();
       break;
     case 'down':
-      movedTiles = moveBoardDown();
+      moveBoardDown();
       break;
     case 'left':
-      movedTiles = moveBoardLeft();
+      moveBoardLeft();
       break;
   }
-  return movedTiles;
+  updateBoard();
 }
 
-function moveTileList(tiles){
-  let movedTiles = [];
-  let gameBoardWidth = document.getElementsByClassName('gameboard')[0].offsetWidth;
-  let tileWidth = document.getElementsByClassName('gameboard__tile')[0].offsetWidth;
-  let ratio = (gameBoardWidth / tileWidth - 4) / 10;
-  for (let k = 0; k < 4; k++){
+function moveTileList(tiles, visual, axis, dir = 1){
+  let shift = 0;
+  let n = tiles.length;
+  for (let k = 0; k < n; k++){
     if (tiles[k] == 0){
-      for (let l = k + 1; l < 4; l++){
+      for (let l = k + 1; l < n; l++){
         if (tiles[l] != 0){
           tiles[k] = tiles[l];
+          if (axis == 'horisontal'){
+            shift = - dir * (l - k) * 100 + '%, 0%';
+          }
+          else if (axis == 'vertical'){
+            shift = '0%, ' + (-dir) * (l - k) * 100 + '%';
+          }
+          //animateTile('moved', visual[l], shift);
           tiles[l] = 0;
-          movedTiles.push([l, k,  (l-k + (ratio * 2 * (l-k)))]);
           break;
         }
       }
     }
 
-    if (tiles[k] != 0){
-      for (let l = k + 1; l < 4; l++){
+    if (tiles[k] != 0 && n == 4){
+      for (let l = k + 1; l < n; l++){
         if (tiles[l] == 0){
           continue;
         }
         if (tiles[l] == tiles[k]){
           tiles[k] = tiles[l] * 2;
+          if (axis == 'horisontal'){
+            shift = dir * (l - k) * 100 + '%, 0%';
+          }
+          else if (axis == 'vertical'){
+            shift = '0%, ' + dir * (l - k) * 100 + '%';
+          }
+          //animateTile('movedtocombine', visual[l], -shift);
+          setTimeout(function(){
+            //animateTile('combined', visual[k]);
+            updateBoardVisual();
+          }, animationSpeed)
           tiles[l] = 0;
-          movedTiles.push([l, k, (l-k + (ratio * 2 * (l-k)))]);
+          updateScore(tiles[l]*2);
         }
         break;
       }
     }
   }
-  return movedTiles;
+  return tiles;
 }
 
 function moveBoardUp(){
-  let movedTiles = [];
-  for (let j = 0; j < 4; j++){
-    let column = [];
-    for (let k = 0; k < 4; k++){
-      column.push(gameBoard[k][j]);
-    }
-    let movedColumnTiles = moveTileList(column);
-    if (movedColumnTiles.length > 0){
-      for (let k = 0; k < movedColumnTiles.length; k++){
-        movedTiles.push([[movedColumnTiles[k][0], j], [movedColumnTiles[k][1], j], '0%, ' + (-movedColumnTiles[k][2]) * 100 + '%']);
+  for (let i = 0; i < 4; i++){
+    for (let j = 0; j < 4; j++){
+      let column = [];
+      for (let k = i; k < 4; k++){
+        column.push(gameBoard[k][j]);
+      }
+      let visualColumn = [];
+      for (let k = i; k < 4; k++){
+        visualColumn.push(visualTiles[k * 4 + j]);
+      }
+      let changedColumn = moveTileList(column, visualColumn, 'vertical', 1);
+      if (changedColumn == -1){
+        continue;
+      }
+      for (let k = i; k < 4; k++){
+        gameBoard[k][j] = changedColumn[k - i];
       }
     }
   }
-  return movedTiles;
 }
 
 function moveBoardDown(){
-  let movedTiles = [];
-  for (let j = 0; j < 4; j++){
-    let column = [];
-    for (let k = 3; k >= 0; k--){
-      column.push(gameBoard[k][j]);
-    }
-    let movedColumnTiles = moveTileList(column);
-    if (movedColumnTiles.length > 0){
-      for (let k = 0; k < movedColumnTiles.length; k++){
-        movedTiles.push([[3 - movedColumnTiles[k][0], j], [3 - movedColumnTiles[k][1], j], '0%, ' + (movedColumnTiles[k][2]) * 100 + '%']);
+  for (let i = 3; i >= 0; i--){
+    for (let j = 0; j < 4; j++){
+      let column = [];
+      for (let k = i; k >= 0; k--){
+        column.push(gameBoard[k][j]);
+      }
+      let visualColumn = [];
+      for (let k = i; k >= 0; k--){
+        visualColumn.push(visualTiles[k * 4 + j]);
+      }
+      let changedColumn = moveTileList(column, visualColumn, 'vertical', -1);
+      if (changedColumn == -1){
+        continue;
+      }
+      for (let k = i; k >= 0; k--){
+        gameBoard[k][j] = changedColumn[i - k];
       }
     }
   }
-  return movedTiles;
 }
 
 function moveBoardRight(){
-  let movedTiles = [];
   for (let i = 0; i < 4; i++){
-    let column = [];
-    for (let k = 3; k >= 0; k--){
-      column.push(gameBoard[i][k]);
-    }
-    let movedColumnTiles = moveTileList(column);
-    if (movedColumnTiles.length > 0){
-      for (let k = 0; k < movedColumnTiles.length; k++){
-        movedTiles.push([[i, 3 - movedColumnTiles[k][0]], [i, 3 - movedColumnTiles[k][1]], (movedColumnTiles[k][2]) * 100 + '%, 0%']);
+    for (let j = 3; j >= 0; j--){
+      let column = [];
+      for (let k = j; k >= 0; k--){
+        column.push(gameBoard[i][k]);
+      }
+      let visualColumn = [];
+      for (let k = j; k >= 0; k--){
+        visualColumn.push(visualTiles[i * 4 + k]);
+      }
+      let changedColumn = moveTileList(column, visualColumn, 'horisontal', -1);
+      if (changedColumn == -1){
+        continue;
+      }
+      for (let k = j; k >= 0; k--){
+        gameBoard[i][k] = changedColumn[j - k];
       }
     }
   }
-  return movedTiles;
 }
 
 function moveBoardLeft(){
-  let movedTiles = [];
   for (let i = 0; i < 4; i++){
-    let column = [];
-    for (let k = 0; k < 4; k++){
-      column.push(gameBoard[i][k]);
-    }
-    let movedColumnTiles = moveTileList(column);
-    if (movedColumnTiles.length > 0){
-      for (let k = 0; k < movedColumnTiles.length; k++){
-        movedTiles.push([[i, movedColumnTiles[k][0]], [i, movedColumnTiles[k][1]], (- movedColumnTiles[k][2]) * 100 + '%, 0%']);
+    for (let j = 0; j < 4; j++){
+      let column = [];
+      for (let k = j; k < 4; k++){
+        column.push(gameBoard[i][k]);
+      }
+      let visualColumn = [];
+      for (let k = j; k < 4; k++){
+        visualColumn.push(visualTiles[i * 4 + k]);
+      }
+      let changedColumn = moveTileList(column, visualColumn, 'horisontal', 1);
+      if (changedColumn == -1){
+        continue;
+      }
+      for (let k = j; k < 4; k++){
+        gameBoard[i][k] = changedColumn[k - j];
       }
     }
   }
-  return movedTiles;
 }
 
 function getBaseLog(x, y) {
@@ -303,7 +275,7 @@ function addNewRandomTile(){
   let newTileCoords = randomRow[getRandomInteger(randomRow.length)];
   let tileValue = (getRandomInteger(2) + 1) * 2;
   gameBoard[newTileCoords[0]][newTileCoords[1]] = tileValue;
-  animateTile('appeared', visualTiles[newTileCoords[0]*4 + newTileCoords[1]]);
+  //animateTile('appeared', visualTiles[newTileCoords[0]*4 + newTileCoords[1]]);
 }
 
 function getFreeTiles(){
@@ -324,19 +296,41 @@ function getFreeTiles(){
 
 function startNewGame(){
   gameBoard = [
-    [4, 0, 0, 0],
-    [4, 2, 0, 0],
-    [0, 0, 2, 0],
-    [0, 0, 0, 2]
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0]
   ]
   gameScore = 0;
   updateScore(0);
-  /*
+  //color testing
+  /*gameBoard = [
+    [0, 2, 4, 8],
+    [16, 32, 64, 128],
+    [256, 512, 1024, 2048],
+    [16384, 131072, 1048576, 1073741824]
+  ]*/
   for (let i = 0; i < getRandomInteger(3) + 1; i++){
     addNewRandomTile();
-  }*/
+  }
   updateBoardVisual();
 }
+
+function updateTileVisual(i, j){
+  let chosenTile = visualTiles[i*4 + j];
+  let tileValue = gameBoard[i][j];
+  chosenTile.setAttribute('tile-value', tileValue);
+  if (tileValue != 0){
+    chosenTile.textContent = tileValue;
+  }
+  else{
+    chosenTile.textContent = '';
+  }
+  let tileVisual = Math.max(1, tileFont - tileFontRate * tileValue.toString().length);
+  chosenTile.style.fontSize = tileVisual.toString() + 'rem';
+  changeTileColor(chosenTile);
+}
+
 
 function updateBoardVisual(){
   for (let i = 0; i < 4; i++){
@@ -346,11 +340,9 @@ function updateBoardVisual(){
       chosenTile.setAttribute('tile-value', tileValue);
       if (tileValue != 0){
         chosenTile.textContent = tileValue;
-        chosenTile.classList.add('active-tile');
       }
       else{
         chosenTile.textContent = '';
-        chosenTile.classList.remove('active-tile');
       }
       let tileVisual = Math.max(1, tileFont - tileFontRate * tileValue.toString().length);
       chosenTile.style.fontSize = tileVisual.toString() + 'rem';
@@ -480,28 +472,28 @@ main_container.appendChild(controls);
 const controls_left = document.createElement('button');
 controls_left.classList.add('controls__arrow');
 controls_left.classList.add('controls__arrow-left');
-controls_left.addEventListener('click', () => {updateBoardMove('left')});
+controls_left.addEventListener('click', () => {moveBoard('left')});
 controls.appendChild(controls_left);
 const controls_right = document.createElement('button');
 controls_right.classList.add('controls__arrow');
 controls_right.classList.add('controls__arrow-right');
-controls_right.addEventListener('click', () => {updateBoardMove('right')});
+controls_right.addEventListener('click', () => {moveBoard('right')});
 controls.appendChild(controls_right);
 const controls_down = document.createElement('button');
 controls_down.classList.add('controls__arrow');
 controls_down.classList.add('controls__arrow-down');
-controls_down.addEventListener('click', () => {updateBoardMove('down')});
+controls_down.addEventListener('click', () => {moveBoard('down')});
 controls.appendChild(controls_down);
 const controls_up = document.createElement('button');
 controls_up.classList.add('controls__arrow');
 controls_up.classList.add('controls__arrow-up');
-controls_up.addEventListener('click', () => {updateBoardMove('up')});
+controls_up.addEventListener('click', () => {moveBoard('up')});
 controls.appendChild(controls_up);
 
 document.addEventListener('keydown', (e) => {
   if (e.code.indexOf('Arrow') == 0){
     e.preventDefault();
-    updateBoardMove(e.code.slice(5));
+    moveBoard(e.code.slice(5));
   }
 })
 

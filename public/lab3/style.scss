@@ -161,6 +161,10 @@ footer{
       background-color: $color-primary;
     }
   }
+  .active-tile{
+    z-index: 20;
+    position: relative;
+  }
 }
 
 .controls{
