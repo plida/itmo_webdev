@@ -5,6 +5,9 @@ let gameBoard = [
   [0, 0, 0, 0],
   [0, 0, 0, 0]
 ]
+let prevGameBoard = [
+
+]
 let gameScore = 0;
 let tileFont = 0;
 let tileFontRate = 0;
@@ -18,7 +21,10 @@ let tileColors = [
   [115, 32, 15]
 ]
 
+let prevMove = [];
+let newlyAdded = [];
 let isBoardPaused = false;
+let baseSpeed = 100;
 let animationSpeed = 100;
 
 // FUNCTIONS
@@ -33,15 +39,19 @@ function updateBoardMove(direction){
     return;
   }
   isBoardPaused = true;
+  speed_control_input.disabled = true;
   let movedTiles = [];
   movedTiles = collectMovedTiles(direction);
+  prevMove = movedTiles;
+  prevGameBoard = gameBoard;
+  console.log(prevGameBoard, gameBoard);
   setTimeout(function(){
     updateBoardSnap(movedTiles);
   }, animationSpeed)
 }
 
 function updateBoardSnap(movedTiles){
-  console.log(movedTiles);
+  
   let animations = [];
   for (tile of movedTiles){
     let oldTile = gameBoard[tile[0][0]][tile[0][1]];
@@ -74,6 +84,7 @@ function updateBoardSnap(movedTiles){
         gameBoard[tile[0][0]][tile[0][1]] = 0;
         gameBoard[tile[1][0]][tile[1][1]] = oldTile * 2;
         updateScore(oldTile * 2);
+        animateTile('combined', visualTiles[tile[1][0]*4 + tile[1][1]]);
       }
     }
     updateBoardVisual();
@@ -84,9 +95,49 @@ function updateBoardSnap(movedTiles){
 function updateBoardAdd(){
   addNewRandomTile();
   isBoardPaused = false;
+  speed_control_input.disabled = false;
   setTimeout(function(){
     updateBoardVisual();
   }, animationSpeed)
+}
+
+function undoMove(){
+  if (prevMove == []){
+    return;
+  }
+  animations = [];
+  for (tile of newlyAdded){
+    gameBoard[tile[0]][tile[1]] = 0;
+  }
+  console.log(prevGameBoard);
+  for (tile of prevMove){
+    let oldTile = prevGameBoard[tile[0][0]][tile[0][1]];
+    let newTile = prevGameBoard[tile[1][0]][tile[1][1]];
+    console.log(oldTile, newTile, tile);
+  }
+  updateBoardVisual();
+  /*for (let tile of prevMove){
+    let oldTile = gameBoard[tile[0][0]][tile[0][1]];
+    let newTile = gameBoard[tile[1][0]][tile[1][1]];
+    if (oldTile != newTile){
+      let shift = tile[2];
+      let animation = animateTile('moved', visualTiles[tile[0][0]*4 + tile[0][1]], shift)
+      animations.push(animation);
+    }
+    else{
+      let shift = tile[2];
+      let animation = animateTile('moved', visualTiles[tile[0][0]*4 + tile[0][1]], shift)
+      animations.push(animation);
+    }
+  }
+  updateBoardVisual();
+  prevMove = [];
+  setTimeout(function(){
+  for (let animation of animations){
+      animation.cancel();
+    }})*/
+  newlyAdded = [];
+  prevGameBoard = [];
 }
 
 function animateTile(type, tile, shift='0%, 0%'){
@@ -114,7 +165,6 @@ function animateTile(type, tile, shift='0%, 0%'){
       {
         duration: animationSpeed,
         iterations: 1,
-        delay: animationSpeed,
       });
       break;
     case 'moved':
@@ -304,6 +354,7 @@ function addNewRandomTile(){
   let tileValue = (getRandomInteger(2) + 1) * 2;
   gameBoard[newTileCoords[0]][newTileCoords[1]] = tileValue;
   animateTile('appeared', visualTiles[newTileCoords[0]*4 + newTileCoords[1]]);
+  newlyAdded.push([newTileCoords[0], newTileCoords[1]]);
 }
 
 function getFreeTiles(){
@@ -456,6 +507,48 @@ const main_container = document.createElement('div');
 main_container.classList.add('main-container');
 main.appendChild(main_container);
 
+const speed_control = document.createElement('section');
+speed_control.classList.add('speed-control');
+main_container.appendChild(speed_control);
+const speed_control_slider = document.createElement('div');
+speed_control.appendChild(speed_control_slider);
+
+const speed_control_label = document.createElement('label');
+speed_control_label.textContent = 'animation speed';
+speed_control_label.for = 'speed-control';
+speed_control_slider.appendChild(speed_control_label);
+
+const markers = [10**(-1) * 3.3, 10**(-1) * 5, 1, 2, 3, 5, 10];
+
+const speed_control_input = document.createElement('input');
+speed_control_input.type = 'range';
+speed_control_input.id = 'speed-control';
+speed_control_input.value = 2;
+speed_control_input.min = 0;
+speed_control_input.max = markers.length - 1;
+speed_control_input.step = 1;
+speed_control_input.setAttribute('list', 'speed-markers');
+speed_control_input.addEventListener('change', (event) => {
+  if (isBoardPaused == false){
+    animationSpeed = baseSpeed * (1 / markers[event.target.value]); 
+    console.log(event.target.value, animationSpeed);
+  }
+});
+speed_control_slider.appendChild(speed_control_input);
+
+const speed_control_markers = document.createElement('datalist');
+
+
+for (let i = 0; i < markers.length; i++){
+  let speed_control_marker = document.createElement('option');
+  speed_control_marker.value = i;
+  speed_control_marker.label = markers[i];
+  speed_control_markers.appendChild(speed_control_marker);
+}
+speed_control_markers.id = 'speed-markers';
+main_container.appendChild(speed_control_markers);
+
+
 const score = document.createElement('section');
 score.textContent = '0';
 main_container.appendChild(score);
@@ -473,6 +566,14 @@ for (let i = 1; i < 17; i++){
 }
 
 const visualTiles = board.querySelectorAll('.gameboard__tile');
+
+const settings = document.createElement('section');
+main_container.appendChild(settings);
+const undo = document.createElement('button');
+undo.textContent = 'undo';
+undo.addEventListener('click', () => {undoMove()});
+settings.appendChild(undo);
+
 
 const controls = document.createElement('section');
 controls.classList.add('controls');

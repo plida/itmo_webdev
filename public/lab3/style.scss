@@ -167,6 +167,30 @@ footer{
   }
 }
 
+.speed-control{
+  div{
+    display: flex;
+    flex-direction: column;
+  }
+  input{
+    width: 15rem;
+    margin: 0;
+    margin-bottom: 0.125rem;
+  }
+}
+
+datalist {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  writing-mode: vertical-lr;
+  width: 15rem;
+}
+
+option {
+  padding: 0;
+}
+
 .controls{
   display: grid;
   grid-template-columns: repeat(3, calc($tile-size - 1rem));
