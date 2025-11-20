@@ -42,16 +42,15 @@ function updateBoardMove(direction){
   speed_control_input.disabled = true;
   let movedTiles = [];
   movedTiles = collectMovedTiles(direction);
-  prevMove = movedTiles;
-  prevGameBoard = gameBoard;
-  console.log(prevGameBoard, gameBoard);
   setTimeout(function(){
     updateBoardSnap(movedTiles);
   }, animationSpeed)
 }
 
 function updateBoardSnap(movedTiles){
-  
+  prevMove = movedTiles.slice();
+  prevGameBoard = JSON.parse(JSON.stringify(gameBoard));
+  console.log(prevGameBoard, gameBoard);
   let animations = [];
   for (tile of movedTiles){
     let oldTile = gameBoard[tile[0][0]][tile[0][1]];
@@ -102,40 +101,11 @@ function updateBoardAdd(){
 }
 
 function undoMove(){
-  if (prevMove == []){
+  if (prevMove == [] || prevGameBoard.length == 0){
     return;
   }
-  animations = [];
-  for (tile of newlyAdded){
-    gameBoard[tile[0]][tile[1]] = 0;
-  }
-  console.log(prevGameBoard);
-  for (tile of prevMove){
-    let oldTile = prevGameBoard[tile[0][0]][tile[0][1]];
-    let newTile = prevGameBoard[tile[1][0]][tile[1][1]];
-    console.log(oldTile, newTile, tile);
-  }
+  gameBoard = JSON.parse(JSON.stringify(prevGameBoard));
   updateBoardVisual();
-  /*for (let tile of prevMove){
-    let oldTile = gameBoard[tile[0][0]][tile[0][1]];
-    let newTile = gameBoard[tile[1][0]][tile[1][1]];
-    if (oldTile != newTile){
-      let shift = tile[2];
-      let animation = animateTile('moved', visualTiles[tile[0][0]*4 + tile[0][1]], shift)
-      animations.push(animation);
-    }
-    else{
-      let shift = tile[2];
-      let animation = animateTile('moved', visualTiles[tile[0][0]*4 + tile[0][1]], shift)
-      animations.push(animation);
-    }
-  }
-  updateBoardVisual();
-  prevMove = [];
-  setTimeout(function(){
-  for (let animation of animations){
-      animation.cancel();
-    }})*/
   newlyAdded = [];
   prevGameBoard = [];
 }
