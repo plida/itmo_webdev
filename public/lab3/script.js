@@ -6,9 +6,13 @@ let gameBoard = [
   [0, 0, 0, 0]
 ]
 let prevGameBoard = [
-
 ]
+
+let leaderboardList = [
+]
+
 let gameScore = 0;
+let prevGameScore = 0;
 let tileFont = 0;
 let tileFontRate = 0;
 let maxTileValue = 2048;
@@ -21,8 +25,6 @@ let tileColors = [
   [115, 32, 15]
 ]
 
-let prevMove = [];
-let newlyAdded = [];
 let isBoardPaused = false;
 let baseSpeed = 100;
 let animationSpeed = 100;
@@ -30,8 +32,10 @@ let animationSpeed = 100;
 // FUNCTIONS
 
 function updateScore(newAmount){
+  prevGameScore = gameScore;
   gameScore = gameScore + newAmount;
   score.textContent = gameScore;
+  localStorage.setItem('game-score', JSON.stringify(gameScore)); 
 }
 
 function updateBoardMove(direction){
@@ -48,9 +52,7 @@ function updateBoardMove(direction){
 }
 
 function updateBoardSnap(movedTiles){
-  prevMove = movedTiles.slice();
   prevGameBoard = JSON.parse(JSON.stringify(gameBoard));
-  console.log(prevGameBoard, gameBoard);
   let animations = [];
   for (tile of movedTiles){
     let oldTile = gameBoard[tile[0][0]][tile[0][1]];
@@ -66,7 +68,6 @@ function updateBoardSnap(movedTiles){
       animations.push(animation);
     }
   }
-  //updateBoardVisual();
 
   setTimeout(function(){
     for (let animation of animations){
@@ -83,12 +84,23 @@ function updateBoardSnap(movedTiles){
         gameBoard[tile[0][0]][tile[0][1]] = 0;
         gameBoard[tile[1][0]][tile[1][1]] = oldTile * 2;
         updateScore(oldTile * 2);
-        animateTile('combined', visualTiles[tile[1][0]*4 + tile[1][1]]);
+        let visualTile = visualTiles[tile[1][0]*4 + tile[1][1]];
+        animateTile('combined', visualTile);
+        visualTile.classList.add('active-tile-combined');
       }
     }
     updateBoardVisual();
     updateBoardAdd();
+    resetActiveTiles();
+    setTimeout(function(){
+      if (getFreeTiles().length == 0 && areMovesAvailable() == false){
+        finishGame();
+        return;
+      }
+    }, animationSpeed * 2)
+
   }, animationSpeed)
+  
 }
 
 function updateBoardAdd(){
@@ -101,12 +113,12 @@ function updateBoardAdd(){
 }
 
 function undoMove(){
-  if (prevMove == [] || prevGameBoard.length == 0){
+  if (prevGameBoard.length == 0){
     return;
   }
   gameBoard = JSON.parse(JSON.stringify(prevGameBoard));
   updateBoardVisual();
-  newlyAdded = [];
+  updateScore(prevGameScore - gameScore);
   prevGameBoard = [];
 }
 
@@ -122,7 +134,7 @@ function animateTile(type, tile, shift='0%, 0%'){
       {
         duration: animationSpeed,
         iterations: 1,
-        delay: animationSpeed,
+        delay: animationSpeed - 10,
       });
     break;
     case 'combined':
@@ -157,17 +169,6 @@ function animateTile(type, tile, shift='0%, 0%'){
         iterations: 1,
         fill: 'forwards'
       });
-      break;
-    case 'movedreverse':
-      animation = tile.animate([
-        {transform: 'translate(' + shift + ')'},
-        {transform: 'translate(0)'},
-      ], 
-      {
-        duration: animationSpeed,
-        iterations: 1,
-      });
-      
       break;
   }
   return animation;
@@ -295,6 +296,17 @@ function moveBoardLeft(){
   return movedTiles;
 }
 
+function areMovesAvailable(){
+  let movesLeft = collectMovedTiles('left');
+  let movesRight = collectMovedTiles('right');
+  let movesUp = collectMovedTiles('up');
+  let movesDown = collectMovedTiles('down');
+  if (movesLeft.length != 0 || movesRight.length != 0 || movesUp.length != 0 || movesDown.length != 0){
+    return true;
+  }
+  return false;
+}
+
 function getBaseLog(x, y) {
   return Math.log(y) / Math.log(x);
 }
@@ -315,8 +327,7 @@ const newTileTiming = {
 function addNewRandomTile(){
   let freeTiles = getFreeTiles();
   if (freeTiles.length == 0){
-    alert('the game is over!');
-    startNewGame();
+    finishGame();
     return;
   }
   let randomRow = freeTiles[getRandomInteger(freeTiles.length)];
@@ -324,7 +335,6 @@ function addNewRandomTile(){
   let tileValue = (getRandomInteger(2) + 1) * 2;
   gameBoard[newTileCoords[0]][newTileCoords[1]] = tileValue;
   animateTile('appeared', visualTiles[newTileCoords[0]*4 + newTileCoords[1]]);
-  newlyAdded.push([newTileCoords[0], newTileCoords[1]]);
 }
 
 function getFreeTiles(){
@@ -343,20 +353,37 @@ function getFreeTiles(){
   return freeTiles;
 }
 
+function finishGame(){
+  alert('the game is over!');
+  addToLeaderboard(gameScore, new Date().toISOString().slice(0, 10));
+  startNewGame();
+}
+
 function startNewGame(){
   gameBoard = [
-    [4, 0, 0, 0],
-    [4, 2, 0, 0],
-    [0, 0, 2, 0],
-    [0, 0, 0, 2]
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0]
   ]
+  prevGameBoard = [];
+  prevGameScore = 0;
   gameScore = 0;
+  
   updateScore(0);
-  /*
   for (let i = 0; i < getRandomInteger(3) + 1; i++){
     addNewRandomTile();
-  }*/
+  }
   updateBoardVisual();
+}
+
+function resetActiveTiles(){
+  for (let i = 0; i < 4; i++){
+    for (let j = 0; j < 4; j++){
+      let chosenTile = visualTiles[i*4 + j];
+      chosenTile.classList.remove('active-tile');
+    }
+  }
 }
 
 function updateBoardVisual(){
@@ -378,6 +405,7 @@ function updateBoardVisual(){
       changeTileColor(chosenTile);
     }
   }
+  localStorage.setItem('game-board', JSON.stringify(gameBoard)); 
 }
 
 function changeTileFont(x){
@@ -419,6 +447,52 @@ function changeTileColor(tile){
   let weight = (tileValuePercent * 100 / 25 - (Math.min(gradientEdge) - 1));
   let color = pickHex(firstColor, secondColor, weight);
   tile.style.background = 'rgb('+color[0]+', '+color[1]+', '+color[2]+')';
+}
+
+function compareScore( a, b ) {
+  if ( a.score < b.score ){
+    return 1;
+  }
+  if ( a.score > b.score ){
+    return -1;
+  }
+  return 0;
+}
+
+function addToLeaderboard(newScore, newDate){
+  leaderboardList.sort(compareScore);
+  if (leaderboardList.length < 10){
+    leaderboardList.push(
+      {
+        date: newDate,
+        score: newScore
+      }
+    )
+  }
+  else{
+    if (leaderboardList[leaderboardList.length - 1].score < newScore){
+      leaderboardList.pop();
+      leaderboardList.push(
+        {
+          name: newName,
+          date: newDate,
+          score: newScore
+        }
+      )
+    }
+  }
+  localStorage.setItem('leaderboard', JSON.stringify(leaderboardList)); 
+  populateLeaderboard();
+}
+
+function populateLeaderboard(){
+  leaderboard.textContent = '';
+  leaderboardList.sort(compareScore);
+  for (entry of leaderboardList){
+    let leaderboard_entry = document.createElement('li');
+    leaderboard_entry.textContent = entry.score + ' ' + entry.date;
+    leaderboard.appendChild(leaderboard_entry);
+  }
 }
 
 // PAGE SETUP
@@ -501,7 +575,6 @@ speed_control_input.setAttribute('list', 'speed-markers');
 speed_control_input.addEventListener('change', (event) => {
   if (isBoardPaused == false){
     animationSpeed = baseSpeed * (1 / markers[event.target.value]); 
-    console.log(event.target.value, animationSpeed);
   }
 });
 speed_control_slider.appendChild(speed_control_input);
@@ -576,13 +649,29 @@ document.addEventListener('keydown', (e) => {
   }
 })
 
+const leaderboard = document.createElement('ul');
+leaderboard.classList.add('leaderboard');
+
+main_container.appendChild(leaderboard);
+
 let x = window.matchMedia('(max-width: 512px)')
 x.addEventListener('change', function() {
   changeTileFont(x);
 }); 
 
-if (localStorage.getItem('tasklist-test')){
+if (localStorage.getItem('leaderboard')){
+  leaderboardList = JSON.parse(localStorage.getItem('leaderboard'));
 }
 
+if (localStorage.getItem('game-board')){
+  gameBoard = JSON.parse(localStorage.getItem('game-board'));
+  gameScore = JSON.parse(localStorage.getItem('game-score'));
+  score.textContent = gameScore;
+  updateBoardVisual();
+}
+else{
+  startNewGame();
+}
+
+populateLeaderboard();
 changeTileFont(x);
-startNewGame();

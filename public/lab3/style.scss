@@ -165,6 +165,10 @@ footer{
     z-index: 20;
     position: relative;
   }
+  .active-tile-combined{
+    z-index: 40;
+    position: relative;
+  }
 }
 
 .speed-control{
@@ -192,7 +196,7 @@ option {
 }
 
 .controls{
-  display: grid;
+  display: none;
   grid-template-columns: repeat(3, calc($tile-size - 1rem));
   grid-template-rows: repeat(2, calc($tile-size - 1rem));
   margin: 2rem auto auto auto;
@@ -296,6 +300,12 @@ option {
   }
 }
 
+@media only screen and (max-width: 720px){
+  .controls{
+    display: grid;
+  }
+}
+
 @media only screen and (max-width: 512px){
   $tile-size: 4rem;
   .gameboard{
@@ -303,6 +313,7 @@ option {
     grid-template-rows: repeat(4, $tile-size);
   }
   .controls{
+    display: grid;
     grid-template-columns: repeat(3, calc($tile-size - 0.5rem));
     grid-template-rows: repeat(2, calc($tile-size - 0.5rem));
     &__arrow{
