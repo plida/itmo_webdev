@@ -91,12 +91,13 @@ function updateBoardSnap(movedTiles){
     }
     updateBoardVisual();
     updateBoardAdd();
-    resetActiveTiles();
+    
     setTimeout(function(){
       if (getFreeTiles().length == 0 && areMovesAvailable() == false){
         finishGame();
         return;
       }
+      resetActiveTiles();
     }, animationSpeed * 2)
 
   }, animationSpeed)
@@ -104,7 +105,15 @@ function updateBoardSnap(movedTiles){
 }
 
 function updateBoardAdd(){
-  addNewRandomTile();
+  let freeTiles = getFreeTiles();
+  if (freeTiles.length > 2){
+    for (let i = 0; i < getRandomInteger(2) + 1; i++){
+      addNewRandomTile();
+    }
+  }
+  else{
+    addNewRandomTile();
+  }
   isBoardPaused = false;
   speed_control_input.disabled = false;
   setTimeout(function(){
@@ -381,7 +390,7 @@ function resetActiveTiles(){
   for (let i = 0; i < 4; i++){
     for (let j = 0; j < 4; j++){
       let chosenTile = visualTiles[i*4 + j];
-      chosenTile.classList.remove('active-tile');
+      chosenTile.classList.remove('active-tile-combined');
     }
   }
 }
