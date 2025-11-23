@@ -244,7 +244,31 @@ option {
       content: '\2193';
     }
   }
+}
 
+.popup{
+  z-index: 9999;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgba(210, 211, 251, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.victory-screen{
+  width: 15rem;
+  height: 15rem;
+  padding: 5rem;
+  background-color: $color-primary;
+  border-radius: $border-radius-regular;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
 
 

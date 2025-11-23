@@ -16,6 +16,7 @@ let prevGameScore = 0;
 let tileFont = 0;
 let tileFontRate = 0;
 let maxTileValue = 2048;
+let userName = 'user';
 let tileColors = [
   [237, 216, 190], 
   [237, 216, 190], 
@@ -46,9 +47,7 @@ function updateBoardMove(direction){
   speed_control_input.disabled = true;
   let movedTiles = [];
   movedTiles = collectMovedTiles(direction);
-  setTimeout(function(){
-    updateBoardSnap(movedTiles);
-  }, animationSpeed)
+  updateBoardSnap(movedTiles);
 }
 
 function updateBoardSnap(movedTiles){
@@ -114,10 +113,10 @@ function updateBoardAdd(){
   else{
     addNewRandomTile();
   }
-  isBoardPaused = false;
   speed_control_input.disabled = false;
   setTimeout(function(){
     updateBoardVisual();
+    isBoardPaused = false;
   }, animationSpeed)
 }
 
@@ -363,12 +362,22 @@ function getFreeTiles(){
 }
 
 function finishGame(){
-  alert('the game is over!');
-  addToLeaderboard(gameScore, new Date().toISOString().slice(0, 10));
-  startNewGame();
+  if (gameScore == null){
+    gameScore = 0;
+  }
+  victoryScore.textContent = 'You scored ' + gameScore + ' points';
+  if (isNewRecord(gameScore)){
+    victorySubmit.style.display = 'flex';
+  }
+  victoryScreenWrapper.style.display = 'flex';
+  setTimeout(function(){
+  localStorage.removeItem('game-board');
+  localStorage.removeItem('game-score');
+  }, animationSpeed)
 }
 
 function startNewGame(){
+  victoryScreenWrapper.style.display = 'none';
   gameBoard = [
     [0, 0, 0, 0],
     [0, 0, 0, 0],
@@ -378,12 +387,16 @@ function startNewGame(){
   prevGameBoard = [];
   prevGameScore = 0;
   gameScore = 0;
-  
   updateScore(0);
+  updateBoardVisual();
+  
   for (let i = 0; i < getRandomInteger(3) + 1; i++){
     addNewRandomTile();
   }
-  updateBoardVisual();
+  setTimeout(function(){
+    updateBoardVisual();
+  }, animationSpeed)
+  
 }
 
 function resetActiveTiles(){
@@ -468,28 +481,32 @@ function compareScore( a, b ) {
   return 0;
 }
 
-function addToLeaderboard(newScore, newDate){
-  leaderboardList.sort(compareScore);
+function isNewRecord(newScore){
   if (leaderboardList.length < 10){
-    leaderboardList.push(
-      {
-        date: newDate,
-        score: newScore
-      }
-    )
+    return true;
   }
-  else{
-    if (leaderboardList[leaderboardList.length - 1].score < newScore){
-      leaderboardList.pop();
-      leaderboardList.push(
-        {
-          name: newName,
-          date: newDate,
-          score: newScore
-        }
-      )
+  leaderboardList.sort(compareScore);
+  if (leaderboardList[leaderboardList.length - 1].score < newScore){
+    return true;
+  }
+  return false;
+}
+
+function addToLeaderboard(newName, newScore, newDate){
+  if (isNewRecord(newScore) == false){
+    return;
+  }
+  if (leaderboardList.length >= 10){
+    leaderboardList.sort(compareScore);
+    leaderboardList.pop();
+  }
+  leaderboardList.push(
+    {
+      name: newName,
+      date: newDate,
+      score: newScore
     }
-  }
+  )
   localStorage.setItem('leaderboard', JSON.stringify(leaderboardList)); 
   populateLeaderboard();
 }
@@ -499,7 +516,7 @@ function populateLeaderboard(){
   leaderboardList.sort(compareScore);
   for (entry of leaderboardList){
     let leaderboard_entry = document.createElement('li');
-    leaderboard_entry.textContent = entry.score + ' ' + entry.date;
+    leaderboard_entry.textContent = entry.name + ' ' + entry.score + ' ' + entry.date;
     leaderboard.appendChild(leaderboard_entry);
   }
 }
@@ -583,7 +600,8 @@ speed_control_input.step = 1;
 speed_control_input.setAttribute('list', 'speed-markers');
 speed_control_input.addEventListener('change', (event) => {
   if (isBoardPaused == false){
-    animationSpeed = baseSpeed * (1 / markers[event.target.value]); 
+    animationSpeed = baseSpeed * (1 / markers[event.target.value]);
+    localStorage.setItem('game-speed', animationSpeed);
   }
 });
 speed_control_slider.appendChild(speed_control_input);
@@ -625,7 +643,10 @@ const undo = document.createElement('button');
 undo.textContent = 'undo';
 undo.addEventListener('click', () => {undoMove()});
 settings.appendChild(undo);
-
+const reset = document.createElement('button');
+reset.textContent = 'reset';
+reset.addEventListener('click', () => {startNewGame()});
+settings.appendChild(reset);
 
 const controls = document.createElement('section');
 controls.classList.add('controls');
@@ -660,8 +681,42 @@ document.addEventListener('keydown', (e) => {
 
 const leaderboard = document.createElement('ul');
 leaderboard.classList.add('leaderboard');
-
 main_container.appendChild(leaderboard);
+
+const victoryScreenWrapper = document.createElement('div');
+victoryScreenWrapper.classList.add('popup');
+main_container.appendChild(victoryScreenWrapper);
+const victoryScreen = document.createElement('section');
+victoryScreen.classList.add('victory-screen');
+victoryScreenWrapper.appendChild(victoryScreen);
+const victoryHeading = document.createElement('h2');
+victoryHeading.textContent = 'The game is over!';
+victoryScreen.appendChild(victoryHeading);
+const victoryScore = document.createElement('span');
+victoryScore.textContent = 'You scored 0 points';
+victoryScreen.appendChild(victoryScore);
+const victorySubmit = document.createElement('form');
+victorySubmit.classList.add('victory-submit');
+victoryScreen.appendChild(victorySubmit);
+const victorySubmitName = document.createElement('input');
+victorySubmitName.value = userName;
+//victorySubmitName.maxLength = 20;
+victorySubmit.appendChild(victorySubmitName);
+const victorySubmitBtn = document.createElement('button');
+victorySubmitBtn.type = 'submit';
+victorySubmitBtn.textContent = 'submit new record';
+victorySubmit.addEventListener('submit', (e) => {
+  e.preventDefault(); 
+  addToLeaderboard(victorySubmitName.value, gameScore, new Date().toISOString().slice(0, 10));
+  victorySubmit.style.display = 'none';
+  localStorage.setItem('user-name', userName);
+});
+victorySubmit.appendChild(victorySubmitBtn);
+const victoryReset = document.createElement('button');
+victoryReset.textContent = 'Start a new game';
+victoryReset.addEventListener('click', () => {startNewGame()});
+victoryScreen.appendChild(victoryReset);
+victoryScreenWrapper.style.display = 'none';
 
 let x = window.matchMedia('(max-width: 512px)')
 x.addEventListener('change', function() {
@@ -680,6 +735,14 @@ if (localStorage.getItem('game-board')){
 }
 else{
   startNewGame();
+}
+
+if (localStorage.getItem('game-speed')){
+  animationSpeed = JSON.parse(localStorage.getItem('game-speed'));
+  speed_control_input.value = baseSpeed / animationSpeed;
+}
+if (localStorage.getItem('user-name')){
+  userName = localStorage.getItem('user-name');
 }
 
 populateLeaderboard();
