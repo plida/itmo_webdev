@@ -1,6 +1,7 @@
 $color-background: #f8f7f3;
 $color-primary: #F5E9DA;
 $color-secondary: #F5D389;
+$color-slider: #efa66f;
 $transition-primary: 0.25s ease;
 $border-radius-small: 0.3125rem;
 $border-radius-regular: 0.625rem;
@@ -161,18 +162,30 @@ footer{
 
 .scores{
   display: flex;
-  margin: 0.5rem 0;
+  margin: 2rem auto 0 auto;
+  max-width: 25rem;
+  justify-content: space-evenly;
   &__value{
+    
+    
+  }
+  &__wrapper{
+    display: flex;
     background-color: #F5D389;
     border-radius: $border-radius-small;
     margin: 0 1rem;
     padding: 0.5rem;
+    min-width: 5rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 }
 
+
 .gameboard{
   background-color: $color-background;
-
+  margin: 0.5rem 0 1rem 0;
   padding: 0.125rem;
   border-radius: 0.5rem;
 
@@ -222,6 +235,7 @@ footer{
     width: 15rem;
     margin: 0;
     margin-bottom: 0.125rem;
+    accent-color: $color-slider;
   }
 }
 
@@ -252,7 +266,7 @@ option {
   display: none;
   grid-template-columns: repeat(3, calc($tile-size - 1rem));
   grid-template-rows: repeat(2, calc($tile-size - 1rem));
-  margin: 2rem auto auto auto;
+  margin: 0 auto;
   &__arrow{
     border: none;
     border-radius: 0.25rem;
@@ -316,15 +330,48 @@ option {
   }
 }
 
+.victory-submit{
+  display: flex;
+  align-items: center;
+  height: 2rem;
+  input, button{
+    margin: 0 1rem;
+  }
+}
+
+a.disabled {
+    pointer-events: none;
+}
+
 .victory-screen{
-  width: 15rem;
-  height: 15rem;
-  padding: 5rem;
+  padding: 1rem 5rem;
+  max-width: 25rem;
+  min-height: 15rem;
+  text-align: center;
   border-radius: $border-radius-regular;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  h2, h3{
+    margin: 0.125rem;
+  }
+  p{
+    margin: 0.5rem 0;
+  }
+  input{
+    max-width: 10rem;
+  }
+  button{
+    padding: 0.5rem;
+    margin: 1rem 0 0 0;
+    &[type='submit']{
+      margin: 0;
+    }
+  }
+  img{
+    margin: 0.5rem;
+  }
 }
 
 .leaderboard{
@@ -352,6 +399,12 @@ option {
   align-items: center;
 }
 
+.nuke{
+  margin: 1rem 0 0 0;
+  padding: 0.25rem;
+  background-color: $color-slider;
+}
+
 @media only screen and (max-width: 1080px){
   .main-container{
     width: 90%;
@@ -369,7 +422,7 @@ option {
 
 @media only screen and (max-width: 720px){
   header{
-    height: 5rem;
+    padding: 0.5rem 0;
   }
   nav{
     display: flex;
@@ -411,7 +464,18 @@ option {
 }
 
 @media only screen and (max-width: 512px){
-  $tile-size: 4rem;
+  header{
+    max-height: 4rem;
+    a, img{
+      max-height: 4rem;
+    }
+  }
+  .settings{
+    button{
+      margin: 0 0.5rem;
+    }
+  }
+  $tile-size: 4.5rem;
   .gameboard{
     grid-template-columns: repeat(4, $tile-size);
     grid-template-rows: repeat(4, $tile-size);
@@ -421,7 +485,7 @@ option {
     grid-template-columns: repeat(3, calc($tile-size - 0.5rem));
     grid-template-rows: repeat(2, calc($tile-size - 0.5rem));
     &__arrow{
-      font-size: 1.5rem;
+      font-size: 2rem;
     }
   }
   .site-name-long{

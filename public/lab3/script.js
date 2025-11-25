@@ -22,14 +22,14 @@ let tileColors = [
   [237, 216, 190], 
   [237, 216, 190], 
   [240, 178, 111], 
-  [237, 79, 65], 
-  [173, 54, 39], 
-  [115, 32, 15]
+  [230, 80, 65], 
+  [200, 60, 85], 
+  [120, 65, 115]
 ]
 
 let isBoardPaused = false;
-let baseSpeed = 100;
-let animationSpeed = 100;
+let baseSpeed = 150;
+let animationSpeed = 150;
 
 // FUNCTIONS
 
@@ -37,12 +37,23 @@ function updateScore(newAmount){
   prevGameScore = gameScore;
   gameScore = gameScore + newAmount;
   score.textContent = gameScore;
-  localStorage.setItem('game-score', JSON.stringify(gameScore)); 
+  localStorage.setItem('game-score', JSON.stringify(gameScore));
+  updateBestScore();
 }
 
 function updateBestScore(){
-  let bestScore = leaderboardList.sort(compareScore)[0].score;
-  best_score.textContent = bestScore;
+  if (leaderboardList.length > 0){
+    let bestScore = leaderboardList.sort(compareScore)[0].score;
+    if (gameScore > bestScore){
+      best_score.textContent = gameScore;
+    }
+    else{
+      best_score.textContent = bestScore;
+    }
+  }
+  else{
+    best_score.textContent = gameScore;
+  }
 }
 
 
@@ -123,7 +134,9 @@ function updateBoardAdd(){
   speed_control_input.disabled = false;
   setTimeout(function(){
     updateBoardVisual();
-    isBoardPaused = false;
+    if (gameIsFinished == false){
+      isBoardPaused = false;
+    }
   }, animationSpeed)
 }
 
@@ -369,16 +382,63 @@ function getFreeTiles(){
   return freeTiles;
 }
 
+function disableAllButtons(exception){
+  let buttons = document.querySelectorAll('button');
+  let exceptions = exception.querySelectorAll('button');
+  console.log(exceptions);
+  
+  for (let btn of buttons){
+    console.log([].indexOf.call(exceptions, btn), btn);
+    if ([].indexOf.call(exceptions, btn) == -1){
+      btn.disabled = true;
+    }
+  }
+
+  let links = document.querySelectorAll('a');
+  for (let link of links){
+    link.tabIndex = '-1';
+  }
+
+}
+
+function enableAllButtons(){
+  let buttons = document.querySelectorAll('button');
+  for (btn of buttons){
+    btn.disabled = false;
+  }
+  let links = document.querySelectorAll('a');
+  for (let link of links){
+    link.tabIndex = 0;
+  }
+}
+
 function finishGame(){
+  disableAllButtons(victory_screen);
+  victory_gif.style.display = 'none';
+  victory_best.style.display = 'none';
+  victory_record.style.display = 'none';
+  victory_save.style.display = 'none';
+  victory_save_confirm.style.display = 'none';
   isBoardPaused = true;
   gameIsFinished = true;
   if (gameScore == null){
     gameScore = 0;
   }
-  victory_score.textContent = 'You scored ' + gameScore + ' points';
+  victory_score.textContent = 'You scored ' + gameScore + ' points.';
   if (isNewRecord(gameScore)){
-    victory_submit.style.display = 'flex';
+    victory_submit_name.style.display = 'block'
+    victory_submitBtn.style.display = 'block'
+    victory_save.style.display = 'block';
+    console.log(gameScore, leaderboardList.sort(compareScore)[0]);
+    if (leaderboardList.length == 0 || gameScore > leaderboardList.sort(compareScore)[0].score){
+      victory_gif.style.display = 'block';
+      victory_best.style.display = 'block';
+    }
+    else{
+      victory_record.style.display = 'block';
+    }
   }
+  victory_submit_name.value = userName;
   victory_screen_wrapper.style.display = 'flex';
   if (document.body.classList.contains('stop-scrolling') == false){
     document.body.classList.add('stop-scrolling');
@@ -397,11 +457,18 @@ function startNewGame(){
     [0, 0, 0, 0],
     [0, 0, 0, 0]
   ]
-  prevGameBoard = [];
-  prevGameScore = 0;
-  gameScore = 0;
-  updateScore(0);
-  updateBoardVisual();
+  /*gameBoard = [
+    [2, 4, 8, 16],
+    [32, 64, 128, 256],
+    [512, 1024, 2048, 4019],
+    [0, 0, 0, 0]
+    ]*/
+   prevGameBoard = [];
+   prevGameScore = 0;
+   gameScore = 0;
+   enableAllButtons();
+   updateScore(0);
+   updateBoardVisual();
   updateBestScore();
   for (let i = 0; i < getRandomInteger(3) + 1; i++){
     addNewRandomTile();
@@ -469,9 +536,9 @@ function changeTileFont(x){
 }
 
 function pickHex(color1, color2, weight) {
-  var w2 = weight;
-  var w1 = 1 - w2;
-  var rgb = [Math.round(color1[0] * w1 + color2[0] * w2),
+  let w2 = weight;
+  let w1 = 1 - w2;
+  let rgb = [Math.round(color1[0] * w1 + color2[0] * w2),
       Math.round(color1[1] * w1 + color2[1] * w2),
       Math.round(color1[2] * w1 + color2[2] * w2)];
   return rgb;
@@ -547,6 +614,20 @@ function populateLeaderboard(){
   }
 }
 
+function closeSpeedControl(e){
+  isBoardPaused = false;
+  enableAllButtons();
+  if (e.classList.contains('popup') == false){
+    return;
+  }
+  if (speed_control_wrapper.style.display == 'flex'){
+    speed_control_wrapper.style.display = 'none';
+    if (document.body.classList.contains('stop-scrolling')){
+      document.body.classList.remove('stop-scrolling');
+    };
+  } 
+}
+
 // PAGE SETUP
 const page = document.body;
 const header = document.createElement('header');
@@ -569,6 +650,7 @@ header_logo_link.href = 'index.html';
 header_logo_link.classList.add('disabled');
 header_logo.appendChild(header_logo_link);
 const header_logo_image = document.createElement('img');
+header_logo_image.style.display = 'none';
 header_logo_image.src = 'media/4502.png';
 header_logo_link.appendChild(header_logo_image);
 const header_logo_long = document.createElement('h1');
@@ -613,151 +695,6 @@ settings.appendChild(undo);
 const undoIcon = document.createElement('img');
 undoIcon.src = 'media/undo.png';
 undo.appendChild(undoIcon);
-const reset = document.createElement('button');
-undo.classList.add('reset-btn');
-reset.addEventListener('click', () => {startNewGame()});
-settings.appendChild(reset);
-const resetIcon = document.createElement('img');
-resetIcon.src = 'media/reset.png';
-reset.appendChild(resetIcon);
-
-const leaderboardBtn = document.createElement('button');
-leaderboardBtn.addEventListener('click', () => {openLeaderboard()});
-settings.appendChild(leaderboardBtn);
-const leaderboardBtnIcon = document.createElement('img');
-leaderboardBtnIcon.src = 'media/trophy.png';
-leaderboardBtn.appendChild(leaderboardBtnIcon);
-
-const scores = document.createElement('section');
-scores.classList.add('scores');
-main_container.appendChild(scores);
-const score = document.createElement('span');
-score.textContent = '0';
-score.classList.add('scores__value');
-scores.appendChild(score);
-const best_score = document.createElement('span');
-best_score.textContent = '0';
-best_score.classList.add('scores__value');
-scores.appendChild(best_score);
-
-const board = document.createElement('section');
-board.classList.add('gameboard');
-main_container.appendChild(board);
-for (let i = 1; i < 17; i++){
-  let board_tile_wrapper = document.createElement('div');
-  board_tile_wrapper.classList.add('gameboard__tile-wrapper');
-  board.appendChild(board_tile_wrapper);
-  let board_tile = document.createElement('div');
-  board_tile.classList.add('gameboard__tile');
-  board_tile_wrapper.appendChild(board_tile);
-}
-
-const visualTiles = board.querySelectorAll('.gameboard__tile');
-
-const controls = document.createElement('section');
-controls.classList.add('controls');
-main_container.appendChild(controls);
-const controls_left = document.createElement('button');
-controls_left.classList.add('controls__arrow');
-controls_left.classList.add('controls__arrow-left');
-controls_left.addEventListener('click', () => {updateBoardMove('left')});
-controls.appendChild(controls_left);
-const controls_right = document.createElement('button');
-controls_right.classList.add('controls__arrow');
-controls_right.classList.add('controls__arrow-right');
-controls_right.addEventListener('click', () => {updateBoardMove('right')});
-controls.appendChild(controls_right);
-const controls_down = document.createElement('button');
-controls_down.classList.add('controls__arrow');
-controls_down.classList.add('controls__arrow-down');
-controls_down.addEventListener('click', () => {updateBoardMove('down')});
-controls.appendChild(controls_down);
-const controls_up = document.createElement('button');
-controls_up.classList.add('controls__arrow');
-controls_up.classList.add('controls__arrow-up');
-controls_up.addEventListener('click', () => {updateBoardMove('up')});
-controls.appendChild(controls_up);
-
-document.addEventListener('keydown', (e) => {
-  if (e.code.indexOf('Arrow') == 0){
-    e.preventDefault();
-    updateBoardMove(e.code.slice(5));
-  }
-})
-
-function openLeaderboard(){
-  if (leaderboard_wrapper.style.display == 'none'){
-    leaderboard_wrapper.style.display = 'flex';
-  }
-  if (document.body.classList.contains('stop-scrolling') == false){
-    document.body.classList.add('stop-scrolling');
-  }
-}
-function closeLeaderboard(){
-  if (leaderboard_wrapper.style.display == 'flex'){
-    leaderboard_wrapper.style.display = 'none';
-  }
-  if (document.body.classList.contains('stop-scrolling')){
-    document.body.classList.remove('stop-scrolling');
-  }
-}
-
-const leaderboard_wrapper = document.createElement('div');
-leaderboard_wrapper.classList.add('popup');
-leaderboard_wrapper.style.display = 'none';
-leaderboard_wrapper.addEventListener('click', (e) => {
-  if (e.target.classList.contains('popup')){
-    closeLeaderboard();
-  }
-});
-main_container.appendChild(leaderboard_wrapper);
-
-const leaderboard = document.createElement('section');
-leaderboard.classList.add('leaderboard');
-leaderboard_wrapper.appendChild(leaderboard);
-const leaderboard_heading = document.createElement('h2');
-leaderboard_heading.textContent = 'Your leaderboard (top-10)';
-leaderboard.appendChild(leaderboard_heading);
-const leaderboard_list = document.createElement('ol');
-leaderboard.appendChild(leaderboard_list);
-
-const victory_screen_wrapper = document.createElement('div');
-victory_screen_wrapper.classList.add('popup');
-main_container.appendChild(victory_screen_wrapper);
-const victory_screen = document.createElement('section');
-victory_screen.classList.add('victory-screen');
-victory_screen_wrapper.appendChild(victory_screen);
-const victory_heading = document.createElement('h2');
-victory_heading.textContent = 'The game is over!';
-victory_screen.appendChild(victory_heading);
-const victory_score = document.createElement('span');
-victory_score.textContent = 'You scored 0 points';
-victory_screen.appendChild(victory_score);
-const victory_submit = document.createElement('form');
-victory_submit.classList.add('victory-submit');
-victory_screen.appendChild(victory_submit);
-const victory_submit_name = document.createElement('input');
-victory_submit_name.value = userName;
-victory_submit_name.maxLength = 20;
-victory_submit.appendChild(victory_submit_name);
-const victory_submitBtn = document.createElement('button');
-victory_submitBtn.type = 'submit';
-victory_submitBtn.textContent = 'submit new record';
-victory_submit.addEventListener('submit', (e) => {
-  e.preventDefault(); 
-  addToLeaderboard(victory_submit_name.value, gameScore, new Date().toISOString().slice(0, 10));
-  victory_submit.style.display = 'none'
-  if (document.body.classList.contains('stop-scrolling')){
-    document.body.classList.remove('stop-scrolling');
-  };
-  localStorage.setItem('user-name', userName);
-});
-victory_submit.appendChild(victory_submitBtn);
-const victory_reset = document.createElement('button');
-victory_reset.textContent = 'Start new game';
-victory_reset.addEventListener('click', () => {startNewGame()});
-victory_screen.appendChild(victory_reset);
-victory_screen_wrapper.style.display = 'none';
 
 const speed_control_wrapper = document.createElement('div');
 speed_control_wrapper.style.display = 'none';
@@ -766,10 +703,19 @@ main_container.appendChild(speed_control_wrapper);
 const speed_control = document.createElement('section');
 speed_control.classList.add('speed-control');
 speed_control_wrapper.appendChild(speed_control);
+const speed_control_close = document.createElement('button');
+speed_control_close.textContent = 'x';
+speed_control_close.addEventListener('click', (e) => {
+  closeSpeedControl(speed_control_wrapper);
+})
+speed_control_close.classList.add('close-btn');
+speed_control.appendChild(speed_control_close);
 const speed_control_btn = document.createElement('button');
 speed_control_btn.classList.add('speed-control-btn');
 speed_control_btn.addEventListener('click', () => {
   if (speed_control_wrapper.style.display == 'none'){
+    isBoardPaused = true;
+    disableAllButtons(speed_control_wrapper);
     speed_control_wrapper.style.display = 'flex';
     if (document.body.classList.contains('stop-scrolling') == false){
       document.body.classList.add('stop-scrolling');
@@ -777,15 +723,7 @@ speed_control_btn.addEventListener('click', () => {
   } 
 })
 speed_control_wrapper.addEventListener('click', (e) => {
-  if (e.target.classList.contains('popup') == false){
-    return;
-  }
-  if (speed_control_wrapper.style.display == 'flex'){
-    speed_control_wrapper.style.display = 'none';
-    if (document.body.classList.contains('stop-scrolling')){
-      document.body.classList.remove('stop-scrolling');
-    };
-  } 
+  closeSpeedControl(e.target);
 })
 settings.appendChild(speed_control_btn);
 const speed_control_icon = document.createElement('img');
@@ -833,6 +771,225 @@ for (let i = 0; i < markers.length; i++){
 speed_control_markers.id = 'speed-markers';
 speed_control.appendChild(speed_control_markers);
 
+const leaderboardBtn = document.createElement('button');
+leaderboardBtn.addEventListener('click', () => {openLeaderboard()});
+settings.appendChild(leaderboardBtn);
+const leaderboardBtnIcon = document.createElement('img');
+leaderboardBtnIcon.src = 'media/trophy.png';
+leaderboardBtn.appendChild(leaderboardBtnIcon);
+
+const reset = document.createElement('button');
+undo.classList.add('reset-btn');
+reset.addEventListener('click', () => {
+  if (confirm('Are you absolutely sure you want to start a new game?') == true){
+    startNewGame()
+  }
+});
+settings.appendChild(reset);
+const resetIcon = document.createElement('img');
+resetIcon.src = 'media/reset.png';
+reset.appendChild(resetIcon);
+
+
+
+const scores = document.createElement('section');
+scores.classList.add('scores');
+main_container.appendChild(scores);
+const score_wrapper = document.createElement('div');
+score_wrapper.classList.add('scores__wrapper');
+scores.appendChild(score_wrapper);
+const score_label = document.createElement('span');
+score_label.textContent = 'Score';
+score_wrapper.appendChild(score_label);
+const score = document.createElement('span');
+score.textContent = '0';
+score.classList.add('scores__value');
+score_wrapper.appendChild(score);
+
+
+const best_score_wrapper = document.createElement('div');
+best_score_wrapper.classList.add('scores__wrapper');
+scores.appendChild(best_score_wrapper);
+const best_score_title = document.createElement('span');
+best_score_title.textContent = 'Best';
+best_score_wrapper.appendChild(best_score_title);
+const best_score = document.createElement('span');
+best_score.textContent = '0';
+best_score.classList.add('scores__value');
+best_score_wrapper.appendChild(best_score);
+
+const board = document.createElement('section');
+board.classList.add('gameboard');
+main_container.appendChild(board);
+for (let i = 1; i < 17; i++){
+  let board_tile_wrapper = document.createElement('div');
+  board_tile_wrapper.classList.add('gameboard__tile-wrapper');
+  board.appendChild(board_tile_wrapper);
+  let board_tile = document.createElement('div');
+  board_tile.classList.add('gameboard__tile');
+  board_tile_wrapper.appendChild(board_tile);
+}
+
+const visualTiles = board.querySelectorAll('.gameboard__tile');
+
+const controls = document.createElement('section');
+controls.classList.add('controls');
+main_container.appendChild(controls);
+const controls_left = document.createElement('button');
+controls_left.classList.add('controls__arrow');
+controls_left.classList.add('controls__arrow-left');
+controls_left.addEventListener('click', () => {updateBoardMove('left')});
+controls.appendChild(controls_left);
+const controls_right = document.createElement('button');
+controls_right.classList.add('controls__arrow');
+controls_right.classList.add('controls__arrow-right');
+controls_right.addEventListener('click', () => {updateBoardMove('right')});
+controls.appendChild(controls_right);
+const controls_down = document.createElement('button');
+controls_down.classList.add('controls__arrow');
+controls_down.classList.add('controls__arrow-down');
+controls_down.addEventListener('click', () => {updateBoardMove('down')});
+controls.appendChild(controls_down);
+const controls_up = document.createElement('button');
+controls_up.classList.add('controls__arrow');
+controls_up.classList.add('controls__arrow-up');
+controls_up.addEventListener('click', () => {updateBoardMove('up')});
+controls.appendChild(controls_up);
+
+document.addEventListener('keydown', (e) => {
+  if (e.code.indexOf('Arrow') == 0){
+    e.preventDefault();
+    updateBoardMove(e.code.slice(5));
+  }
+})
+
+function openLeaderboard(){
+  disableAllButtons(leaderboard_wrapper);
+  if (leaderboard_wrapper.style.display == 'none'){
+    leaderboard_wrapper.style.display = 'flex';
+  }
+  if (document.body.classList.contains('stop-scrolling') == false){
+    document.body.classList.add('stop-scrolling');
+  }
+}
+function closeLeaderboard(){
+  enableAllButtons();
+  if (leaderboard_wrapper.style.display == 'flex'){
+    leaderboard_wrapper.style.display = 'none';
+  }
+  if (document.body.classList.contains('stop-scrolling')){
+    document.body.classList.remove('stop-scrolling');
+  }
+}
+
+const leaderboard_wrapper = document.createElement('div');
+leaderboard_wrapper.classList.add('popup');
+leaderboard_wrapper.style.display = 'none';
+leaderboard_wrapper.addEventListener('click', (e) => {
+  if (e.target.classList.contains('popup')){
+    closeLeaderboard();
+  }
+});
+main_container.appendChild(leaderboard_wrapper);
+
+const leaderboard = document.createElement('section');
+leaderboard.classList.add('leaderboard');
+leaderboard_wrapper.appendChild(leaderboard);
+
+const leaderboard_close = document.createElement('button');
+leaderboard_close.textContent = 'x';
+leaderboard_close.addEventListener('click', (e) => {
+  closeLeaderboard();
+})
+leaderboard_close.classList.add('close-btn');
+leaderboard.appendChild(leaderboard_close);
+
+const leaderboard_heading = document.createElement('h2');
+leaderboard_heading.textContent = 'Your leaderboard (top-10)';
+leaderboard.appendChild(leaderboard_heading);
+const leaderboard_list = document.createElement('ol');
+leaderboard.appendChild(leaderboard_list);
+
+const victory_screen_wrapper = document.createElement('div');
+victory_screen_wrapper.classList.add('popup');
+main_container.appendChild(victory_screen_wrapper);
+const victory_screen = document.createElement('section');
+victory_screen.classList.add('victory-screen');
+victory_screen_wrapper.appendChild(victory_screen);
+const victory_heading = document.createElement('h2');
+victory_heading.textContent = 'The game is over!';
+victory_screen.appendChild(victory_heading);
+
+const victory_score = document.createElement('h3');
+victory_score.textContent = 'You scored 0 points.';
+victory_screen.appendChild(victory_score);
+
+const victory_record = document.createElement('p');
+victory_record.textContent = 'This score is in top 10!';
+victory_record.style.display = 'none';
+victory_screen.appendChild(victory_record);
+const victory_best = document.createElement('p');
+victory_best.textContent = 'This is a new record!';
+victory_screen.appendChild(victory_best);
+const victory_save = document.createElement('p');
+victory_save.textContent = 'Enter your name to save it to the leaderboard!';
+victory_save.style.display = 'none';
+victory_screen.appendChild(victory_save);
+
+
+const victory_gif = document.createElement('img');
+victory_gif.src = 'media/congratulations.gif';
+victory_gif.style.display = 'none';
+victory_screen.append(victory_gif);
+const victory_submit = document.createElement('form');
+victory_submit.classList.add('victory-submit');
+victory_screen.appendChild(victory_submit);
+const victory_save_confirm = document.createElement('p');
+victory_save_confirm.textContent = 'Your result has been saved!';
+victory_save_confirm.style.display = 'none';
+victory_submit.appendChild(victory_save_confirm);
+const victory_submit_name = document.createElement('input');
+victory_submit_name.value = userName;
+victory_submit_name.maxLength = 20;
+victory_submit.appendChild(victory_submit_name);
+const victory_submitBtn = document.createElement('button');
+victory_submitBtn.type = 'submit';
+victory_submitBtn.textContent = 'Save';
+victory_submit.addEventListener('submit', (e) => {
+  e.preventDefault(); 
+  addToLeaderboard(victory_submit_name.value, gameScore, new Date().toISOString().slice(0, 10));
+  victory_submit_name.style.display = 'none'
+  victory_submitBtn.style.display = 'none'
+  if (document.body.classList.contains('stop-scrolling')){
+    document.body.classList.remove('stop-scrolling');
+  };
+  userName = victory_submit_name.value;
+  localStorage.setItem('user-name', userName);
+  victory_save_confirm.style.display = 'block';
+});
+victory_submit.appendChild(victory_submitBtn);
+const victory_reset = document.createElement('button');
+victory_reset.textContent = 'Start a new game';
+victory_reset.addEventListener('click', () => {startNewGame()});
+victory_screen.appendChild(victory_reset);
+victory_screen_wrapper.style.display = 'none';
+
+const nuke = document.createElement('button');
+nuke.textContent = 'Destroy all saved data';
+nuke.classList.add('nuke');
+nuke.addEventListener('click', function() {
+  if (confirm('Are you absolutely sure you want to get rid of your saves & start a new game?') == true){
+    localStorage.clear();
+    best_score.textContent = '0';
+    prevGameBoard = []
+    leaderboardList = []
+    gameScore = 0;
+    prevGameScore = 0;
+    startNewGame();
+  }
+});
+main_container.appendChild(nuke);
+
 let x = window.matchMedia('(max-width: 512px)')
 x.addEventListener('change', function() {
   changeTileFont(x);
@@ -856,7 +1013,6 @@ else{
 if (localStorage.getItem('game-speed')){
   animationSpeed = JSON.parse(localStorage.getItem('game-speed'));
   speed_control_input.value = baseSpeed / animationSpeed;
-  console.log(speed_control_input.value);
   speed_control_value.textContent = 'x' + markers[speed_control_input.value];
 }
 if (localStorage.getItem('user-name')){
