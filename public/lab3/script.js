@@ -28,14 +28,26 @@ let tileColors = [
 ]
 
 let isBoardPaused = false;
-let baseSpeed = 150;
-let animationSpeed = 150;
+let baseSpeed = 100;
+let animationSpeed = 100;
 
 // FUNCTIONS
 
+function sanitize(string) {
+  const map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#x27;',
+      "/": '&#x2F;',
+  };
+  const reg = /[&<>"'/]/ig;
+  return string.replace(reg, (match)=>(map[match]));
+}
+
 function updateScore(newAmount){
-  prevGameScore = gameScore;
-  gameScore = gameScore + newAmount;
+  gameScore = Math.max(0, gameScore + newAmount);
   score.textContent = gameScore;
   localStorage.setItem('game-score', JSON.stringify(gameScore));
   updateBestScore();
@@ -61,6 +73,7 @@ function updateBoardMove(direction){
   if (isBoardPaused){
     return;
   }
+  prevGameScore = gameScore;
   isBoardPaused = true;
   speed_control_input.disabled = true;
   let movedTiles = [];
@@ -122,15 +135,7 @@ function updateBoardSnap(movedTiles){
 }
 
 function updateBoardAdd(){
-  let freeTiles = getFreeTiles();
-  if (freeTiles.length > 2){
-    for (let i = 0; i < getRandomInteger(2) + 1; i++){
-      addNewRandomTile();
-    }
-  }
-  else{
-    addNewRandomTile();
-  }
+  addNewRandomTile();
   speed_control_input.disabled = false;
   setTimeout(function(){
     updateBoardVisual();
@@ -146,7 +151,7 @@ function undoMove(){
   }
   gameBoard = JSON.parse(JSON.stringify(prevGameBoard));
   updateBoardVisual();
-  updateScore(prevGameScore - gameScore);
+  updateScore((prevGameScore - gameScore)*2);
   prevGameBoard = [];
   undo.classList.add('disabled');
 }
@@ -385,12 +390,10 @@ function getFreeTiles(){
 function disableAllButtons(exception){
   let buttons = document.querySelectorAll('button');
   let exceptions = exception.querySelectorAll('button');
-  console.log(exceptions);
   
   for (let btn of buttons){
-    console.log([].indexOf.call(exceptions, btn), btn);
     if ([].indexOf.call(exceptions, btn) == -1){
-      btn.disabled = true;
+      btn.tabIndex = '-1';
     }
   }
 
@@ -404,11 +407,11 @@ function disableAllButtons(exception){
 function enableAllButtons(){
   let buttons = document.querySelectorAll('button');
   for (btn of buttons){
-    btn.disabled = false;
+    btn.tabIndex = '0';
   }
   let links = document.querySelectorAll('a');
   for (let link of links){
-    link.tabIndex = 0;
+    link.tabIndex = '0';
   }
 }
 
@@ -429,7 +432,6 @@ function finishGame(){
     victory_submit_name.style.display = 'block'
     victory_submitBtn.style.display = 'block'
     victory_save.style.display = 'block';
-    console.log(gameScore, leaderboardList.sort(compareScore)[0]);
     if (leaderboardList.length == 0 || gameScore > leaderboardList.sort(compareScore)[0].score){
       victory_gif.style.display = 'block';
       victory_best.style.display = 'block';
@@ -647,10 +649,8 @@ const header_logo = document.createElement('li');
 header_nav_list.appendChild(header_logo);
 const header_logo_link = document.createElement('a');
 header_logo_link.href = 'index.html';
-header_logo_link.classList.add('disabled');
 header_logo.appendChild(header_logo_link);
 const header_logo_image = document.createElement('img');
-header_logo_image.style.display = 'none';
 header_logo_image.src = 'media/4502.png';
 header_logo_link.appendChild(header_logo_image);
 const header_logo_long = document.createElement('h1');
@@ -690,6 +690,7 @@ settings.classList.add('settings');
 main_container.appendChild(settings);
 const undo = document.createElement('button');
 undo.classList.add('undo-btn');
+undo.title = 'Undo previous move (2x score penalty!)'
 undo.addEventListener('click', () => {undoMove()});
 settings.appendChild(undo);
 const undoIcon = document.createElement('img');
@@ -704,7 +705,6 @@ const speed_control = document.createElement('section');
 speed_control.classList.add('speed-control');
 speed_control_wrapper.appendChild(speed_control);
 const speed_control_close = document.createElement('button');
-speed_control_close.textContent = 'x';
 speed_control_close.addEventListener('click', (e) => {
   closeSpeedControl(speed_control_wrapper);
 })
@@ -712,6 +712,7 @@ speed_control_close.classList.add('close-btn');
 speed_control.appendChild(speed_control_close);
 const speed_control_btn = document.createElement('button');
 speed_control_btn.classList.add('speed-control-btn');
+speed_control_btn.title = 'Change animation speed'
 speed_control_btn.addEventListener('click', () => {
   if (speed_control_wrapper.style.display == 'none'){
     isBoardPaused = true;
@@ -736,26 +737,24 @@ speed_control_value.textContent = 'x1';
 speed_control_btn.appendChild(speed_control_value);
 
 const speed_control_label = document.createElement('label');
-speed_control_label.textContent = 'animation speed';
+speed_control_label.textContent = 'Animation speed';
 speed_control_label.for = 'speed-control';
 speed_control_slider.appendChild(speed_control_label);
 
-const markers = [10**(-1) * 3.3, 10**(-1) * 5, 1, 2, 3, 5, 10];
+const markers = [10**(-1) * 2.5, 10**(-1) * 5, 0.75, 1, 2, 3, 5, 10];
 
 const speed_control_input = document.createElement('input');
 speed_control_input.type = 'range';
 speed_control_input.id = 'speed-control';
-speed_control_input.value = 2;
+speed_control_input.value = 3;
 speed_control_input.min = 0;
 speed_control_input.max = markers.length - 1;
 speed_control_input.step = 1;
 speed_control_input.setAttribute('list', 'speed-markers');
 speed_control_input.addEventListener('change', (event) => {
-  if (isBoardPaused == false){
-    animationSpeed = baseSpeed * (1 / markers[event.target.value]);
-    localStorage.setItem('game-speed', animationSpeed);
-    speed_control_value.textContent = 'x' + markers[event.target.value];
-  }
+  animationSpeed = baseSpeed * (1 / markers[event.target.value]);
+  localStorage.setItem('game-speed', animationSpeed);
+  speed_control_value.textContent = 'x' + markers[event.target.value];
 });
 speed_control_slider.appendChild(speed_control_input);
 
@@ -772,6 +771,7 @@ speed_control_markers.id = 'speed-markers';
 speed_control.appendChild(speed_control_markers);
 
 const leaderboardBtn = document.createElement('button');
+leaderboardBtn.title = 'View personal leaderboard';
 leaderboardBtn.addEventListener('click', () => {openLeaderboard()});
 settings.appendChild(leaderboardBtn);
 const leaderboardBtnIcon = document.createElement('img');
@@ -779,7 +779,8 @@ leaderboardBtnIcon.src = 'media/trophy.png';
 leaderboardBtn.appendChild(leaderboardBtnIcon);
 
 const reset = document.createElement('button');
-undo.classList.add('reset-btn');
+reset.title = 'Start a new game'
+reset.classList.add('reset-btn');
 reset.addEventListener('click', () => {
   if (confirm('Are you absolutely sure you want to start a new game?') == true){
     startNewGame()
@@ -840,21 +841,33 @@ controls_left.classList.add('controls__arrow');
 controls_left.classList.add('controls__arrow-left');
 controls_left.addEventListener('click', () => {updateBoardMove('left')});
 controls.appendChild(controls_left);
+const controls_left_image = document.createElement('img');
+controls_left_image.src = 'media/left-arrow.png';
+controls_left.appendChild(controls_left_image);
 const controls_right = document.createElement('button');
 controls_right.classList.add('controls__arrow');
 controls_right.classList.add('controls__arrow-right');
 controls_right.addEventListener('click', () => {updateBoardMove('right')});
 controls.appendChild(controls_right);
+const controls_right_image = document.createElement('img');
+controls_right_image.src = 'media/right-arrow.png';
+controls_right.appendChild(controls_right_image);
 const controls_down = document.createElement('button');
 controls_down.classList.add('controls__arrow');
 controls_down.classList.add('controls__arrow-down');
 controls_down.addEventListener('click', () => {updateBoardMove('down')});
 controls.appendChild(controls_down);
+const controls_down_image = document.createElement('img');
+controls_down_image.src = 'media/down-arrow.png';
+controls_down.appendChild(controls_down_image);
 const controls_up = document.createElement('button');
 controls_up.classList.add('controls__arrow');
 controls_up.classList.add('controls__arrow-up');
 controls_up.addEventListener('click', () => {updateBoardMove('up')});
 controls.appendChild(controls_up);
+const controls_up_image = document.createElement('img');
+controls_up_image.src = 'media/up-arrow.png';
+controls_up.appendChild(controls_up_image);
 
 document.addEventListener('keydown', (e) => {
   if (e.code.indexOf('Arrow') == 0){
@@ -897,7 +910,6 @@ leaderboard.classList.add('leaderboard');
 leaderboard_wrapper.appendChild(leaderboard);
 
 const leaderboard_close = document.createElement('button');
-leaderboard_close.textContent = 'x';
 leaderboard_close.addEventListener('click', (e) => {
   closeLeaderboard();
 })
@@ -963,7 +975,7 @@ victory_submit.addEventListener('submit', (e) => {
   if (document.body.classList.contains('stop-scrolling')){
     document.body.classList.remove('stop-scrolling');
   };
-  userName = victory_submit_name.value;
+  userName = sanitize(victory_submit_name.value);
   localStorage.setItem('user-name', userName);
   victory_save_confirm.style.display = 'block';
 });
@@ -985,6 +997,9 @@ nuke.addEventListener('click', function() {
     leaderboardList = []
     gameScore = 0;
     prevGameScore = 0;
+    speed_control_input.value = 3;
+    animationSpeed = baseSpeed;
+    speed_control_value.textContent = 'x' + markers[3];
     startNewGame();
   }
 });
@@ -1012,8 +1027,10 @@ else{
 
 if (localStorage.getItem('game-speed')){
   animationSpeed = JSON.parse(localStorage.getItem('game-speed'));
-  speed_control_input.value = baseSpeed / animationSpeed;
-  speed_control_value.textContent = 'x' + markers[speed_control_input.value];
+  let speed = Math.round(baseSpeed * 100 / animationSpeed) / 100;
+  let ind = markers.indexOf(Number(speed));
+  speed_control_input.value = ind;
+  speed_control_value.textContent = 'x' + markers[ind];
 }
 if (localStorage.getItem('user-name')){
   userName = localStorage.getItem('user-name');

@@ -2,6 +2,7 @@ $color-background: #f8f7f3;
 $color-primary: #F5E9DA;
 $color-secondary: #F5D389;
 $color-slider: #efa66f;
+$color-red: #ef6449;
 $transition-primary: 0.25s ease;
 $border-radius-small: 0.3125rem;
 $border-radius-regular: 0.625rem;
@@ -35,6 +36,20 @@ button, input[type='radio'], input[type='submit']{
   background-color: $color-secondary;
   border-radius: $border-radius-small;
   border: none;
+  transition: all $transition-primary;
+  &:hover{
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.05);
+    filter: brightness(85%);
+  }
+  &:active, &:focus{
+    box-shadow: none;
+    filter: brightness(100%);
+  }
+  &.disabled{
+    background-color: $color-slider;
+    box-shadow: none;
+    filter: grayscale(75%) brightness(100%);
+  }
 }
 
 .disabled{
@@ -66,6 +81,22 @@ button, input[type='radio'], input[type='submit']{
     img{
       width: 3rem;
     }
+  }
+}
+
+.close-btn{
+  background-color: $color-red;
+  position: absolute;
+  display: inline-block;
+  z-index: 99999;
+  padding: 0.5rem;
+  right: 0.5rem;
+  top: 0.5rem;
+  &::before{
+    content: "\274C";
+    display: flex;
+    align-items: center;
+    filter: brightness(0) invert(0);
   }
 }
 
@@ -161,6 +192,7 @@ footer{
 }
 
 .scores{
+  font-weight: 500;
   display: flex;
   margin: 2rem auto 0 auto;
   max-width: 25rem;
@@ -188,7 +220,7 @@ footer{
   margin: 0.5rem 0 1rem 0;
   padding: 0.125rem;
   border-radius: 0.5rem;
-
+  font-weight: 500;
   display: grid;
   grid-template-columns:  repeat(4, $tile-size);
   grid-template-rows: repeat(4, $tile-size);
@@ -227,6 +259,13 @@ footer{
   flex-direction: column;
   align-items: center;
   text-align: center;
+  label{
+    font-weight: 500;
+    background-color: $color-secondary;
+    padding: 0.5rem;
+    border-radius: $border-radius-small;
+    margin: 0.5rem 0;
+  }
   div{
     display: flex;
     flex-direction: column;
@@ -252,7 +291,7 @@ datalist {
     background-color: $color-secondary;
     border-radius: $border-radius-small;
     padding: 0.25rem;
-    font-weight: bold;
+    font-weight: 500;
     position: relative;
     right: 1%;
   }
@@ -268,6 +307,9 @@ option {
   grid-template-rows: repeat(2, calc($tile-size - 1rem));
   margin: 0 auto;
   &__arrow{
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border: none;
     border-radius: 0.25rem;
     margin: 0.125rem;
@@ -292,23 +334,13 @@ option {
       display: inline-block;
       font-family: sans-serif;
       position: relative;
-      top: -0.125rem;
       height: 0;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    &-left:after{
-      content: '\2190';
-    }
-    &-up:after{
-      content: '\2191';
-    }
-    &-right:after{
-      content: '\2192';
-    }
-    &-down:after{
-      content: '\2193';
+    img{
+      height: 1.5rem;
     }
   }
 }
@@ -323,10 +355,11 @@ option {
   background-color: rgba(210, 211, 251, 0.2);
   display: flex;
   justify-content: center;
-  align-items: center;
   cursor: default;
   section{
     background-color: $color-primary;
+    position: absolute;
+    top: 25%;
   }
 }
 
@@ -382,7 +415,7 @@ a.disabled {
   align-items: center;
   h2{
     text-align: center;
-    margin: 0;
+    margin: 1rem 0 0 0;
     padding: 1rem;
     border-radius: $border-radius-small;
     background-color: $color-secondary;
@@ -400,6 +433,7 @@ a.disabled {
 }
 
 .nuke{
+  font-weight: 500;
   margin: 1rem 0 0 0;
   padding: 0.25rem;
   background-color: $color-slider;
@@ -475,6 +509,9 @@ a.disabled {
       margin: 0 0.5rem;
     }
   }
+  .speed-control{
+    padding: 1.5rem 0.5rem;
+  }
   $tile-size: 4.5rem;
   .gameboard{
     grid-template-columns: repeat(4, $tile-size);
@@ -487,6 +524,13 @@ a.disabled {
     &__arrow{
       font-size: 2rem;
     }
+  }
+  .speed-control{
+    width: 90%;
+  }
+  .leaderboard{
+    width: 90%;
+    padding: 0.5rem;
   }
   .site-name-long{
     display: none;
