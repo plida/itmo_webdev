@@ -785,6 +785,9 @@ if (localStorage.getItem('leaderboard')){
 if (localStorage.getItem('game-board')){
   gameBoard = JSON.parse(localStorage.getItem('game-board'));
   gameScore = JSON.parse(localStorage.getItem('game-score'));
+  if (gameScore == null){
+    gameScore = 0;
+  }
   elem_score.textContent = gameScore;
   updateBoardVisual();
 }
