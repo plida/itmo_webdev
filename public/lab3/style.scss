@@ -179,6 +179,10 @@ html{
   height: 100%;
 }
 
+.hidden{
+  display: none !important; 
+}
+
 footer{
   width: 100%;
 	background-color: $color-primary;
@@ -363,7 +367,7 @@ option {
   }
 }
 
-.victory-submit{
+.victory__submit{
   display: flex;
   align-items: center;
   height: 2rem;
@@ -376,7 +380,7 @@ a.disabled {
     pointer-events: none;
 }
 
-.victory-screen{
+.victory{
   padding: 1rem 5rem;
   max-width: 25rem;
   min-height: 15rem;

@@ -12,6 +12,113 @@
   <script src="script.js" defer></script>
 </head>
 <body>
+  <header>
+    <nav>
+      <ul>
+        <li>
+          <a href="https://webdevitmo.plida.ru"><img src="media/4502.png">
+          <h1 class="site-name-long">Plida's cool 2048 game<br>Web programming lab work #3</h1>
+          <h1 class="site-name-middle">Plida's cool 2048 game</h1>
+          <h1 class="site-name-short"></h1>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/plida/itmo_webdev/tree/main/public/lab3"><img src="media/Octicons-mark-github.svg.png"></a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <div class="main-container" id="main-container">
+      <section class="settings">
+        <button class="undo-btn" title="Undo previous move (2x score penalty!)">
+          <img src='media/undo.png'>
+        </button>
+        <button class="speed-control-btn" title="Change animation speed">
+          <img src='media/speed.png'>
+          <span>x1</span>
+        </button>
+        <button class="leaderboard-btn" title="View personal leaderboard">
+          <img src="media/trophy.png">
+        </button>
+        <button class="reset-btn" title="Start a new game">
+          <img src="media/reset.png">
+        </button>
+      </section>
+      <section class="scores">
+        <div class="scores__wrapper">
+          <span>Score</span>
+          <span class="scores__value">0</span>
+        </div>
+        <div class="scores__wrapper">
+          <span>Best</span>
+          <span class="scores__value">0</span>
+        </div>
+      </section>
+      <section class="gameboard">
 
+      </section>
+      <section class="controls">
+        <button class="controls__arrow controls__arrow-left" data-direction="left">
+          <img src="media/left-arrow.png">
+        </button>
+        <button class="controls__arrow controls__arrow-right" data-direction="right">
+          <img src="media/right-arrow.png">
+        </button>
+        <button class="controls__arrow controls__arrow-down" data-direction="down">
+          <img src="media/down-arrow.png">
+        </button>
+        <button class="controls__arrow controls__arrow-up" data-direction="up">
+          <img src="media/up-arrow.png">
+        </button>
+      </section>
+      <div class="popup speed-wrapper hidden">
+        <section class="speed-control">
+          <button class="close-btn"></button>
+          <div class="speed-control__slider">
+            <label for="speed-control">Animation speed</label>
+            <input id="speed-control" type="range" value="3" min="0" max="7" step="1" list="speed-markers">
+            <datalist id="speed-markers">
+              <option value="0">0.25</option>
+              <option value="1">0.50</option>
+              <option value="2">0.75</option>
+              <option value="3">1</option>
+              <option value="4">2</option>
+              <option value="5">3</option>
+              <option value="6">5</option>
+              <option value="7">10</option>
+          </datalist>
+          </div>
+        </section>
+      </div>
+      <div class="popup leaderboard-wrapper hidden">
+        <section class="leaderboard">
+          <button class="close-btn"></button>
+          <h2>Your leaderboard (top-10)</h2>
+          <ol></ol>
+        </section>
+      </div>
+      <div class="popup victory-wrapper hidden">
+        <section class="victory">
+          <h2>The game is over!</h2>
+          <h3>You scored 0 points.</h3>
+          <p class="victory__title-record">This score is in top 10!</p>
+          <p class="victory__title-best">This is a new record!</p>
+          <p class="victory__title-save">Enter your name to save it to the leaderboard!</p>
+          <img class="victory__gif" src="media/congratulations.gif">
+          <form class="victory__submit">
+            <input maxlength="20" value="user">
+            <button type="submit">Save</button>
+            <p class="victory__title-confirm">Your result has been saved!</p>
+          </form>
+          <button class="victory__reset">Start a new game</button>
+        </section>
+      </div>
+      <button class="nuke">Destroy all savedata</button>      
+    </div>
+  </main>
+  <footer>
+    <span>Plida 2025</span>
+  </footer>
 </body>
 </html>
