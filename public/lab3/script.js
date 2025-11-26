@@ -465,12 +465,12 @@ function startNewGame(){
     [512, 1024, 2048, 4019],
     [0, 0, 0, 0]
     ]*/
-   prevGameBoard = [];
-   prevGameScore = 0;
-   gameScore = 0;
-   enableAllButtons();
-   updateScore(0);
-   updateBoardVisual();
+  prevGameBoard = [];
+  prevGameScore = 0;
+  gameScore = 0;
+  enableAllButtons();
+  updateScore(0);
+  updateBoardVisual();
   updateBestScore();
   for (let i = 0; i < getRandomInteger(3) + 1; i++){
     addNewRandomTile();

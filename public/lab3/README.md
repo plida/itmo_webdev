@@ -19,6 +19,8 @@
 
 В классической игре появляется только по 1 плитке, что было решено сэмулировать.
 
+<img src="media-report/logic-2.gif" width="40%" height="40%">
+
 3. Слияние плиток однаковых чисел работает во всех направлениях
 
 <img src="media-report/logic-3.gif" width="40%" height="40%">
@@ -28,6 +30,10 @@
 <img src="media-report/logic-4.gif" width="40%" height="40%">
 
 5. Корректный расчет и отображение очков
+
+<img src="media-report/logic-5-1.gif" width="40%" height="40%">
+
+<img src="media-report/logic-5-2.gif" width="40%" height="40%">
 
 ### Взаимодействие вне игрового поля
 
