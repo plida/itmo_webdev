@@ -63,7 +63,13 @@
 
 1. Поддержка управления кнопками клавиатуры для десктопа и свайпами/виртуальными кнопками на мобильных устройствах
 
+<img src="media-report/interact-with-1-1.gif" width="40%" height="40%">
+
+<img src="media-report/interact-with-1-2.gif" width="40%" height="40%">
+
 2. Состояние игры сохраняется в localStorage
+
+<img src="media-report/interact-with-2.gif" width="40%" height="40%">
 
 ### Визуальное отображение
 
@@ -72,3 +78,5 @@
 ![](media-report/visual-1.png)
 
 2. Плавная анимация движения и слияния плиток
+
+<img src="media-report/visual-2.gif" width="40%" height="40%">
