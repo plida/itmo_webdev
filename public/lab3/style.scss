@@ -499,6 +499,10 @@ a.disabled {
   .controls{
     display: grid;
   }
+  .victory{
+    max-width: 18rem;
+    padding: 0.75rem;
+  }
 }
 
 @media only screen and (max-width: 512px){

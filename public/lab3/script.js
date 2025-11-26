@@ -767,6 +767,7 @@ nuke.addEventListener('click', function() {
     speed_control_input.value = 3;
     animationSpeed = baseSpeed;
     speed_control_value.textContent = 'x' + markers[3];
+    populateLeaderboard();
     startNewGame();
   }
 });
