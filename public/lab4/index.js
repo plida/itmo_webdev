@@ -7,22 +7,13 @@ const MAP_LOCATIONS = {
   'Yekaterinburg': [56.882507, 60.543053],
   'Novosibirsk': [55.055589, 82.910959],
 }
+let curr_location = '';
 
 function round(number, precision = 1){
   return Math.round(
     number * Math.pow(10, precision)
   ) / Math.pow(10, precision);
 }
-
-var getLocation = new Promise(function(resolve, reject) {
-  if (!(navigator.geolocation)) {
-    reject();
-  }
-  navigator.geolocation.getCurrentPosition(function(position){
-    let entry = {latitude: position.coords.latitude, longitude: position.coords.longitude, data: '', place: 'Current location'};
-    resolve(entry);
-  }) 
-})
 
 //let userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -88,7 +79,15 @@ async function populateElemLocations(){
     return;
   }
   elemLocationsList.textContent = '';
+  console.log(curr_location);
+  if (curr_location != ""){
+    elemLocationsList.append(fillElement(curr_location));
+  }
   for (let location of locations){
+    console.log(location);
+    if (!location.data){
+      return;
+    }
     elemLocationsList.append(fillElement(location));
   }
 }
@@ -105,6 +104,9 @@ async function createLocationEntry(place){
 }
 
 function fillElement(location){
+  if (location.data == undefined){
+    return;
+  }
   let elemLocation = document.createElement('li');
   elemLocation.textContent = location.place;
   for (let i = 0; i < nDays; i++){
@@ -142,42 +144,74 @@ function purgeCurrLocation(){
 }
 
 async function setupPage(){
-  /*let todaysDate = new Date().toISOString().slice(0, 10);
-
-  
-  if (localStorage.getItem('date') != todaysDate){
-    for (let location of locations){
-      location.data = '';
-    }
-  }
-  localStorage.setItem('date', todaysDate);
-  */
-  
   for (let location of locations){
     location.data = await getWeather(location.latitude, location.longitude);
   }
-
-  
   populateElemLocations()
 
   localStorage.setItem('locations', JSON.stringify(locations));
 }
 
-populateElemLocations()
+setupPage();
 
-if (!getListedPlaces().includes('Current location')){
-  getLocation.then(
-    (entry) => {locations.unshift(entry), setupPage()},
-    () => {setupPage()}
-  )
+async function addCurentLocation(position){
+  console.log("Position: ", position)
+  let entry = {latitude: position.coords.latitude, longitude: position.coords.longitude, data: '', place: 'Current location'};
+  entry.data = await getWeather(entry.latitude, entry.longitude);
+  if (curr_location != entry){
+    curr_location = entry;
+    populateElemLocations();
+  }
 }
-else if (!(navigator.geolocation)){
+
+const watchID = navigator.geolocation.watchPosition((position) => {
+  if (curr_location == ''){
+    addCurentLocation(position);
+  }
+});
+
+/*
+function addCurrentLocation(){
+  if (!getListedPlaces().includes('Current location')){
+    getLocation.then(
+      (entry) => {locations.unshift(entry), setupPage()},
+      () => {setupPage()}
+    )
+  }
+  else if (!(navigator.geolocation)){
+  console.log("?");
   purgeCurrLocation();
   setupPage();
 }
-else{
-  setupPage();
+  else{
+    console.log("*", getListedPlaces().includes('Current location'), navigator.geolocation);
+    setupPage();
+  }
 }
+
+addCurrentLocation();
+
+var getLocation = new Promise(function(resolve, reject) {
+  if (!(navigator.geolocation)) {
+    reject();
+  }
+  navigator.geolocation.getCurrentPosition(function(position){
+    let entry = {latitude: position.coords.latitude, longitude: position.coords.longitude, data: '', place: 'Current location'};
+    resolve(entry);
+  }) 
+})
+
+navigator.geolocation.watchPosition(function(position) {
+  console.log('yaaay', getListedPlaces());
+  if (!getListedPlaces().includes('Current location')){
+    addCurrentLocation();
+  }
+  },
+  function(error) {
+    if (error.code == error.PERMISSION_DENIED)
+      purgeCurrLocation();
+      setupPage();
+  });*/
 
 const refresh_btn = document.getElementById('refresh-btn');
 refresh_btn.addEventListener('click', () =>{
