@@ -66,7 +66,7 @@ function parseWeatherData(data){
             maxTemp = roundTemp;
           }
         }
-        avgTemp = round(avgTemp / 24, 2);
+        avgTemp = round(avgTemp / 6, 1);
         periods.push([avgTemp, minTemp, maxTemp]);
       }
       days.push([data.hourly.time[i*24], periods]);
@@ -75,20 +75,22 @@ function parseWeatherData(data){
 }
 
 async function populateElemLocations(){
-  if (locations.length == 0){
+  if (curr_location == "" && locations.length == 0){
     return;
   }
-  elemLocationsList.textContent = '';
-  console.log(curr_location);
   if (curr_location != ""){
-    elemLocationsList.append(fillElement(curr_location));
+    let elemLocList = elemLocationsList[0].getElementsByTagName('ul')[0];
+    elemLocList.textContent = '';
+    fillElement(curr_location, elemLocList);
+    let elemLocHeader = elemLocationsList[0].getElementsByTagName('h3')[0];
+    elemLocHeader.textContent = curr_location.place;
   }
-  for (let location of locations){
-    console.log(location);
-    if (!location.data){
-      return;
-    }
-    elemLocationsList.append(fillElement(location));
+  for (let i = 0; i < locations.length; i++){
+    let elemLocList = elemLocationsList[i+2].getElementsByTagName('ul')[0];
+    elemLocList.textContent = '';
+    fillElement(locations[i], elemLocList);
+    let elemLocHeader = elemLocationsList[i+2].getElementsByTagName('h3')[0];
+    elemLocHeader.textContent = locations[i].place;
   }
 }
 
@@ -103,31 +105,38 @@ async function createLocationEntry(place){
   localStorage.setItem('locations', JSON.stringify(locations));
 }
 
-function fillElement(location){
+function fillElement(location, list){
   if (location.data == undefined){
     return;
   }
-  let elemLocation = document.createElement('li');
-  elemLocation.textContent = location.place;
   for (let i = 0; i < nDays; i++){
     let dayData = location.data[i];
-    let elemLocationDay = document.createElement('div');
-    elemLocationDay.textContent = WEEKDAYS[new Date(dayData[0].slice(0, 10)).getDay()];
+    let elemLocationDay = document.createElement('li');
+    let elemLocationDayHeader = document.createElement('span');
+    elemLocationDayHeader.textContent = WEEKDAYS[new Date(dayData[0].slice(0, 10)).getDay()];
+    elemLocationDay.appendChild(elemLocationDayHeader);
+    let elemLocationDayEntries = document.createElement('div');
+    elemLocationDayEntries.classList.add('location-data-entries');
+    elemLocationDay.appendChild(elemLocationDayEntries);
     for (let k = 0; k < 4; k++){
+      let elemLocationDayEntry = document.createElement('div');
+      elemLocationDayEntry.classList.add('location-data-entry');
       let periodData = dayData[1][k];
-      let elemLocationDayPeriod = document.createElement('div');
-      elemLocationDayPeriod.textContent = PERIODS[k] + ' Max: ' + periodData[2] + ', min: ' + periodData[1];
-      elemLocationDay.appendChild(elemLocationDayPeriod);
+      let elemLocationDayPeriod = document.createElement('span');
+      elemLocationDayPeriod.textContent = PERIODS[k];
+      let elemLocationDayValue = document.createElement('span');
+      elemLocationDayValue.textContent = periodData[0];
+      elemLocationDayEntry.appendChild(elemLocationDayPeriod);
+      elemLocationDayEntry.appendChild(elemLocationDayValue);
+      elemLocationDayEntries.appendChild(elemLocationDayEntry);
     }
-    elemLocation.appendChild(elemLocationDay);
+    list.appendChild(elemLocationDay);
   }
-  return elemLocation;
 }
 
 let locations = [
 ]
-const elemLocations = document.getElementsByClassName('locations-list')[0];
-const elemLocationsList = elemLocations.getElementsByTagName('ul')[0];
+const elemLocationsList = document.getElementsByClassName('location-data');
 
 if (localStorage.getItem('locations')){
   locations = JSON.parse(localStorage.getItem('locations'));
@@ -164,54 +173,13 @@ async function addCurentLocation(position){
   }
 }
 
+const elemCurrLocations = document.getElementsByClassName('location-data');
 const watchID = navigator.geolocation.watchPosition((position) => {
   if (curr_location == ''){
     addCurentLocation(position);
   }
 });
 
-/*
-function addCurrentLocation(){
-  if (!getListedPlaces().includes('Current location')){
-    getLocation.then(
-      (entry) => {locations.unshift(entry), setupPage()},
-      () => {setupPage()}
-    )
-  }
-  else if (!(navigator.geolocation)){
-  console.log("?");
-  purgeCurrLocation();
-  setupPage();
-}
-  else{
-    console.log("*", getListedPlaces().includes('Current location'), navigator.geolocation);
-    setupPage();
-  }
-}
-
-addCurrentLocation();
-
-var getLocation = new Promise(function(resolve, reject) {
-  if (!(navigator.geolocation)) {
-    reject();
-  }
-  navigator.geolocation.getCurrentPosition(function(position){
-    let entry = {latitude: position.coords.latitude, longitude: position.coords.longitude, data: '', place: 'Current location'};
-    resolve(entry);
-  }) 
-})
-
-navigator.geolocation.watchPosition(function(position) {
-  console.log('yaaay', getListedPlaces());
-  if (!getListedPlaces().includes('Current location')){
-    addCurrentLocation();
-  }
-  },
-  function(error) {
-    if (error.code == error.PERMISSION_DENIED)
-      purgeCurrLocation();
-      setupPage();
-  });*/
 
 const refresh_btn = document.getElementById('refresh-btn');
 refresh_btn.addEventListener('click', () =>{
@@ -240,3 +208,16 @@ add_place.textContent = '+';
 const main = document.getElementsByTagName('main')[0];
 main.appendChild(places_list);
 main.appendChild(add_place);
+
+function populateCitiesLists(){
+  let citiesLists = document.getElementsByClassName('datalist-cities');
+  for (let list of citiesLists){
+    for (let [place, coords] of Object.entries(MAP_LOCATIONS)){
+      let elemPlace = document.createElement('option');
+      elemPlace.value = place;
+      list.appendChild(elemPlace);
+    }
+  }
+}
+populateCitiesLists();
+

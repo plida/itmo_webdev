@@ -175,6 +175,32 @@ a.disabled {
     pointer-events: none;
 }
 
+.location-data{
+  ul{
+    padding: 0;
+    list-style-type: none;
+    display: flex;
+    align-items: center;
+  }
+  li{
+    margin: 0 1rem;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+  &-entry{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 0.5rem;
+  }
+  &-entries{
+    display: flex;
+  }
+}
+
+
+
 @media only screen and (max-width: 1080px){
   .main-container{
     width: 90%;
