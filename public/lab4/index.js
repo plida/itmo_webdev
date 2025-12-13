@@ -1,5 +1,13 @@
 const PERIODS = {0: 'night', 1: 'morning', 2: 'afternoon', 3: 'evening'};
 const WEEKDAYS = {0: 'Sunday', 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday'};
+const MAP_LOCATIONS = {
+  'St Petersburg': [59.938886, 30.313838],
+  'Veliky Novgorod': [58.523342, 31.267735],
+  'Moscow': [55.763263, 37.613748],
+  'Yekaterinburg': [56.882507, 60.543053],
+  'Novosibirsk': [55.055589, 82.910959],
+}
+
 function round(number, precision = 1){
   return Math.round(
     number * Math.pow(10, precision)
@@ -32,11 +40,20 @@ async function getWeather (latitude, longitude) {
   return days;
 }
 
+let nDays = 3;
+
+function getListedPlaces(){
+  let listedPlaces = [];
+  for (let location of locations){
+    listedPlaces.push(location.place);
+  }
+  return listedPlaces;
+}
 
 function parseWeatherData(data){
   let days = [];
   let temperatures = data.hourly.temperature_2m;
-    for (let i = 0; i < 7; i++){
+    for (let i = 0; i < nDays; i++){
       let periods = [];
       for (let k = 0; k < 4; k++){
         let avgTemp = 0;
@@ -72,11 +89,22 @@ async function populateElemLocations(){
   }
 }
 
+async function createLocationEntry(place){
+  if (getListedPlaces().includes(place) || place == ""){
+    return;
+  }
+  let entry = {latitude: MAP_LOCATIONS[place][0], longitude: MAP_LOCATIONS[place][1], data: '', place: place};
+  entry.data = await getWeather(entry.latitude, entry.longitude);
+  locations.push(entry);
+  populateElemLocations();
+  localStorage.setItem('locations', JSON.stringify(locations));
+}
+
 function fillElement(location){
   console.log('filling', location);
   let elemLocation = document.createElement('li');
   elemLocation.textContent = location.place;
-  for (let i = 0; i < 7; i++){
+  for (let i = 0; i < nDays; i++){
     let dayData = location.data[i];
     let elemLocationDay = document.createElement('div');
     elemLocationDay.textContent = WEEKDAYS[new Date(dayData[0].slice(0, 10)).getDay()];
@@ -116,7 +144,6 @@ async function setupPage(){
   }
 
   localStorage.setItem('date', todaysDate);
-  console.log("??");
   populateElemLocations()
 
   localStorage.setItem('locations', JSON.stringify(locations));
@@ -124,12 +151,36 @@ async function setupPage(){
 
 if (navigator.geolocation && locations[0].place != 'Current location'){
   getLocation.then(
-    (entry) => {console.log("??!!!"), locations.unshift(entry), setupPage()},
-    () => {console.log("??!!!!!!!"), setupPage()}
+    (entry) => {locations.unshift(entry), setupPage()},
+    () => {setupPage()}
   )
 }
 else{
   setupPage();
 }
 
+const places_list = document.createElement('select');
+const places_list_header = document.createElement('option');
+places_list_header.value = "";
+places_list_header.textContent = 'Choose a city';
+places_list.appendChild(places_list_header);
 
+for (const [key, value] of Object.entries(MAP_LOCATIONS)) {
+  console.log(key, value);
+  let places_list_entry = document.createElement('option');
+  places_list_entry.value = key;
+  places_list_entry.textContent = key;
+  places_list.appendChild(places_list_entry);
+}
+
+const add_place = document.createElement('button');
+add_place.addEventListener('click', () =>{
+  createLocationEntry(places_list.value);
+})
+add_place.textContent = '+';
+
+const main = document.getElementsByTagName('main')[0];
+main.appendChild(places_list);
+main.appendChild(add_place);
+
+createLocationEntry('Novosibirsk');
