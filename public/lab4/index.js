@@ -142,21 +142,22 @@ function purgeCurrLocation(){
 }
 
 async function setupPage(){
-  let todaysDate = new Date().toISOString().slice(0, 10);
+  /*let todaysDate = new Date().toISOString().slice(0, 10);
 
+  
   if (localStorage.getItem('date') != todaysDate){
     for (let location of locations){
       location.data = '';
     }
   }
+  localStorage.setItem('date', todaysDate);
+  */
   
   for (let location of locations){
-    if (location.data == ''){
-      location.data = await getWeather(location.latitude, location.longitude);
-    }
+    location.data = await getWeather(location.latitude, location.longitude);
   }
 
-  localStorage.setItem('date', todaysDate);
+  
   populateElemLocations()
 
   localStorage.setItem('locations', JSON.stringify(locations));
