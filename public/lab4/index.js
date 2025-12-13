@@ -26,9 +26,6 @@ var getLocation = new Promise(function(resolve, reject) {
 
 //let userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-// example end
-
-// example from https://www.omi.me/blogs/api-guides/how-to-fetch-weather-data-using-open-meteo-api-in-javascript
 async function getWeather (latitude, longitude) {
   const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m&timezone=auto`;
   let days = [];
@@ -120,12 +117,21 @@ function fillElement(location){
 }
 
 let locations = [
-  {latitude: 55.9261184, longitude: 37.3497216, data: '', place: 'Moscow'}
 ]
 const elemLocations = document.getElementsByClassName('locations-list')[0];
 
 if (localStorage.getItem('locations')){
   locations = JSON.parse(localStorage.getItem('locations'));
+}
+
+function purgeCurrLocation(){
+  for (let i = 0; i < locations.length; i++){
+    if (locations[i].place == 'Current location'){
+      locations.splice(i, 1);
+      localStorage.setItem('locations', JSON.stringify(locations));
+      break;
+    }
+  }
 }
 
 async function setupPage(){
@@ -149,13 +155,17 @@ async function setupPage(){
   localStorage.setItem('locations', JSON.stringify(locations));
 }
 
-if (navigator.geolocation && locations[0].place != 'Current location'){
+populateElemLocations()
+
+if (!getListedPlaces().includes('Current location')){
   getLocation.then(
-    (entry) => {locations.unshift(entry), setupPage()},
-    () => {setupPage()}
+    (entry) => {console.log("?"), locations.unshift(entry), setupPage()},
+    () => {console.log("!"), setupPage()}
   )
 }
 else{
+  console.log("*");
+  purgeCurrLocation();
   setupPage();
 }
 
@@ -182,5 +192,3 @@ add_place.textContent = '+';
 const main = document.getElementsByTagName('main')[0];
 main.appendChild(places_list);
 main.appendChild(add_place);
-
-createLocationEntry('Novosibirsk');
