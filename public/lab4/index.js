@@ -15,6 +15,14 @@ function round(number, precision = 1){
   ) / Math.pow(10, precision);
 }
 
+const curr_loc_geo = document.getElementsByClassName('current-location__geolocation')[0];
+curr_loc_geo.classList.add('hidden');
+const curr_loc_man_ch = document.getElementsByClassName('current-location__manual-choice')[0];
+curr_loc_man_ch.classList.add('hidden');
+const curr_loc_man = document.getElementsByClassName('current-location__manual')[0];
+curr_loc_man.classList.add('hidden');
+
+
 //let userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 async function getWeather (latitude, longitude) {
@@ -40,10 +48,14 @@ function getListedPlaces(){
 
 async function refreshWeatherData(){
   elemLocationsList.textContent = '';
+  if (curr_location != ""){
+    curr_location.data = await getWeather(curr_location.latitude, curr_location.longitude);
+  }
   for (let location of locations){
     location.data = await getWeather(location.latitude, location.longitude);
   }
   localStorage.setItem('locations', JSON.stringify(locations));
+  populateCurrentLocation();
   populateElemLocations();
 }
 
@@ -74,23 +86,33 @@ function parseWeatherData(data){
   return days;
 }
 
-async function populateElemLocations(){
-  if (curr_location == "" && locations.length == 0){
+async function populateCurrentLocation(){
+  if (curr_location == ""){
     return;
   }
   if (curr_location != ""){
     let elemLocList = elemLocationsList[0].getElementsByTagName('ul')[0];
     elemLocList.textContent = '';
     fillElement(curr_location, elemLocList);
-    let elemLocHeader = elemLocationsList[0].getElementsByTagName('h3')[0];
-    elemLocHeader.textContent = curr_location.place;
   }
+}
+
+async function populateElemLocations(){
+  if (locations.length == 0){
+    return;
+  }
+
+  while (elemLocationsList.length > 2){
+    console.log('removing: ', 2, elemLocationsList.length);
+    elemLocationsList[2].remove();
+  }
+
   for (let i = 0; i < locations.length; i++){
+    createElemLocation(locations[i]);
+    console.log(elemLocationsList.length, locations[i], i);
     let elemLocList = elemLocationsList[i+2].getElementsByTagName('ul')[0];
     elemLocList.textContent = '';
     fillElement(locations[i], elemLocList);
-    let elemLocHeader = elemLocationsList[i+2].getElementsByTagName('h3')[0];
-    elemLocHeader.textContent = locations[i].place;
   }
 }
 
@@ -103,6 +125,20 @@ async function createLocationEntry(place){
   locations.push(entry);
   populateElemLocations();
   localStorage.setItem('locations', JSON.stringify(locations));
+}
+
+function createElemLocation(location){
+  let locationData = document.createElement('section');
+  locationData.classList.add('location-data');
+  main.appendChild(locationData);
+  let locationHeader = document.createElement('h3');
+  locationHeader.textContent = location.place;
+  locationData.appendChild(locationHeader);
+  let locationByDay = document.createElement('div');
+  locationByDay.classList.add('location-data-byday');
+  locationData.appendChild(locationByDay);
+  let locationList = document.createElement('ul');
+  locationByDay.appendChild(locationList);
 }
 
 function fillElement(location, list){
@@ -136,7 +172,7 @@ function fillElement(location, list){
 
 let locations = [
 ]
-const elemLocationsList = document.getElementsByClassName('location-data');
+let elemLocationsList = document.getElementsByClassName('location-data');
 
 if (localStorage.getItem('locations')){
   locations = JSON.parse(localStorage.getItem('locations'));
@@ -163,23 +199,32 @@ async function setupPage(){
 
 setupPage();
 
-async function addCurentLocation(position){
+async function addCurrentLocation(position){
   console.log("Position: ", position)
   let entry = {latitude: position.coords.latitude, longitude: position.coords.longitude, data: '', place: 'Current location'};
   entry.data = await getWeather(entry.latitude, entry.longitude);
   if (curr_location != entry){
     curr_location = entry;
-    populateElemLocations();
+    populateCurrentLocation();
   }
 }
 
 const elemCurrLocations = document.getElementsByClassName('location-data');
 const watchID = navigator.geolocation.watchPosition((position) => {
   if (curr_location == ''){
-    addCurentLocation(position);
+    curr_loc_geo.classList.remove('hidden');
+    addCurrentLocation(position);
+    curr_loc_man_ch.classList.add('hidden');
+    curr_loc_man.classList.add('hidden');
   }
-});
+  },
+  () => {
+    curr_loc_geo.classList.add('hidden');
+    curr_loc_man_ch.classList.remove('hidden');
+    curr_loc_man.classList.remove('hidden');
+  }
 
+);
 
 const refresh_btn = document.getElementById('refresh-btn');
 refresh_btn.addEventListener('click', () =>{
