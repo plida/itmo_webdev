@@ -47,6 +47,15 @@ function getListedPlaces(){
   return listedPlaces;
 }
 
+async function refreshWeatherData(){
+  elemLocationsList.textContent = '';
+  for (let location of locations){
+    location.data = await getWeather(location.latitude, location.longitude);
+  }
+  localStorage.setItem('locations', JSON.stringify(locations));
+  populateElemLocations();
+}
+
 function parseWeatherData(data){
   let days = [];
   let temperatures = data.hourly.temperature_2m;
@@ -75,11 +84,9 @@ function parseWeatherData(data){
 }
 
 async function populateElemLocations(){
-  console.log('populating', locations);
   if (locations.length == 0){
     return;
   }
-  let elemLocationsList = elemLocations.getElementsByTagName('ul')[0];
   elemLocationsList.textContent = '';
   for (let location of locations){
     elemLocationsList.append(fillElement(location));
@@ -98,7 +105,6 @@ async function createLocationEntry(place){
 }
 
 function fillElement(location){
-  console.log('filling', location);
   let elemLocation = document.createElement('li');
   elemLocation.textContent = location.place;
   for (let i = 0; i < nDays; i++){
@@ -119,6 +125,7 @@ function fillElement(location){
 let locations = [
 ]
 const elemLocations = document.getElementsByClassName('locations-list')[0];
+const elemLocationsList = elemLocations.getElementsByTagName('ul')[0];
 
 if (localStorage.getItem('locations')){
   locations = JSON.parse(localStorage.getItem('locations'));
@@ -159,15 +166,22 @@ populateElemLocations()
 
 if (!getListedPlaces().includes('Current location')){
   getLocation.then(
-    (entry) => {console.log("?"), locations.unshift(entry), setupPage()},
-    () => {console.log("!"), setupPage()}
+    (entry) => {locations.unshift(entry), setupPage()},
+    () => {setupPage()}
   )
 }
-else{
-  console.log("*");
+else if (!(navigator.geolocation)){
   purgeCurrLocation();
   setupPage();
 }
+else{
+  setupPage();
+}
+
+const refresh_btn = document.getElementById('refresh-btn');
+refresh_btn.addEventListener('click', () =>{
+  refreshWeatherData();
+})
 
 const places_list = document.createElement('select');
 const places_list_header = document.createElement('option');
@@ -176,7 +190,6 @@ places_list_header.textContent = 'Choose a city';
 places_list.appendChild(places_list_header);
 
 for (const [key, value] of Object.entries(MAP_LOCATIONS)) {
-  console.log(key, value);
   let places_list_entry = document.createElement('option');
   places_list_entry.value = key;
   places_list_entry.textContent = key;
