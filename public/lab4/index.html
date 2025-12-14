@@ -30,10 +30,11 @@
   </header>
   <main id="main">
     <button id="refresh-btn">Refresh</button>
+    
     <section class="current-location">
+      <h3>Current location</h3>
       <div class="current-location__geolocation">
         <section class="location-data">
-          <h3>Current location</h3>
           <div class="location-data-byday">
             <ul></ul>
           </div>
@@ -43,19 +44,30 @@
       <div class="current-location__manual-choice">
         <label>Add the city closest to you: </label>
         <input list="curr-cities" name="myCity">
-        <button>Add</button>
+        <button class="add-current-btn">Add</button>
         <datalist id="curr-cities" class="datalist-cities">
         </datalist>
       </div>
       <div class="current-location__manual">
         <section class="location-data">
-          <h3>Current location</h3>
           <div class="location-data-byday">
             <ul></ul>
           </div>
         </section>
       </div>
     </section>
+
+    <section class="add-location">
+      <option value="">Choose a city</option>
+      <input list="curr-cities" name="myCity">
+      <button class="add-city-btn">Add</button>
+      <datalist id="curr-cities" class="datalist-cities">
+    </section>
+
+    <section class="locations">
+
+    </section>
+    
   </main>
   <footer>
     <span>Plida 2025</span>

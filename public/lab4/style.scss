@@ -199,7 +199,15 @@ a.disabled {
   }
 }
 
-
+.add-location{
+  display: flex;
+  width: 50%;
+  align-items: center;
+  justify-content: center;
+  button{
+    padding: 1rem 2rem;
+  }
+}
 
 @media only screen and (max-width: 1080px){
   .main-container{
