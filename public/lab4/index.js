@@ -1,5 +1,16 @@
 const PERIODS = {0: 'night', 1: 'morning', 2: 'afternoon', 3: 'evening'};
+const PERIODS_ICONS = {0: './media/icon_night.png', 1: './media/icon_morning.png', 2: './media/icon_afternoon.png', 3: './media/icon_evening.png'}
 const WEEKDAYS = {0: 'Sunday', 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday'};
+const TEMP_COLORS = {
+  140: '#ffb0b0',
+  130: '#ffd7b0',
+  120: '#fff7b0',
+  110: '#dfffb0',
+  100: '#b0ffed',
+  90: '#b0f1ff',
+  80: '#b0d7ff',
+  70: '#b0c0ff'
+}
 const MAP_LOCATIONS = {
   'St Petersburg': [59.938886, 30.313838],
   'Veliky Novgorod': [58.523342, 31.267735],
@@ -147,6 +158,17 @@ function createElemLocation(location){
   locationByDay.appendChild(locationList);
 }
 
+function colorTemperature(elem, value){
+  let tempValues = Object.keys(TEMP_COLORS).sort(function(a, b) { return b - a; });
+  for (let temp of tempValues){
+    if (value > temp - 100){
+      elem.style.background = TEMP_COLORS[temp];
+      return;
+    }
+  }
+  elem.style.background = TEMP_COLORS[0];
+}
+
 function fillElement(location, list){
   if (location.data == undefined){
     return;
@@ -164,14 +186,16 @@ function fillElement(location, list){
       let elemLocationDayEntry = document.createElement('div');
       elemLocationDayEntry.classList.add('location-data-entry');
       let periodData = dayData[1][k];
-      let elemLocationDayPeriod = document.createElement('span');
-      elemLocationDayPeriod.textContent = PERIODS[k];
+      let elemLocationDayPeriod = document.createElement('img');
+      elemLocationDayPeriod.src = PERIODS_ICONS[k];
       let elemLocationDayValue = document.createElement('span');
+      elemLocationDayValue.classList.add('value');
+      colorTemperature(elemLocationDayValue, periodData[0]);
       if (periodData[0] > 0){
-        elemLocationDayValue.textContent = '+' + periodData[0];
+        elemLocationDayValue.textContent = '+' + periodData[0] + '°';
       } 
       else{
-        elemLocationDayValue.textContent = periodData[0];
+        elemLocationDayValue.textContent = periodData[0] + '°';
       }
       elemLocationDayEntry.appendChild(elemLocationDayPeriod);
       elemLocationDayEntry.appendChild(elemLocationDayValue);
@@ -187,16 +211,6 @@ let elemLocationsList = document.getElementsByClassName('location-data');
 
 if (localStorage.getItem('locations')){
   locations = JSON.parse(localStorage.getItem('locations'));
-}
-
-function purgeCurrLocation(){
-  for (let i = 0; i < locations.length; i++){
-    if (locations[i].place == 'Current location'){
-      locations.splice(i, 1);
-      localStorage.setItem('locations', JSON.stringify(locations));
-      break;
-    }
-  }
 }
 
 async function setupPage(){
