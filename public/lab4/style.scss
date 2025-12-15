@@ -175,12 +175,35 @@ a.disabled {
     pointer-events: none;
 }
 
+.main-container{
+  section{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+  }
+  div{
+    width: 100%;
+  }
+}
+
+.current-location{
+  flex-direction: column;
+}
+
+.locations{
+  flex-direction: column;
+}
+
 .location-data{
+  flex-direction: column;
   ul{
     padding: 0;
     list-style-type: none;
     display: flex;
     align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
   }
   li{
     margin: 0;
@@ -209,6 +232,19 @@ a.disabled {
     min-width: 5rem;
     min-height: 2rem;
     width: 100%;
+  }
+}
+h3{
+  align-self: flex-start;
+}
+
+.current-weather{
+  display: flex;
+  align-items: center;
+  font-size: 2rem;
+  align-self: flex-start;
+  img{
+    max-width: 5rem;
   }
 }
 

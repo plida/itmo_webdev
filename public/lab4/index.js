@@ -1,6 +1,7 @@
 const PERIODS = {0: 'night', 1: 'morning', 2: 'afternoon', 3: 'evening'};
 const PERIODS_ICONS = {0: './media/icon_night.png', 1: './media/icon_morning.png', 2: './media/icon_afternoon.png', 3: './media/icon_evening.png'}
 const WEEKDAYS = {0: 'Sunday', 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday'};
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const TEMP_COLORS = {
   140: '#ffb0b0',
   130: '#ffd7b0',
@@ -107,10 +108,20 @@ async function populateCurrentLocation(){
   if (curr_location == ""){
     return;
   }
-  if (curr_location != ""){
-    let elemLocList = curr_target.getElementsByTagName('ul')[0];
-    elemLocList.textContent = '';
-    fillElement(curr_location, elemLocList);
+  let elemLocList = curr_target.getElementsByTagName('ul')[0];
+  elemLocList.textContent = '';
+  fillElement(curr_location, elemLocList);
+  let current_weather = document.getElementsByClassName('current-weather')[0].getElementsByTagName('span')[0];
+  let index = Math.floor(new Date().getHours() / 6);
+  console.log(curr_location.data[0][1], index);
+  let value = curr_location.data[0][1][index][0];
+  let current_weather_image = document.getElementsByClassName('current-weather')[0].getElementsByTagName('img')[0];
+  current_weather_image.src = PERIODS_ICONS[index];
+  if (value > 0){
+    current_weather.textContent = '+' + value + '°C';
+  }
+  else{
+    current_weather.textContent = value + '°C';
   }
 }
 
@@ -177,7 +188,7 @@ function fillElement(location, list){
     let dayData = location.data[i];
     let elemLocationDay = document.createElement('li');
     let elemLocationDayHeader = document.createElement('span');
-    elemLocationDayHeader.textContent = WEEKDAYS[new Date(dayData[0]).getDay()] + ' ' + dayData[0].slice(0, 10);
+    elemLocationDayHeader.textContent = WEEKDAYS[new Date(dayData[0]).getDay()] + ' ' + MONTHS[parseInt(dayData[0].slice(5, 7)) - 1].slice(0, 3) + ' ' + dayData[0].slice(8, 10);
     elemLocationDay.appendChild(elemLocationDayHeader);
     let elemLocationDayEntries = document.createElement('div');
     elemLocationDayEntries.classList.add('location-data-entries');
