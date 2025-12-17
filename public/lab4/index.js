@@ -10,9 +10,10 @@ const TEMP_COLORS = {
   100: '#b0ffed',
   90: '#b0f1ff',
   80: '#b0d7ff',
-  70: '#b0c0ff'
+  70: '#b0c0ff',
+  0: 'rgba(158, 154, 255, 1)'
 }
-const MAP_LOCATIONS = {
+let MAP_LOCATIONS = {
   'St Petersburg': [59.938886, 30.313838],
   'Veliky Novgorod': [58.523342, 31.267735],
   'Moscow': [55.763263, 37.613748],
@@ -146,6 +147,10 @@ async function createLocationEntry(place){
   if (getListedPlaces().includes(place) || place == ""){
     return;
   }
+  if (place in MAP_LOCATIONS == false){
+    console.log('doesnt exist!');
+    return;
+  }
   let entry = {latitude: MAP_LOCATIONS[place][0], longitude: MAP_LOCATIONS[place][1], data: '', place: place};
   entry.data = await getWeather(entry.latitude, entry.longitude);
   locations.unshift(entry);
@@ -274,6 +279,7 @@ const main = document.getElementsByTagName('main')[0];
 function populateCitiesLists(){
   let citiesLists = document.getElementsByClassName('datalist-cities');
   for (let list of citiesLists){
+    list.textContent = '';
     for (let [place, coords] of Object.entries(MAP_LOCATIONS)){
       let elemPlace = document.createElement('option');
       elemPlace.value = place;
@@ -281,11 +287,22 @@ function populateCitiesLists(){
     }
   }
 }
-populateCitiesLists();
+
+function populateCountriesLists(){
+  let countriesLists = document.getElementsByClassName('datalist-countries');
+  for (let list of countriesLists){
+    for (let [place, id] of Object.entries(MAP_COUNTRIES)){
+      let elemPlace = document.createElement('option');
+      elemPlace.value = place;
+      list.appendChild(elemPlace);
+    }
+  }
+}
 
 let add_current_btns = document.getElementsByClassName('add-current-btn');
 for (let btn of add_current_btns){
   let add_select = btn.parentNode.getElementsByTagName('input')[0];
+  add_select.value = "";
   btn.addEventListener('click', () => {
     curr_target = document.getElementsByClassName('current-location__manual')[0];
     addCurrentLocation(MAP_LOCATIONS[add_select.value][0], MAP_LOCATIONS[add_select.value][1]);
@@ -299,3 +316,54 @@ for (let btn of add_city_btns){
   let add_select = btn.parentNode.getElementsByTagName('input')[0];
   btn.addEventListener('click', () => {createLocationEntry(add_select.value)});
 }
+
+let set_country_btns = document.getElementsByClassName('set-country-btn');
+for (let btn of set_country_btns){
+  let country_select = btn.parentNode.getElementsByTagName('input')[0];
+  country_select.value = "";
+  btn.addEventListener('click', () => {
+    console.log(country_select.value, country_select.value in MAP_COUNTRIES.keys());
+    if (country_select.value in MAP_COUNTRIES){
+      populate(MAP_COUNTRIES[country_select.value])}
+    }
+  );
+}
+
+let MAP_COUNTRIES = [];
+async function getCountries(){
+  const requestURL =
+    "https://plida.github.io/cities-info/countries.json";
+  const request = new Request(requestURL);
+
+  const response = await fetch(request);
+  const cities = await response.json();
+  
+  for (let country of cities){
+    MAP_COUNTRIES[country.name] = country.id;
+  }
+
+  populateCountriesLists();
+
+  console.log(cities.length);
+}
+async function populate(country_id) {
+  console.log("?");
+  const requestURL =
+    "https://plida.github.io/cities-info/cities.json";
+  const request = new Request(requestURL);
+
+  const response = await fetch(request);
+  const cities = await response.json();
+  MAP_LOCATIONS = {};
+  for (let city of cities){
+    if (city.country_id == country_id){
+      MAP_LOCATIONS[city.name] = [city.latitude, city.longitude];
+    }
+  }
+
+  populateCitiesLists();
+
+  console.log(cities.length);
+}
+
+getCountries();

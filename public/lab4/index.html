@@ -47,11 +47,18 @@
 
       </div>
       <div class="current-location__manual-choice">
-        <label>Add the city closest to you: </label>
+        <section>
+        <option value="">Choose a country</option>
+        <input list="curr-countries" name="myCity">
+        <button class="set-country-btn">Set</button>
+        <datalist id="curr-countries" class="datalist-countries">
+      </section>
+      <section>
+        <option value="">Choose a city</option>
         <input list="curr-cities" name="myCity">
         <button class="add-current-btn">Add</button>
         <datalist id="curr-cities" class="datalist-cities">
-        </datalist>
+      </section>
       </div>
       <div class="current-location__manual">
         <section class="location-data">
@@ -63,10 +70,18 @@
     </section>
 
     <section class="add-location">
-      <option value="">Choose a city</option>
-      <input list="curr-cities" name="myCity">
-      <button class="add-city-btn">Add</button>
-      <datalist id="curr-cities" class="datalist-cities">
+      <section>
+        <option value="">Choose a country</option>
+        <input list="curr-countries" name="myCity">
+        <button class="set-country-btn">Set</button>
+        <datalist id="curr-countries" class="datalist-countries">
+      </section>
+      <section>
+        <option value="">Choose a city</option>
+        <input list="curr-cities" name="myCity">
+        <button class="add-city-btn">Add</button>
+        <datalist id="curr-cities" class="datalist-cities">
+      </section>
     </section>
 
     <section class="locations">
