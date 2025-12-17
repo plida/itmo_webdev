@@ -61,6 +61,12 @@ function getListedPlaces(){
 }
 
 async function refreshWeatherData(){
+  let elemLocList = curr_target.getElementsByTagName('ul')[0];
+  elemLocList.textContent = 'loading...';
+  for (let i = 0; i < locations.length; i++){
+    let elemLocList = elemLocationsList[i+2].getElementsByTagName('ul')[0];
+    elemLocList.textContent = 'loading...';
+  }
   if (curr_location != ""){
     curr_location.data = await getWeather(curr_location.latitude, curr_location.longitude);
   }
@@ -68,14 +74,10 @@ async function refreshWeatherData(){
     location.data = await getWeather(location.latitude, location.longitude);
   }
   localStorage.setItem('locations', JSON.stringify(locations));
-  let elemLocList = curr_target.getElementsByTagName('ul')[0];
-  elemLocList.textContent = 'loading...';
-  for (let i = 0; i < locations.length; i++){
-    let elemLocList = elemLocationsList[i+2].getElementsByTagName('ul')[0];
-    elemLocList.textContent = 'loading...';
-  }
-  setTimeout(populateCurrentLocation, 100);
-  setTimeout(populateElemLocations, 100);
+  
+  
+  populateCurrentLocation();
+  populateElemLocations();
 }
 
 function parseWeatherData(data){
