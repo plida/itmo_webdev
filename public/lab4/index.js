@@ -29,6 +29,10 @@ function round(number, precision = 1){
   ) / Math.pow(10, precision);
 }
 
+function capitalize(val) {
+    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
+
 const curr_loc_geo = document.getElementsByClassName('current-location__geolocation')[0];
 curr_loc_geo.classList.add('hidden');
 const curr_loc_man_ch = document.getElementsByClassName('current-location__manual-choice')[0];
@@ -146,6 +150,7 @@ async function populateElemLocations(){
 }
 
 async function createLocationEntry(place){
+  place = place.toLowerCase();
   if (getListedPlaces().includes(place) || place == ""){
     return;
   }
@@ -167,7 +172,7 @@ function createElemLocation(location){
   locationData.classList.add('location-data');
   elemLocations.appendChild(locationData);
   let locationHeader = document.createElement('h3');
-  locationHeader.textContent = location.place;
+  locationHeader.textContent = capitalize(location.place);
   locationData.appendChild(locationHeader);
   let locationByDay = document.createElement('div');
   locationByDay.classList.add('location-data-byday');
@@ -277,15 +282,36 @@ refresh_btn.addEventListener('click', () =>{
 
 const main = document.getElementsByTagName('main')[0];
 
+let citiesLists = document.getElementsByClassName('datalist-cities');
+let countriesLists = document.getElementsByClassName('datalist-countries');
+for (let list of citiesLists){
+  let select = list.getElementsByTagName('select')[0];
+  select.addEventListener('change', () => {
+    curr_target = document.getElementsByClassName('current-location__manual')[0];
+    addCurrentLocation(MAP_LOCATIONS[add_select.value][0], MAP_LOCATIONS[add_select.value][1]);
+    curr_loc_man_ch.classList.add('hidden');
+    curr_loc_man.classList.remove('hidden');
+  }
+  )
+}
+
+for (let list of countriesLists){
+  let select = list.getElementsByTagName('select')[0];
+  select.addEventListener('change', (event) => {
+    if (event.target.value.toLowerCase() in MAP_COUNTRIES){
+      populate(MAP_COUNTRIES[country_select.value])}
+    })
+  }
 
 function populateCitiesLists(){
   let citiesLists = document.getElementsByClassName('datalist-cities');
   for (let list of citiesLists){
-    list.textContent = '';
+    let selectList = list.getElementsByTagName('select')[0];
+    selectList.textContent = '';
     for (let [place, coords] of Object.entries(MAP_LOCATIONS)){
       let elemPlace = document.createElement('option');
-      elemPlace.value = place;
-      list.appendChild(elemPlace);
+      elemPlace.value = capitalize(place);
+      selectList.appendChild(elemPlace);
     }
   }
 }
@@ -293,10 +319,12 @@ function populateCitiesLists(){
 function populateCountriesLists(){
   let countriesLists = document.getElementsByClassName('datalist-countries');
   for (let list of countriesLists){
+    let selectList = list.getElementsByTagName('select')[0];
+    selectList.textContent = '';
     for (let [place, id] of Object.entries(MAP_COUNTRIES)){
       let elemPlace = document.createElement('option');
-      elemPlace.value = place;
-      list.appendChild(elemPlace);
+      elemPlace.value = capitalize(place);
+      selectList.appendChild(elemPlace);
     }
   }
 }
@@ -307,7 +335,7 @@ for (let btn of add_current_btns){
   add_select.value = "";
   btn.addEventListener('click', () => {
     curr_target = document.getElementsByClassName('current-location__manual')[0];
-    addCurrentLocation(MAP_LOCATIONS[add_select.value][0], MAP_LOCATIONS[add_select.value][1]);
+    addCurrentLocation(MAP_LOCATIONS[add_select.value.toLowerCase()][0], MAP_LOCATIONS[add_select.value.toLowerCase()][1]);
     curr_loc_man_ch.classList.add('hidden');
     curr_loc_man.classList.remove('hidden');
   });
@@ -316,7 +344,7 @@ for (let btn of add_current_btns){
 let add_city_btns = document.getElementsByClassName('add-city-btn');
 for (let btn of add_city_btns){
   let add_select = btn.parentNode.getElementsByTagName('input')[0];
-  btn.addEventListener('click', () => {createLocationEntry(add_select.value)});
+  btn.addEventListener('click', () => {createLocationEntry(add_select.value.toLowerCase())});
 }
 
 let set_country_btns = document.getElementsByClassName('set-country-btn');
@@ -324,9 +352,8 @@ for (let btn of set_country_btns){
   let country_select = btn.parentNode.getElementsByTagName('input')[0];
   country_select.value = "";
   btn.addEventListener('click', () => {
-    console.log(country_select.value, country_select.value in MAP_COUNTRIES.keys());
-    if (country_select.value in MAP_COUNTRIES){
-      populate(MAP_COUNTRIES[country_select.value])}
+    if (country_select.value.toLowerCase() in MAP_COUNTRIES){
+      populate(MAP_COUNTRIES[country_select.value.toLowerCase()])}
     }
   );
 }
@@ -341,7 +368,7 @@ async function getCountries(){
   const cities = await response.json();
   
   for (let country of cities){
-    MAP_COUNTRIES[country.name] = country.id;
+    MAP_COUNTRIES[country.name.toLowerCase()] = country.id;
   }
 
   populateCountriesLists();
@@ -359,7 +386,7 @@ async function populate(country_id) {
   MAP_LOCATIONS = {};
   for (let city of cities){
     if (city.country_id == country_id){
-      MAP_LOCATIONS[city.name] = [city.latitude, city.longitude];
+      MAP_LOCATIONS[city.name.toLowerCase()] = [city.latitude, city.longitude];
     }
   }
 
