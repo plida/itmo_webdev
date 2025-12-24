@@ -539,5 +539,9 @@ function colorTemperature(elem, value){
   elem.style.background = TMPR_COLORS[0];
 }
 
+const popups = document.getElementsByClassName('corner-popups')[0];
+for (let popup of popups.children){
+  popup.addEventListener('click', (event) => {event.target.classList.add('hidden')});
+}
 
 setupPage();

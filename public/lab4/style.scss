@@ -44,9 +44,9 @@ button, input[type='radio'], input[type='submit']{
     box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.05);
     filter: brightness(85%);
   }
-  &:active, &:focus{
+  &:active{
     box-shadow: none;
-    filter: brightness(100%);
+    filter: brightness(70%);
   }
   &.disabled{
     background-color: $color-slider;
@@ -309,6 +309,7 @@ h3{
   right: 1rem;
   font-size: 2rem;
   span{
+    cursor: pointer;
     background-color: #ef6449;
     padding: 0.25rem;
     margin: 0 0 0.125rem 0;
