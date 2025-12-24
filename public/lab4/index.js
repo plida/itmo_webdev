@@ -29,6 +29,15 @@ let curr_target = document.getElementsByClassName('current-location__geolocation
 
 //// HELPERS
 
+function sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
+}
+
+
 function round(number, precision = 1){
   return Math.round(
     number * Math.pow(10, precision)
@@ -243,7 +252,7 @@ for (let btn of add_city_btns){
 // Weather API
 
 async function getWeather(latitude, longitude){
-  const apiURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m&timezone=auto`;
+  const apiURL = `https://api.open-metfasfasfaseo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m&timezone=auto`;
   try {
     let response = await fetch(apiURL);
     if (!response.ok) {
@@ -299,7 +308,7 @@ async function refreshWeatherData(){
   if (curr_location != ""){
     let result = await getWeather(curr_location.latitude, curr_location.longitude);
     if (result == -1){
-      elemLocList.textContent = 'An error has occured. Please try refreshing again.';
+      elemLocList.textContent = 'An error has occured. Please try refreshing.';
       curr_location.weather = '';
     }
     else{
@@ -314,9 +323,10 @@ async function refreshWeatherData(){
     
     let elemLocList = elemLocationsList[i+2].getElementsByTagName('ul')[0];
     elemLocList.textContent = 'loading...';
+    sleep(100);
     let result = await getWeather(locations[i].latitude, locations[i].longitude);
     if (result == -1){
-      elemLocList.textContent = 'An error has occured. Please try refreshing again.';
+      elemLocList.textContent = 'An error has occured. Please try refreshing.';
       locations[i].weather = '';
     }
     else{
@@ -353,7 +363,7 @@ async function addCurrentLocation(latitude, longitude){
   let entry = {latitude: latitude, longitude: longitude, data: '', place: 'Current location'};
   let result = await getWeather(entry.latitude, entry.longitude);
   if (result == -1){
-    elemLocList.textContent = 'An error has occured. Please try refreshing again.';
+    elemLocList.textContent = 'An error has occured. Please try refreshing.';
     return;
   }
   else{
