@@ -252,7 +252,7 @@ for (let btn of add_city_btns){
 // Weather API
 
 async function getWeather(latitude, longitude){
-  const apiURL = `https://api.open-metfasfasfaseo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m&timezone=auto`;
+  const apiURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m&timezone=auto`;
   try {
     let response = await fetch(apiURL);
     if (!response.ok) {
