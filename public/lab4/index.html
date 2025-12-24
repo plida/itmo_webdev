@@ -17,8 +17,8 @@
       <ul>
         <li>
           <a href="https://webdevitmo.plida.ru"><img src="media/4.png">
-          <h1 class="site-name-long">Plida's weather service<br>Web programming lab work #4</h1>
-          <h1 class="site-name-middle">Plida's weather service</h1>
+          <h1 class="site-name-long">Plida's cool weather service<br>Web programming lab work #4</h1>
+          <h1 class="site-name-middle">Plida's cool weather service</h1>
           <h1 class="site-name-short"></h1>
           </a>
         </li>
@@ -29,11 +29,17 @@
     </nav>
   </header>
   <main id="main">
+    <section class="corner-popups">
+      <span class="invalid-input hidden">Invalid city!</span>
+      <span class="invalid-country-input hidden">Invalid country!</span>
+      <span class="repeat-input hidden">You've already picked this city!</span>
+    </section>
+    
     <div class="main-container">
     <button id="refresh-btn">Refresh</button>
     
     <section class="current-location">
-      <h3>Current location</h3>
+      <h2>Current location</h2>
       <div class="current-weather">
         <img>
         <span></span>
@@ -47,26 +53,25 @@
 
       </div>
       <div class="current-location__manual-choice">
-        <section class="add-location__country">
-        <option value="">Choose a country</option>
+        <section class="add-location__country choose-place">
+        <span>Choose country</span>
         <input list="curr-countries" name="myCity">
         <button class="set-country-btn">Set</button>
         <datalist id="curr-countries" class="datalist-countries">
           <select></select>
         </datalist>
-        <span class="invalid-input hidden">Invalid country!</span>
       </section>
-      <section class="add-location__city">
-        <option value="">Choose a city</option>
+      <section class="add-location__city choose-place">
+        <span>Choose city</span>
         <input list="curr-cities" name="myCity">
         <button class="add-current-btn">Add</button>
         <datalist id="curr-cities" class="datalist-cities">
           <select></select>
         </datalist>
-        <span class="invalid-input hidden">Invalid city!</span>
       </section>
       </div>
       <div class="current-location__manual">
+        <button>Change city</button>
         <section class="location-data">
           <div class="location-data-byday">
             <ul></ul>
@@ -75,28 +80,29 @@
       </div>
     </section>
 
-    <section class="add-location">
-      <section class="add-location__country">
-        <option value="">Choose a country</option>
+    
+
+    <section class="locations">
+      <h2>Other locations</h2>
+      <section class="add-location">
+      <section class="add-location__country choose-place">
+        <span>Choose country</span>
         <input list="curr-countries" name="myCity">
         <button class="set-country-btn">Set</button>
         <datalist id="curr-countries" class="datalist-countries">
           <select></select>
         </datalist>
-        <span class="invalid-input hidden">Invalid country!</span>
       </section>
-      <section class="add-location__city">
-        <option value="">Choose a city</option>
+      <section class="add-location__city choose-place">
+        <span>Choose city</span>
         <input list="curr-cities" name="myCity">
         <button class="add-city-btn">Add</button>
         <datalist id="curr-cities" class="datalist-cities">
           <select></select>
         </datalist>
-        <span class="invalid-input hidden">Invalid city!</span>
       </section>
-    </section>
-
-    <section class="locations">
+      </section>
+      
 
     </section>
     </div>

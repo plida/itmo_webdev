@@ -25,7 +25,7 @@ let mapLocations = {
 }
 let locations = [];
 let curr_location = '';
-let curr_target = document.getElementsByClassName('current-location__manual')[0];
+let curr_target = document.getElementsByClassName('current-location__geolocation')[0];
 
 //// HELPERS
 
@@ -49,6 +49,20 @@ function getListedPlaces(){
   return listedPlaces;
 }
 
+function animatePopup(popup){
+  let animationSpeed = 250;
+  popup.classList.remove('hidden');
+  console.log(popup);
+  popup.animate(
+  [
+    { opacity: 0, transform: 'translateY(-2rem)' },
+    { opacity: 1, transform: 'translateY(0)' },
+  ], 
+  {
+    duration: animationSpeed,
+    iterations: 1,
+  });
+}
 
 //// START
 
@@ -59,11 +73,8 @@ if (localStorage.getItem('locations')){
 
 async function setupPage(){
   getCountries();
-  for (let location of locations){
-    location.weather = await getWeather(location.latitude, location.longitude);
-  }
-  populateElemLocations()
-  localStorage.setItem('locations', JSON.stringify(locations));
+  populateElemLocations();
+  refreshWeatherData();
 }
 
 
@@ -102,11 +113,19 @@ function populateCountriesLists(){
 
 function processNewCountry(event, list){
   let country_select = list.parentNode.getElementsByTagName('input')[0];
+  let error_popup = document.getElementsByClassName('invalid-country-input')[0];
+  let error_city_popup = document.getElementsByClassName('invalid-input')[0];
   let respectiveCity = list.parentNode.parentNode.getElementsByClassName('add-location__city')[0];
   respectiveCity.classList.add('hidden');
   if (country_select.value.toLowerCase() in mapCountries){
+    error_popup.classList.add('hidden');
     respectiveCity.classList.remove('hidden');
     fetchCities(mapCountries[country_select.value.toLowerCase()])
+  }
+  else{
+    error_popup.classList.remove('hidden');
+    error_city_popup.classList.add('hidden');
+    animatePopup(error_popup);
   }
 }
 
@@ -127,15 +146,18 @@ async function getCountries(){
 
 
 let citiesLists = document.getElementsByClassName('datalist-cities');
-for (let list of citiesLists){
-  let input = list.parentNode.getElementsByTagName('input')[0];
+for (let i = 0; i < citiesLists.length; i++){
+  let input = citiesLists[i].parentNode.getElementsByTagName('input')[0];
   input.value = '';
-  let select = list.getElementsByTagName('select')[0];
+  let select = citiesLists[i].getElementsByTagName('select')[0]; 
   select.addEventListener('change', () => {
-    curr_target = document.getElementsByClassName('current-location__manual')[0];
-    addCurrentLocation(mapLocations[add_select.value][0], mapLocations[add_select.value][1]);
-    curr_loc_man_ch.classList.add('hidden');
-    curr_loc_man.classList.remove('hidden');
+      if (i > 1){
+        let mode = 'default'; 
+      }
+      else{
+        let mode = 'curr';
+      }
+      processNewCity(citiesLists[i], mode);
     }
   )
 }
@@ -170,13 +192,43 @@ async function fetchCities(country_id) {
   populateCitiesLists();
 }
 
+function processNewCity(list, mode = 'default'){
+  let city_select = list.parentNode.getElementsByTagName('input')[0];
+  let error_popup = document.getElementsByClassName('invalid-input')[0];
+  let repeat_popup = document.getElementsByClassName('repeat-input')[0];
+
+  repeat_popup.classList.add('hidden');
+  error_popup.classList.add('hidden');
+  let value = city_select.value.toLowerCase();
+  if (getListedPlaces().includes(value) && mode == 'default'){
+    repeat_popup.classList.remove('hidden');
+    animatePopup(repeat_popup);
+    return;
+  }
+
+  if (value in mapLocations){
+    if (mode == 'curr'){
+      addCurrentLocation(mapLocations[value][0], mapLocations[value][1]);
+    }
+    else if (mode == 'default'){
+      createLocationEntry(value)
+    }
+  }
+  else{
+    error_popup.classList.remove('hidden');
+    animatePopup(error_popup);
+  }
+}
+
+
 let add_current_btns = document.getElementsByClassName('add-current-btn');
 for (let btn of add_current_btns){
+  let list = btn.parentNode.getElementsByTagName('datalist')[0];
   let add_select = btn.parentNode.getElementsByTagName('input')[0];
   add_select.value = "";
   btn.addEventListener('click', () => {
     curr_target = document.getElementsByClassName('current-location__manual')[0];
-    addCurrentLocation(mapLocations[add_select.value.toLowerCase()][0], mapLocations[add_select.value.toLowerCase()][1]);
+    processNewCity(list, 'curr');
     curr_loc_man_ch.classList.add('hidden');
     curr_loc_man.classList.remove('hidden');
   });
@@ -184,8 +236,8 @@ for (let btn of add_current_btns){
 
 let add_city_btns = document.getElementsByClassName('add-city-btn');
 for (let btn of add_city_btns){
-  let add_select = btn.parentNode.getElementsByTagName('input')[0];
-  btn.addEventListener('click', () => {createLocationEntry(add_select.value.toLowerCase())});
+  let list = btn.parentNode.getElementsByTagName('datalist')[0];
+  btn.addEventListener('click', () => {processNewCity(list, 'default')});
 }
 
 // Weather API
@@ -209,7 +261,7 @@ async function getWeather(latitude, longitude){
 function parseWeatherData(data){
   let days = [];
   let temperatures = data.hourly.temperature_2m;
-  for (let i = 0; i < NDAYS; i++){
+  for (let i = 0; i < 7; i++){
     let periods = [];
     for (let k = 0; k < 4; k++){
       let avgTemp = 0;
@@ -241,20 +293,25 @@ refresh_btn.addEventListener('click', () =>{
 
 async function refreshWeatherData(){
   let elemLocationsList = document.getElementsByClassName('location-data');
+  let elemLocList = curr_target.getElementsByTagName('ul')[0];
+  currentWeather.classList.add('hidden');
+  elemLocList.textContent = 'loading...';
   if (curr_location != ""){
-    let elemLocList = curr_target.getElementsByTagName('ul')[0];
-    elemLocList.textContent = 'loading...';
     let result = await getWeather(curr_location.latitude, curr_location.longitude);
     if (result == -1){
       elemLocList.textContent = 'An error has occured. Please try refreshing again.';
+      curr_location.weather = '';
     }
     else{
       curr_location.weather = result;
-      curr_location.weather = '';
     }
   }
-
+  
   for (let i = 0; i < locations.length; i++){
+    if (elemLocationsList.length < 3){
+      break;
+    }
+    
     let elemLocList = elemLocationsList[i+2].getElementsByTagName('ul')[0];
     elemLocList.textContent = 'loading...';
     let result = await getWeather(locations[i].latitude, locations[i].longitude);
@@ -282,17 +339,26 @@ const watchCurrGeo = navigator.geolocation.watchPosition(
       addCurrentLocation(position.coords.latitude, position.coords.longitude);
       curr_loc_geo.classList.remove('hidden');
       curr_loc_man_ch.classList.add('hidden');
-      }
+    }
   },
   () => {
+    curr_target = document.getElementsByClassName('current-location__manual')[0];
     curr_loc_geo.classList.add('hidden');
     curr_loc_man_ch.classList.remove('hidden');
   }
 );
 
 async function addCurrentLocation(latitude, longitude){
+  let elemLocList = curr_target.getElementsByTagName('ul')[0];
   let entry = {latitude: latitude, longitude: longitude, data: '', place: 'Current location'};
-  entry.weather = await getWeather(entry.latitude, entry.longitude);
+  let result = await getWeather(entry.latitude, entry.longitude);
+  if (result == -1){
+    elemLocList.textContent = 'An error has occured. Please try refreshing again.';
+    return;
+  }
+  else{
+    entry.weather = result;
+  }
   if (curr_location != entry){
     curr_location = entry;
     populateCurrentLocation();
@@ -308,6 +374,8 @@ async function populateCurrentLocation(){
   elemLocList.textContent = '';
   fillElemLocation(curr_location, elemLocList);
   // current weather
+  console.log('dada');
+  currentWeather.classList.remove('hidden');
   let current_weather = document.getElementsByClassName('current-weather')[0].getElementsByTagName('span')[0];
   let index = Math.floor(new Date().getHours() / 6);
   let value = curr_location.weather[0][1][index][0];
@@ -341,11 +409,17 @@ async function createLocationEntry(place){
     return;
   }
   if (place in mapLocations == false){
-    console.log('doesnt exist!');
     return;
   }
   let entry = {latitude: mapLocations[place][0], longitude: mapLocations[place][1], data: '', place: place};
-  entry.weather = await getWeather(entry.latitude, entry.longitude);
+  let result = await getWeather(entry.latitude, entry.longitude);
+  if (result == -1){
+    alert('An error has occured. Please try adding the entry again.');
+    return;
+  }
+  else{
+    entry.weather = result;
+  }
   locations.unshift(entry);
   populateElemLocations();
   localStorage.setItem('locations', JSON.stringify(locations));
@@ -354,32 +428,49 @@ async function createLocationEntry(place){
 //// DOM
 
 const curr_loc_geo = document.getElementsByClassName('current-location__geolocation')[0];
-curr_loc_geo.classList.add('hidden');
+curr_loc_geo.classList.remove('hidden');
 const curr_loc_man_ch = document.getElementsByClassName('current-location__manual-choice')[0];
 curr_loc_man_ch.classList.add('hidden');
 const curr_loc_man = document.getElementsByClassName('current-location__manual')[0];
 curr_loc_man.classList.add('hidden');
+const currentWeather = document.getElementsByClassName('current-weather')[0];
+currentWeather.classList.add('hidden');
+
+const curr_loc_man_btn = curr_loc_man.getElementsByTagName('button')[0];
+curr_loc_man_btn.addEventListener('click', () => {
+  curr_target = document.getElementsByClassName('current-location__manual')[0];
+  curr_location = '';
+  currentWeather.classList.add('hidden');
+  curr_loc_geo.classList.add('hidden');
+  curr_loc_man_ch.classList.remove('hidden');
+  curr_loc_man.classList.add('hidden');
+})
 
 function createElemLocation(location){
   let elemLocations = document.getElementsByClassName('locations')[0];
   let locationData = document.createElement('section');
   locationData.classList.add('location-data');
   elemLocations.appendChild(locationData);
+
+  let locationInfo = document.createElement('div');
+  locationInfo.classList.add('location-data__info');
+  locationData.appendChild(locationInfo);
   let locationHeader = document.createElement('h3');
   locationHeader.textContent = capitalize(location.place);
-  locationData.appendChild(locationHeader);
+  locationInfo.appendChild(locationHeader);
   let locationRemove = document.createElement('button');
-  locationRemove.textContent = '-';
   locationRemove.classList.add('location__remove-btn');
   locationRemove.addEventListener('click', (event) => {
       let indToRemove = locations.indexOf(location);
       if (indToRemove != -1){
         locations.splice(indToRemove, 1);
-        event.target.parentNode.remove();
+        event.target.parentNode.parentNode.remove();
+        localStorage.setItem('locations', JSON.stringify(locations));
       }
     }
   )
-  locationData.appendChild(locationRemove);
+  locationInfo.appendChild(locationRemove);
+
   let locationByDay = document.createElement('div');
   locationByDay.classList.add('location-data-byday');
   locationData.appendChild(locationByDay);
@@ -392,10 +483,17 @@ function fillElemLocation(location, list){
     return;
   }
   for (let i = 0; i < NDAYS; i++){
+    if (location.weather == ''){
+      let span = document.createElement('span');
+      span.textContent = 'An error has occured. Please try refreshing.';
+      list.appendChild(span);
+      break;
+    }
     let dayData = location.weather[i];
     let elemLocationDay = document.createElement('li');
     let elemLocationDayHeader = document.createElement('span');
     elemLocationDayHeader.textContent = WEEKDAYS[new Date(dayData[0]).getDay()] + ' ' + MONTHS[parseInt(dayData[0].slice(5, 7)) - 1].slice(0, 3) + ' ' + dayData[0].slice(8, 10);
+    elemLocationDayHeader.classList.add('day-header');
     elemLocationDay.appendChild(elemLocationDayHeader);
     let elemLocationDayEntries = document.createElement('div');
     elemLocationDayEntries.classList.add('location-data-entries');
