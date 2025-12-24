@@ -22,3 +22,10 @@
 
 [Отчёт](https://github.com/plida/itmo_webdev/blob/main/public/lab3/README.md)
 
+
+## Лабораторная работа №4: Прогноз погоды
+
+[Деплой](https://webdevitmo.plida.ru/lab4/index.html)
+
+[Отчёт](https://github.com/plida/itmo_webdev/blob/main/public/lab4/README.md)
+
