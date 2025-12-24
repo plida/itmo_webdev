@@ -216,7 +216,7 @@ a.disabled {
     list-style-type: none;
     display: flex;
     align-items: flex-start;
-    justify-content: flex-start;
+    justify-content: center;
     flex-wrap: wrap;
   }
   li{
@@ -254,10 +254,15 @@ a.disabled {
     padding: 0.25rem;
     display: flex;
     align-items: center;
+    width: 15rem;
+    justify-content: space-between;
+    h3{
+      margin-left: 1rem;
+    }
     button{
       width: 2rem;
       height: 2rem;
-      margin-left: 1rem;
+      margin: 0 1rem;
       &::before{
         content: "\274C";
         display: flex;
@@ -323,7 +328,7 @@ h3{
     width: 10rem;
   }
   button{
-    margin-left: 1rem;
+    margin: 0 0.5rem;
     padding: 0.25rem;
     width: 3rem;
   }
@@ -388,10 +393,29 @@ h2{
 }
 
 @media only screen and (max-width: 720px){
-
 }
 
 @media only screen and (max-width: 512px){
+  .add-location{
+    height: 7rem;
+  }
+  .choose-place{
+    flex-wrap: wrap;
+    justify-content: space-between;
+    span{
+      flex-basis: 100%;
+    }
+  }
+  .location-data{
+    &-entry{
+      .value{
+        min-width: 4rem;
+      }
+      img{
+        max-width: 3rem;
+      }
+    }
+  }
   header{
     max-height: 4rem;
     a, img{
